@@ -76,6 +76,16 @@ class DatabaseService {
     const schedules = await this.getAllSchedules();
     if (!schedules || schedules.length === 0) {
       await this.resetToDefault();
+    } else {
+      // Sync any new initial schedules (such as HUST courses) if not already present
+      const hasHust175507 = schedules.some((s) => s.id === 'sch-hust-175507');
+      if (!hasHust175507) {
+        for (const item of INITIAL_SCHEDULE) {
+          if (!schedules.some((s) => s.id === item.id)) {
+            await this.addSchedule(item);
+          }
+        }
+      }
     }
   }
 

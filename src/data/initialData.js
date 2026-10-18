@@ -89,6 +89,38 @@ export const ORAL_TEAM_IDS = ['quang_anh', 'duc_kien', 'thao_nguyen', 'khanh_lin
 export const INITIAL_SCHEDULE = [
   // ================= THỨ 5 (22/10/2026) =================
   {
+    id: 'sch-hust-175507',
+    day: '22',
+    dayTitle: 'THỨ 5 (22/10/2026): Lịch học Đại học Bách khoa Hà Nội',
+    time: '06:45 – 09:10',
+    periodText: 'Tiết 1 - 3 (06:45 - 09:10)',
+    title: '175507 - Lịch sử Đảng cộng sản Việt Nam - SSH1141',
+    location: 'D5-301',
+    category: 'academic',
+    participants: [...ALL_MEMBER_IDS],
+    speaker: 'Lê Thị Lan',
+    description: '175507 - Lịch sử Đảng cộng sản Việt Nam - SSH1141\nGiảng viên: Lê Thị Lan\nĐịa điểm: D5-301 (Đại học Bách khoa Hà Nội)',
+    memberNotes: {
+      quang_anh: 'Tham gia học tập đầy đủ trước khi xuất phát đi Hội thảo ICEF 2026.'
+    }
+  },
+  {
+    id: 'sch-hust-174386',
+    day: '22',
+    dayTitle: 'THỨ 5 (22/10/2026): Lịch học Đại học Bách khoa Hà Nội',
+    time: '09:20 – 11:45',
+    periodText: 'Tiết 4 - 6 (09:20 - 11:45)',
+    title: '174386 - Hệ thống và Công nghệ Mạng - IT3080',
+    location: 'D7-404',
+    category: 'academic',
+    participants: [...ALL_MEMBER_IDS],
+    speaker: 'Ngô Thị Hiển',
+    description: '174386 - Hệ thống và Công nghệ Mạng - IT3080\nGiảng viên: Ngô Thị Hiển\nĐịa điểm: D7-404 (Đại học Bách khoa Hà Nội)',
+    memberNotes: {
+      quang_anh: 'Xin phép vắng mặt / học online để tham gia đoàn Hội thảo ICEF 2026 tại Ninh Bình.'
+    }
+  },
+  {
     id: 'sch-22-1',
     day: '22',
     dayTitle: 'THỨ 5 (22/10/2026): Di chuyển, Check-in & Pre-conference Workshops',

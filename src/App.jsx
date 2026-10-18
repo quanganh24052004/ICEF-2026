@@ -276,10 +276,12 @@ export default function App() {
         ) : (
           <CalendarView
             schedules={schedules}
+            members={members}
             selectedMember={selectedMember}
             showAllSessions={showAllSessions}
             searchQuery={searchQuery}
             onEventClick={handleOpenEditModal}
+            onDeleteEvent={handleOpenDeleteModal}
           />
         )}
       </main>
