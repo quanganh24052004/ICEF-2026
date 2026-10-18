@@ -26,6 +26,84 @@
   scrollbar-width: none;
 }
 
+/* FullCalendar Styling Overrides */
+.fullcalendar-custom-wrapper {
+  --fc-border-color: #e2e8f0;
+  --fc-button-text-color: #334155;
+  --fc-button-bg-color: #f1f5f9;
+  --fc-button-border-color: #cbd5e1;
+  --fc-button-hover-bg-color: #e2e8f0;
+  --fc-button-hover-border-color: #94a3b8;
+  --fc-button-active-bg-color: #1d4ed8;
+  --fc-button-active-border-color: #1e40af;
+  --fc-today-bg-color: rgba(239, 246, 255, 0.6);
+  --fc-now-indicator-color: #ef4444;
+}
+
+.fc .fc-toolbar-title {
+  font-size: 1.1rem !important;
+  font-family: 'Outfit', 'Inter', sans-serif !important;
+  font-weight: 700 !important;
+  color: #0f172a !important;
+}
+
+@media (min-width: 640px) {
+  .fc .fc-toolbar-title {
+    font-size: 1.35rem !important;
+  }
+}
+
+.fc .fc-button {
+  font-size: 0.8rem !important;
+  font-weight: 600 !important;
+  border-radius: 8px !important;
+  padding: 0.35rem 0.75rem !important;
+  text-transform: capitalize !important;
+  transition: all 0.15s ease !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+}
+
+.fc .fc-button-primary:not(:disabled).fc-button-active,
+.fc .fc-button-primary:not(:disabled):active {
+  background-color: #1d4ed8 !important;
+  color: #ffffff !important;
+  border-color: #1e40af !important;
+}
+
+.fc-theme-standard td, .fc-theme-standard th {
+  border-color: #f1f5f9 !important;
+}
+
+.fc .fc-timegrid-slot-label {
+  font-family: monospace !important;
+  font-size: 0.75rem !important;
+  color: #64748b !important;
+}
+
+.fc .fc-col-header-cell {
+  background-color: #f8fafc !important;
+  padding: 0.5rem 0 !important;
+}
+
+.fc .fc-col-header-cell-cushion {
+  font-size: 0.82rem !important;
+  font-weight: 700 !important;
+  color: #1e293b !important;
+}
+
+.fc-timegrid-event {
+  border-radius: 8px !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08) !important;
+  transition: transform 0.15s ease, box-shadow 0.15s ease !important;
+  overflow: hidden !important;
+}
+
+.fc-timegrid-event:hover {
+  transform: translateY(-1px) scale(1.01) !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15) !important;
+  z-index: 20 !important;
+}
+
 /* Print optimizations */
 @media print {
   header, .no-print, button, input {

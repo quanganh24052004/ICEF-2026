@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { dbService } from './services/db';
+import { downloadICSFile } from './services/ical';
 import Header from './components/Header';
 import StatsBar from './components/StatsBar';
 import MemberFilter from './components/MemberFilter';
 import AccommodationsCard from './components/AccommodationsCard';
 import DayTabs from './components/DayTabs';
 import ScheduleList from './components/ScheduleList';
+import CalendarView from './components/CalendarView';
 import EventModal from './components/EventModal';
 import DeleteModal from './components/DeleteModal';
 import BackupModal from './components/BackupModal';
@@ -19,6 +21,7 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(true);
 
   // Filter & Search states
+  const [viewMode, setViewMode] = useState('timeline'); // 'timeline' | 'calendar'
   const [selectedDay, setSelectedDay] = useState('all');
   const [selectedMember, setSelectedMember] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -193,6 +196,24 @@ export default function App() {
     }
   };
 
+  // Export iCalendar (.ics) Handler for Google/Apple Calendar
+  const handleExportICS = () => {
+    const curMember = members.find((m) => m.id === selectedMember);
+    const memberName = curMember ? curMember.name : 'Cả đoàn ICEF 2026';
+
+    const itemsToExport = selectedMember === 'all'
+      ? schedules
+      : schedules.filter((s) => s.participants?.includes(selectedMember));
+
+    if (itemsToExport.length === 0) {
+      showToast('Không có hoạt động nào để xuất lịch!', 'error');
+      return;
+    }
+
+    downloadICSFile(itemsToExport, memberName);
+    showToast(`Đã xuất file .ics cho ${memberName}! Mở file trên điện thoại để thêm vào Lịch.`, 'success');
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50 text-slate-600">
@@ -229,25 +250,38 @@ export default function App() {
         {/* Hotel & Academic Paper Overview (Collapsible) */}
         <AccommodationsCard hotelInfo={hotelInfo} />
 
-        {/* Day Tabs Navigation & View Controls */}
+        {/* Day Tabs Navigation & View Mode Controls */}
         <DayTabs
           selectedDay={selectedDay}
           onSelectDay={setSelectedDay}
           showAllSessions={showAllSessions}
           onToggleShowAllSessions={setShowAllSessions}
+          viewMode={viewMode}
+          onSelectViewMode={setViewMode}
+          onExportICS={handleExportICS}
         />
 
-        {/* Schedule Events Timeline */}
-        <ScheduleList
-          schedules={schedules}
-          members={members}
-          selectedDay={selectedDay}
-          selectedMember={selectedMember}
-          searchQuery={searchQuery}
-          showAllSessions={showAllSessions}
-          onEditEvent={handleOpenEditModal}
-          onDeleteEvent={handleOpenDeleteModal}
-        />
+        {/* View Switching: Timeline List vs Google Calendar TimeGrid */}
+        {viewMode === 'timeline' ? (
+          <ScheduleList
+            schedules={schedules}
+            members={members}
+            selectedDay={selectedDay}
+            selectedMember={selectedMember}
+            searchQuery={searchQuery}
+            showAllSessions={showAllSessions}
+            onEditEvent={handleOpenEditModal}
+            onDeleteEvent={handleOpenDeleteModal}
+          />
+        ) : (
+          <CalendarView
+            schedules={schedules}
+            selectedMember={selectedMember}
+            showAllSessions={showAllSessions}
+            searchQuery={searchQuery}
+            onEventClick={handleOpenEditModal}
+          />
+        )}
       </main>
 
       {/* Mobile Floating Action Button */}
