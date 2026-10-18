@@ -159,7 +159,7 @@ export default function App() {
     try {
       await dbService.updateMember(newMember);
       setMembers((prev) => [...prev, newMember]);
-      showToast(`Đã thêm thành viên mới: ${newMember.name} (${newMember.mssv})`, 'success');
+      showToast(`Đã thêm thành viên mới: ${newMember.name}`, 'success');
     } catch (err) {
       console.error('[App] Lỗi đăng ký thành viên:', err);
       showToast('Lỗi đăng ký: ' + err.message, 'error');

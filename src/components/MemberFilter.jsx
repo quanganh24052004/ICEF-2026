@@ -26,7 +26,7 @@ export default function MemberFilter({ members = [], selectedMember, onSelectMem
         <span className="text-xs font-semibold text-blue-700 bg-blue-50 px-2.5 py-1 rounded-full border border-blue-100">
           {selectedMember === 'all'
             ? `Đang xem: Tất cả (${members.length} thành viên)`
-            : `Đang lọc: ${currentMember?.name} (${currentMember?.mssv || ''})`}
+            : `Đang lọc: ${currentMember?.name}`}
         </span>
       </div>
 
@@ -82,8 +82,8 @@ export default function MemberFilter({ members = [], selectedMember, onSelectMem
                   <Crown className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
                 )}
               </div>
-              <div className="text-xs text-slate-600 font-mono mt-0.5">
-                MSSV: <strong>{currentMember.mssv || '---'}</strong>
+              <div className="text-xs text-slate-600 mt-0.5">
+                {currentMember.roleTitle || 'Thành viên đoàn'}
               </div>
               <span className={`inline-block mt-1 text-[11px] px-2 py-0.5 rounded font-semibold ${
                 currentMember.isAdmin || currentMember.mssv === '20227035'

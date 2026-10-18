@@ -72,25 +72,39 @@ class DatabaseService {
     });
   }
 
-  async _seedInitialDataIfNeeded() {
-    const schedules = await this.getAllSchedules();
-    if (!schedules || schedules.length === 0) {
-      await this.resetToDefault();
-    } else {
-      // Sync any new initial schedules (such as HUST courses) if not already present
-      const hasHust175507 = schedules.some((s) => s.id === 'sch-hust-175507');
-      if (!hasHust175507) {
-        for (const item of INITIAL_SCHEDULE) {
-          if (!schedules.some((s) => s.id === item.id)) {
-            await this.addSchedule(item);
-          }
-        }
-      }
+  async getAppInfo() {
+    if (this.useFallback) {
+      const data = this._getFallbackData();
+      return data.meta ? data.meta['app_info'] : null;
     }
 
-    // Sync member MSSVs and roles
+    return new Promise((resolve) => {
+      try {
+        const tx = this.db.transaction([STORE_META], 'readonly');
+        const store = tx.objectStore(STORE_META);
+        const req = store.get('app_info');
+        req.onsuccess = () => resolve(req.result || null);
+        req.onerror = () => resolve(null);
+      } catch {
+        resolve(null);
+      }
+    });
+  }
+
+  async _seedInitialDataIfNeeded() {
+    // Check if the database has already been initialized
+    const appInfo = await this.getAppInfo();
+    if (!appInfo) {
+      // First-time load on this browser: initialize default data
+      await this.resetToDefault();
+      return;
+    }
+
+    // Database is already initialized.
+    // NEVER re-insert deleted schedules on F5!
+    // Only ensure members list has latest structure if empty
     const members = await this.getAllMembers();
-    if (!members || members.length === 0 || !members[0].mssv) {
+    if (!members || members.length === 0) {
       for (const m of INITIAL_MEMBERS) {
         await this.updateMember(m);
       }

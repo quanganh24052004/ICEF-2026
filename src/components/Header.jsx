@@ -77,11 +77,11 @@ export default function Header({
                     <div className="text-xs font-bold text-white truncate flex items-center gap-1">
                       <span>{currentUser.name}</span>
                     </div>
-                    <div className="text-[10px] text-blue-200 font-mono truncate">
+                    <div className="text-[10px] text-blue-200 truncate">
                       {isAdmin ? (
-                        <span className="text-amber-300 font-semibold">Admin (20227035)</span>
+                        <span className="text-amber-300 font-semibold">👑 Admin (Quản trị viên)</span>
                       ) : (
-                        <span>MSSV: {currentUser.mssv || 'Khách'}</span>
+                        <span>{currentUser.roleTitle || 'Thành viên đoàn'}</span>
                       )}
                     </div>
                   </div>
