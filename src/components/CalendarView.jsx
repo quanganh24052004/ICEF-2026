@@ -189,6 +189,27 @@ export default function CalendarView({
     return ev.time;
   };
 
+  const getCategoryInfo = (category) => {
+    switch (category) {
+      case 'highlight_oral':
+        return { text: 'Báo cáo Oral', color: 'bg-amber-100 text-amber-900 border-amber-300' };
+      case 'highlight_poster':
+        return { text: 'Báo cáo Poster', color: 'bg-purple-100 text-purple-900 border-purple-300' };
+      case 'plenary':
+        return { text: 'Phiên Toàn Thể', color: 'bg-red-100 text-red-900 border-red-300' };
+      case 'academic':
+        return { text: 'Chuyên môn', color: 'bg-blue-100 text-blue-900 border-blue-300' };
+      case 'travel':
+        return { text: 'Di chuyển', color: 'bg-emerald-100 text-emerald-900 border-emerald-300' };
+      case 'hotel':
+        return { text: 'Khách sạn', color: 'bg-teal-100 text-teal-900 border-teal-300' };
+      case 'meal':
+        return { text: 'Ẩm thực', color: 'bg-orange-100 text-orange-900 border-orange-300' };
+      default:
+        return { text: 'Lịch trình', color: 'bg-slate-100 text-slate-800 border-slate-200' };
+    }
+  };
+
   return (
     <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden text-slate-800 font-sans">
       {/* =========================================================================
@@ -200,14 +221,14 @@ export default function CalendarView({
           <button
             type="button"
             onClick={() => setViewType('week')}
-            className="px-4 py-1 rounded-full border border-red-600 text-red-600 font-medium text-xs sm:text-sm hover:bg-red-50 transition-colors shadow-2xs"
+            className="px-4 py-1 rounded-full border border-red-600 text-red-600 font-medium text-xs sm:text-sm hover:bg-red-50 transition-colors shadow-2xs cursor-pointer"
           >
             Hôm nay
           </button>
           <button
             type="button"
             onClick={() => setViewType('week')}
-            className="w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-red-600 text-red-600 flex items-center justify-center hover:bg-red-50 transition-colors"
+            className="w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-red-600 text-red-600 flex items-center justify-center hover:bg-red-50 transition-colors cursor-pointer"
             title="Lịch tuần"
           >
             <CalendarIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
@@ -313,7 +334,7 @@ export default function CalendarView({
             </div>
 
             {/* Days Columns Body with Events */}
-            {displayedDays.map((d) => {
+            {displayedDays.map((d, dayIndex) => {
               const dayEvents = eventsByDay[d.dayNumber] || [];
 
               // Calculate current time indicator for today (19.10 or active day)
@@ -365,6 +386,7 @@ export default function CalendarView({
                     const isHovered = hoveredEventId === ev.id;
                     const speaker = getSpeakerText(ev);
                     const timeLabel = formatEventTimeLabel(ev);
+                    const catInfo = getCategoryInfo(ev.category);
 
                     // Multi-column width for parallel sessions
                     const totalCols = ev.totalCols || 1;
@@ -372,183 +394,228 @@ export default function CalendarView({
                     const colWidthPct = 100 / totalCols;
                     const leftPct = colIdx * colWidthPct;
 
+                    // Smart popover anchor orientation to never clip outside the timetable or screen
+                    const isRightSide =
+                      displayedDays.length === 1
+                        ? colIdx >= totalCols / 2
+                        : dayIndex >= displayedDays.length - 2 ||
+                          (dayIndex >= displayedDays.length - 3 && colIdx >= 1);
+
+                    const isBottomHalf = ev.startMin >= 17 * 60; // 17:00 onwards
+                    const isAdmin = currentUser?.isAdmin || currentUser?.mssv === '20227035';
+                    const canDelete =
+                      isAdmin || (ev.createdByMssv && ev.createdByMssv === currentUser?.mssv);
+
                     return (
                       <div
                         key={ev.id}
                         onMouseEnter={() => setHoveredEventId(ev.id)}
                         onMouseLeave={() => setHoveredEventId(null)}
-                        onClick={() => onEventClick && onEventClick(ev)}
-                        className={`absolute rounded-md border border-slate-200/90 border-l-[4px] border-l-red-600 bg-white transition-shadow cursor-pointer ${
-                          isHovered
-                            ? 'z-50 shadow-2xl ring-1 ring-black/10 overflow-visible'
-                            : 'z-10 shadow-xs hover:shadow-md overflow-hidden'
-                        }`}
+                        className="absolute select-none"
                         style={{
                           top: `${topPx}px`,
                           left: `calc(${leftPct}% + 2px)`,
-                          width: isHovered && totalCols > 1
-                            ? `calc(max(${colWidthPct}%, 200px) - 4px)`
-                            : `calc(${colWidthPct}% - 4px)`,
-                          maxWidth: 'calc(100% - 4px)',
-                          height: isHovered ? 'auto' : `${heightPx}px`,
-                          minHeight: `${heightPx}px`,
-                          zIndex: isHovered ? 50 : 10
+                          width: `calc(${colWidthPct}% - 4px)`,
+                          height: `${heightPx}px`,
+                          zIndex: isHovered ? 40 : 10
                         }}
                       >
-                        <div className={`p-2 sm:p-2.5 flex flex-col bg-white rounded-r-md ${isHovered ? 'h-auto' : 'h-full overflow-hidden'}`}>
+                        {/* 1. Base Card in the Timetable Grid (Always solid & nicely proportioned) */}
+                        <div
+                          onClick={() => onEventClick && onEventClick(ev)}
+                          className={`w-full h-full rounded-md border border-slate-200/90 border-l-[3.5px] border-l-red-600 bg-white p-1.5 sm:p-2 flex flex-col justify-between overflow-hidden cursor-pointer transition-all duration-150 ${
+                            isHovered
+                              ? 'ring-2 ring-red-500 shadow-md bg-red-50/20'
+                              : 'shadow-xs hover:border-slate-300 hover:shadow-sm'
+                          }`}
+                        >
                           <div>
-                            {/* Card Header: Title + Action buttons (Matches Image 2 & 3) */}
-                            <div className="flex items-start justify-between gap-1">
-                              <h5
-                                className={`text-xs sm:text-[13px] font-bold text-red-600 leading-tight ${
-                                  isHovered
-                                    ? 'whitespace-normal break-words line-clamp-none'
-                                    : 'truncate'
-                                }`}
-                                title={ev.title}
-                              >
-                                {ev.isHighlight && (
-                                  <Star className="inline w-3 h-3 fill-amber-500 text-amber-500 mr-1 shrink-0 -mt-0.5" />
-                                )}
-                                {ev.title}
-                              </h5>
+                            <h5
+                              className="text-xs font-bold text-red-600 leading-tight line-clamp-2"
+                              title={ev.title}
+                            >
+                              {ev.isHighlight && (
+                                <Star className="inline w-3 h-3 fill-amber-500 text-amber-500 mr-1 shrink-0 -mt-0.5" />
+                              )}
+                              {ev.title}
+                            </h5>
 
-                              {/* Quick Edit/Delete on Hover */}
-                              {isHovered && (() => {
-                                const isAdmin = currentUser?.isAdmin || currentUser?.mssv === '20227035';
-                                const canDelete = isAdmin || (ev.createdByMssv && ev.createdByMssv === currentUser?.mssv);
+                            <div className="flex items-center gap-1 text-[10px] sm:text-[11px] text-slate-700 mt-1 truncate">
+                              <CalendarIcon className="w-3 h-3 text-slate-500 shrink-0 stroke-[1.75]" />
+                              <span className="font-medium text-slate-800 truncate">{timeLabel}</span>
+                            </div>
 
-                                return (
-                                  <div className="flex items-center gap-1 shrink-0 ml-1">
+                            {ev.location && heightPx >= 52 && (
+                              <div className="flex items-center gap-1 text-[10px] sm:text-[11px] text-slate-600 mt-0.5 truncate">
+                                <MapPin className="w-3 h-3 text-slate-400 shrink-0 stroke-[1.75]" />
+                                <span className="truncate">{ev.location}</span>
+                              </div>
+                            )}
+
+                            {speaker && heightPx >= 68 && (
+                              <div className="flex items-center gap-1 text-[10px] sm:text-[11px] text-slate-600 mt-0.5 truncate">
+                                <User className="w-3 h-3 text-slate-400 shrink-0 stroke-[1.75]" />
+                                <span className="truncate">{speaker}</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* 2. Floating Popover (Smartly bounded, elegant preview on hover) */}
+                        {isHovered && (
+                          <div
+                            onClick={() => onEventClick && onEventClick(ev)}
+                            className="absolute z-50 bg-white rounded-xl shadow-2xl border border-slate-200 border-l-[5px] border-l-red-600 text-slate-800 cursor-pointer pointer-events-auto ring-1 ring-black/10 animate-fade-in flex flex-col"
+                            style={{
+                              width: '320px',
+                              maxWidth: 'min(360px, 88vw)',
+                              maxHeight: '340px',
+                              ...(isRightSide ? { right: 0 } : { left: 0 }),
+                              ...(isBottomHalf ? { bottom: 0 } : { top: 0 })
+                            }}
+                          >
+                            {/* Popover Header (Pinned Top) */}
+                            <div className="p-3 pb-2 border-b border-slate-100 bg-white rounded-t-xl shrink-0">
+                              <div className="flex items-start justify-between gap-2">
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center gap-1.5 mb-1 flex-wrap">
+                                    <span
+                                      className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${catInfo.color}`}
+                                    >
+                                      {catInfo.text}
+                                    </span>
+                                    {ev.isHighlight && (
+                                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500 text-white flex items-center gap-0.5">
+                                        <Star className="w-2.5 h-2.5 fill-white" /> Trọng tâm
+                                      </span>
+                                    )}
+                                  </div>
+                                  <h4 className="text-xs sm:text-[13px] font-bold text-red-600 leading-snug break-words">
+                                    {ev.title}
+                                  </h4>
+                                </div>
+
+                                {/* Quick Action buttons */}
+                                <div className="flex items-center gap-1 shrink-0">
+                                  <button
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      onEventClick && onEventClick(ev);
+                                    }}
+                                    className="p-1.5 rounded-md hover:bg-blue-50 text-slate-500 hover:text-blue-600 transition-colors"
+                                    title="Chỉnh sửa chi tiết"
+                                  >
+                                    <Pen className="w-3.5 h-3.5" />
+                                  </button>
+                                  {canDelete ? (
                                     <button
                                       type="button"
                                       onClick={(e) => {
                                         e.stopPropagation();
-                                        onEventClick && onEventClick(ev);
+                                        onDeleteEvent && onDeleteEvent(ev);
                                       }}
-                                      className="p-1 rounded hover:bg-blue-50 text-slate-500 hover:text-blue-600 transition-colors"
-                                      title="Chỉnh sửa"
+                                      className="p-1.5 rounded-md hover:bg-red-50 text-slate-500 hover:text-red-600 transition-colors"
+                                      title="Xóa sự kiện"
                                     >
-                                      <Pen className="w-3 h-3" />
+                                      <Trash2 className="w-3.5 h-3.5" />
                                     </button>
-                                    {canDelete ? (
-                                      <button
-                                        type="button"
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          onDeleteEvent && onDeleteEvent(ev);
-                                        }}
-                                        className="p-1 rounded hover:bg-red-50 text-slate-500 hover:text-red-600 transition-colors"
-                                        title="Xóa hoạt động"
-                                      >
-                                        <Trash2 className="w-3 h-3" />
-                                      </button>
-                                    ) : (
-                                      <button
-                                        type="button"
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          onDeleteEvent && onDeleteEvent(ev);
-                                        }}
-                                        className="p-1 rounded text-slate-300 hover:text-amber-600 hover:bg-amber-50 transition-colors"
-                                        title="Chỉ Nguyễn Quang Anh (20227035) mới có quyền xóa sự kiện này"
-                                      >
-                                        <Lock className="w-3 h-3 text-slate-400" />
-                                      </button>
-                                    )}
-                                  </div>
-                                );
-                              })()}
-                            </div>
-
-                            {/* Row 1: Calendar icon 📅 + Time (Matches Image 2 & 3) */}
-                            <div className="flex items-center gap-1.5 text-[11px] text-slate-700 mt-1">
-                              <CalendarIcon className="w-3.5 h-3.5 text-slate-500 shrink-0 stroke-[1.75]" />
-                              <span className="font-medium text-slate-800">
-                                {timeLabel}
-                              </span>
-                            </div>
-
-                            {/* Row 2: MapPin icon 📍 + Location (Matches Image 2 & 3) */}
-                            {ev.location && (
-                              <div className="flex items-center gap-1.5 text-[11px] text-slate-700 mt-0.5">
-                                <MapPin className="w-3.5 h-3.5 text-slate-500 shrink-0 stroke-[1.75]" />
-                                <span
-                                  className={
-                                    isHovered
-                                      ? 'whitespace-normal break-words leading-tight'
-                                      : 'truncate'
-                                  }
-                                >
-                                  {ev.location}
-                                </span>
+                                  ) : (
+                                    <button
+                                      type="button"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        onDeleteEvent && onDeleteEvent(ev);
+                                      }}
+                                      className="p-1.5 rounded-md text-slate-300 hover:text-amber-600 hover:bg-amber-50 transition-colors"
+                                      title="Chỉ Nguyễn Quang Anh (20227035) mới có quyền xóa sự kiện này"
+                                    >
+                                      <Lock className="w-3.5 h-3.5 text-slate-400" />
+                                    </button>
+                                  )}
+                                </div>
                               </div>
-                            )}
 
-                            {/* Row 3: User icon 👤 + Speaker / Lecturer (Matches Image 2 & 3) */}
-                            <div className="flex items-center gap-1.5 text-[11px] text-slate-700 mt-0.5 font-normal">
-                              <User className="w-3.5 h-3.5 text-slate-500 shrink-0 stroke-[1.75]" />
-                              <span
-                                className={
-                                  isHovered
-                                    ? 'whitespace-normal break-words leading-tight'
-                                    : 'truncate'
-                                }
-                              >
-                                {speaker}
-                              </span>
+                              {/* Key Meta Details */}
+                              <div className="mt-2 grid grid-cols-1 gap-1 text-[11px] text-slate-600">
+                                <div className="flex items-center gap-1.5">
+                                  <CalendarIcon className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                                  <span className="font-semibold text-slate-800">{timeLabel}</span>
+                                </div>
+                                {ev.location && (
+                                  <div className="flex items-center gap-1.5">
+                                    <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                                    <span className="text-slate-700 truncate">{ev.location}</span>
+                                  </div>
+                                )}
+                                {speaker && (
+                                  <div className="flex items-center gap-1.5">
+                                    <User className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                                    <span className="text-slate-700 truncate">{speaker}</span>
+                                  </div>
+                                )}
+                              </div>
                             </div>
-                          </div>
 
-                          {/* ==========================================================
-                              HOVER EXPANDED DETAILS (Matches User Image 3)
-                              When hovered, reveals full title without truncation,
-                              description, sub-items and member assignment note!
-                              ========================================================== */}
-                          {isHovered && (
-                            <div className="mt-2.5 pt-2 border-t border-slate-100 text-[11px] text-slate-600 space-y-1.5 animate-fadeIn">
-                              {ev.description && (
-                                <p className="leading-relaxed whitespace-pre-line text-slate-700">
-                                  {ev.description}
-                                </p>
-                              )}
-
-                              {/* Member Specific Task Note on Hover */}
+                            {/* Popover Scrollable Body (Max height with thin custom scrollbar) */}
+                            <div className="p-3 pt-2 overflow-y-auto custom-scrollbar space-y-2 flex-1 text-slate-700">
+                              {/* Member Personal Assignment Note */}
                               {selectedMember !== 'all' &&
                                 ev.memberNotes &&
                                 ev.memberNotes[selectedMember] && (
-                                  <div className="p-1.5 bg-red-50 border border-red-200 rounded text-red-950 font-medium leading-tight">
-                                    📌 <strong>Nhiệm vụ của bạn:</strong>{' '}
+                                  <div className="p-2 bg-rose-50/90 border border-rose-200/90 rounded-lg text-[11px] text-rose-950 leading-relaxed shadow-2xs">
+                                    <div className="font-bold flex items-center gap-1 text-rose-800 text-[10px] uppercase tracking-wide mb-0.5">
+                                      <span>📌 Nhiệm vụ của bạn</span>
+                                    </div>
                                     {ev.memberNotes[selectedMember]}
                                   </div>
                                 )}
 
-                              {/* Sub items / PID Papers on Hover */}
+                              {/* Description */}
+                              {ev.description && (
+                                <div className="text-[11px] text-slate-600 leading-relaxed whitespace-pre-line bg-slate-50/80 p-2 rounded-lg border border-slate-100">
+                                  {ev.description}
+                                </div>
+                              )}
+
+                              {/* Sub-items (Parallel sessions / Papers list) */}
                               {ev.subItems && ev.subItems.length > 0 && (
-                                <div className="space-y-1 pt-1">
-                                  <div className="font-bold text-slate-800 text-[10px] uppercase">
-                                    Chi tiết các bài báo:
+                                <div className="space-y-1.5">
+                                  <div className="flex items-center justify-between text-[10px] font-bold text-slate-700 uppercase tracking-wide">
+                                    <span>Chi tiết các phòng / Bài báo ({ev.subItems.length})</span>
+                                    <span className="text-[9px] font-normal text-slate-400">Cuộn xem thêm</span>
                                   </div>
-                                  {ev.subItems.map((sub, sIdx) => (
-                                    <div
-                                      key={sIdx}
-                                      className={`p-1 rounded text-[10px] leading-tight ${
-                                        sub.highlight
-                                          ? 'bg-amber-100 text-amber-900 font-semibold'
-                                          : 'bg-slate-50 text-slate-700'
-                                      }`}
-                                    >
-                                      <span className="font-mono font-bold mr-1">
-                                        {sub.time}
-                                      </span>
-                                      <span>{sub.text}</span>
-                                    </div>
-                                  ))}
+                                  <div className="space-y-1">
+                                    {ev.subItems.map((sub, sIdx) => (
+                                      <div
+                                        key={sIdx}
+                                        className={`p-1.5 rounded-md text-[11px] leading-snug border transition-colors ${
+                                          sub.highlight
+                                            ? 'bg-amber-50 border-amber-300 text-amber-950 font-medium'
+                                            : 'bg-white border-slate-200 text-slate-700'
+                                        }`}
+                                      >
+                                        <div className="flex items-center gap-1 text-[10px] font-mono text-slate-500 font-bold mb-0.5">
+                                          {sub.highlight && <span className="text-amber-600">⭐ ĐOÀN HUST</span>}
+                                          <span>{sub.time}</span>
+                                        </div>
+                                        <div>{sub.text}</div>
+                                      </div>
+                                    ))}
+                                  </div>
                                 </div>
                               )}
                             </div>
-                          )}
-                        </div>
+
+                            {/* Popover Footer (Pinned Bottom) */}
+                            <div className="px-3 py-1.5 bg-slate-50/80 border-t border-slate-100 rounded-b-xl flex items-center justify-between text-[10px] text-slate-400 shrink-0">
+                              <span className="flex items-center gap-1 text-slate-500 hover:text-red-600 font-medium transition-colors">
+                                <ExternalLink className="w-3 h-3" /> Nhấp để mở toàn màn hình & chỉnh sửa
+                              </span>
+                              <span className="text-[9px] font-mono text-slate-400">ICEF 2026</span>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     );
                   })}
@@ -561,3 +628,5 @@ export default function CalendarView({
     </div>
   );
 }
+
+
