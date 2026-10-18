@@ -1,8 +1,8 @@
 import React from 'react';
 import FullCalendar from '@fullcalendar/react';
-import timeGridPlugin from '@fullcalendar/timegrid';
-import dayGridPlugin from '@fullcalendar/daygrid';
-import listPlugin from '@fullcalendar/list';
+import timeGridPlugin from '@fullcalendar/react/timegrid';
+import dayGridPlugin from '@fullcalendar/react/daygrid';
+import listPlugin from '@fullcalendar/react/list';
 import { Star, MapPin } from 'lucide-react';
 
 export default function CalendarView({
