@@ -1,10 +1,11 @@
 import React from 'react';
-import { Clock, MapPin, Pen, Trash2, Star, Landmark, BookOpen, Bus, Hotel, Utensils, Pin, ListChecks } from 'lucide-react';
+import { Clock, MapPin, Pen, Trash2, Star, Landmark, BookOpen, Bus, Hotel, Utensils, Pin, ListChecks, Lock } from 'lucide-react';
 
 export default function EventCard({
   event,
   members = [],
   selectedMember = 'all',
+  currentUser = null,
   onEdit,
   onDelete
 }) {
@@ -94,24 +95,42 @@ export default function EventCard({
           </span>
 
           {/* Action buttons (Pen & Trash) */}
-          <div className="flex items-center gap-1 opacity-80 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
-            <button
-              type="button"
-              onClick={() => onEdit(event)}
-              className="w-7 h-7 rounded-md bg-slate-100 hover:bg-blue-50 text-slate-600 hover:text-blue-700 flex items-center justify-center transition-colors"
-              title="Chỉnh sửa hoạt động"
-            >
-              <Pen className="w-3.5 h-3.5" />
-            </button>
-            <button
-              type="button"
-              onClick={() => onDelete(event)}
-              className="w-7 h-7 rounded-md bg-slate-100 hover:bg-red-50 text-slate-600 hover:text-red-600 flex items-center justify-center transition-colors"
-              title="Xóa hoạt động"
-            >
-              <Trash2 className="w-3.5 h-3.5" />
-            </button>
-          </div>
+          {(() => {
+            const isAdmin = currentUser?.isAdmin || currentUser?.mssv === '20227035';
+            const canDelete = isAdmin || (event.createdByMssv && event.createdByMssv === currentUser?.mssv);
+
+            return (
+              <div className="flex items-center gap-1 opacity-80 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+                <button
+                  type="button"
+                  onClick={() => onEdit(event)}
+                  className="w-7 h-7 rounded-md bg-slate-100 hover:bg-blue-50 text-slate-600 hover:text-blue-700 flex items-center justify-center transition-colors"
+                  title="Chỉnh sửa hoạt động"
+                >
+                  <Pen className="w-3.5 h-3.5" />
+                </button>
+                {canDelete ? (
+                  <button
+                    type="button"
+                    onClick={() => onDelete(event)}
+                    className="w-7 h-7 rounded-md bg-slate-100 hover:bg-red-50 text-slate-600 hover:text-red-600 flex items-center justify-center transition-colors"
+                    title="Xóa hoạt động"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => onDelete(event)}
+                    className="w-7 h-7 rounded-md bg-slate-100 text-slate-300 hover:text-amber-600 hover:bg-amber-50 flex items-center justify-center transition-colors"
+                    title="Chỉ Nguyễn Quang Anh (20227035) mới có quyền xóa sự kiện này"
+                  >
+                    <Lock className="w-3.5 h-3.5 text-slate-400" />
+                  </button>
+                )}
+              </div>
+            );
+          })()}
         </div>
       </div>
 

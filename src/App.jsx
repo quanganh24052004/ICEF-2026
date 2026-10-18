@@ -11,6 +11,7 @@ import CalendarView from './components/CalendarView';
 import EventModal from './components/EventModal';
 import DeleteModal from './components/DeleteModal';
 import BackupModal from './components/BackupModal';
+import AuthModal from './components/AuthModal';
 import Toast from './components/Toast';
 import FloatingAddButton from './components/FloatingAddButton';
 
@@ -20,8 +21,19 @@ export default function App() {
   const [hotelInfo, setHotelInfo] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Authentication State
+  const [currentUser, setCurrentUser] = useState(() => {
+    try {
+      const saved = localStorage.getItem('icef2026_current_user');
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+
   // Filter & Search states
-  const [viewMode, setViewMode] = useState('timeline'); // 'timeline' | 'calendar'
+  const [viewMode, setViewMode] = useState('calendar'); // Default to HUST Calendar view
   const [selectedDay, setSelectedDay] = useState('all');
   const [selectedMember, setSelectedMember] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -41,7 +53,7 @@ export default function App() {
     setToasts((prev) => [...prev, { id, message, type }]);
     setTimeout(() => {
       setToasts((prev) => prev.filter((t) => t.id !== id));
-    }, 3200);
+    }, 3500);
   }, []);
 
   const loadAllData = useCallback(async () => {
@@ -61,6 +73,12 @@ export default function App() {
       setSchedules(sorted);
       setMembers(memData);
       setHotelInfo(hotData);
+
+      // If user hasn't logged in yet, prompt auth modal after loading
+      const savedUser = localStorage.getItem('icef2026_current_user');
+      if (!savedUser) {
+        setIsAuthModalOpen(true);
+      }
     } catch (err) {
       console.error('[App] Lỗi khi tải dữ liệu từ CSDL:', err);
       showToast('Lỗi khi tải dữ liệu: ' + err.message, 'error');
@@ -78,6 +96,13 @@ export default function App() {
     initApp();
   }, [loadAllData]);
 
+  // Sync selectedMember with currentUser when logged in
+  useEffect(() => {
+    if (currentUser && currentUser.id && currentUser.id !== 'guest') {
+      setSelectedMember(currentUser.id);
+    }
+  }, [currentUser]);
+
   // Keyboard shortcut: '/' for search, 'Escape' to close modals
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -87,7 +112,8 @@ export default function App() {
         document.activeElement.tagName !== 'TEXTAREA' &&
         !isEventModalOpen &&
         !deletingEvent &&
-        !isBackupModalOpen
+        !isBackupModalOpen &&
+        !isAuthModalOpen
       ) {
         e.preventDefault();
         const searchInput = document.getElementById('headerSearchInput');
@@ -97,15 +123,80 @@ export default function App() {
         setEditingEvent(null);
         setDeletingEvent(null);
         setIsBackupModalOpen(false);
+        // Only close auth modal with escape if a user is already logged in
+        if (currentUser) {
+          setIsAuthModalOpen(false);
+        }
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isEventModalOpen, deletingEvent, isBackupModalOpen]);
+  }, [isEventModalOpen, deletingEvent, isBackupModalOpen, isAuthModalOpen, currentUser]);
+
+  // Auth Handlers
+  const handleLogin = (member) => {
+    setCurrentUser(member);
+    localStorage.setItem('icef2026_current_user', JSON.stringify(member));
+    setSelectedMember(member.id);
+    setIsAuthModalOpen(false);
+
+    const isAdmin = member.isAdmin || member.mssv === '20227035';
+    if (isAdmin) {
+      showToast(
+        `👑 Xin chào Trưởng đoàn ${member.name}! Bạn có toàn quyền quản trị và chỉnh sửa cao nhất.`,
+        'success'
+      );
+    } else {
+      showToast(
+        `Xin chào ${member.name}! Đã phân chia và kích hoạt lịch trình cá nhân của bạn.`,
+        'info'
+      );
+    }
+  };
+
+  const handleSignUp = async (newMember) => {
+    try {
+      await dbService.updateMember(newMember);
+      setMembers((prev) => [...prev, newMember]);
+      showToast(`Đã thêm thành viên mới: ${newMember.name} (${newMember.mssv})`, 'success');
+    } catch (err) {
+      console.error('[App] Lỗi đăng ký thành viên:', err);
+      showToast('Lỗi đăng ký: ' + err.message, 'error');
+    }
+  };
+
+  const handleGuestMode = () => {
+    const guestUser = {
+      id: 'guest',
+      name: 'Khách vãng lai',
+      shortName: 'Khách',
+      mssv: '',
+      email: '',
+      isAdmin: false,
+      roleTitle: 'Khách (Chế độ chỉ xem)'
+    };
+    setCurrentUser(guestUser);
+    setSelectedMember('all');
+    setIsAuthModalOpen(false);
+    showToast('Đang xem lịch trình với tư cách Khách (Chế độ chỉ xem)', 'info');
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('icef2026_current_user');
+    setCurrentUser(null);
+    setSelectedMember('all');
+    setIsAuthModalOpen(true);
+    showToast('Đã đăng xuất tài khoản.', 'info');
+  };
 
   // CRUD Handlers
   const handleOpenAddModal = () => {
+    if (!currentUser) {
+      setIsAuthModalOpen(true);
+      showToast('Vui lòng đăng nhập MSSV để thêm hoạt động mới!', 'error');
+      return;
+    }
     setEditingEvent(null);
     setIsEventModalOpen(true);
   };
@@ -138,6 +229,16 @@ export default function App() {
   };
 
   const handleOpenDeleteModal = (event) => {
+    const isAdmin = currentUser?.isAdmin || currentUser?.mssv === '20227035';
+    const isCreatedByMe = event.createdByMssv && event.createdByMssv === currentUser?.mssv;
+
+    // Regular members can only delete events they created themselves
+    if (!isAdmin && !isCreatedByMe) {
+      showToast(
+        'Quyền bị từ chối! Các thành viên không thể xóa các sự kiện sẵn có. Chỉ Trưởng đoàn Nguyễn Quang Anh (20227035) mới có quyền xóa.',
+        'error'
+      );
+    }
     setDeletingEvent(event);
   };
 
@@ -146,6 +247,15 @@ export default function App() {
   };
 
   const handleConfirmDelete = async (eventId) => {
+    const isAdmin = currentUser?.isAdmin || currentUser?.mssv === '20227035';
+    const isCreatedByMe = deletingEvent?.createdByMssv && deletingEvent?.createdByMssv === currentUser?.mssv;
+
+    if (!isAdmin && !isCreatedByMe) {
+      showToast('Bạn không có quyền xóa hoạt động này!', 'error');
+      handleCloseDeleteModal();
+      return;
+    }
+
     try {
       await dbService.deleteSchedule(eventId);
       showToast('Đã xóa hoạt động khỏi CSDL!', 'success');
@@ -177,6 +287,12 @@ export default function App() {
   };
 
   const handleImportJSON = async (jsonStr) => {
+    const isAdmin = currentUser?.isAdmin || currentUser?.mssv === '20227035';
+    if (!isAdmin) {
+      showToast('Chỉ Quản trị viên Nguyễn Quang Anh (20227035) mới có quyền khôi phục CSDL!', 'error');
+      return;
+    }
+
     try {
       await dbService.importBackupJSON(jsonStr);
       await loadAllData();
@@ -188,6 +304,12 @@ export default function App() {
   };
 
   const handleResetDefault = async () => {
+    const isAdmin = currentUser?.isAdmin || currentUser?.mssv === '20227035';
+    if (!isAdmin) {
+      showToast('Chỉ Quản trị viên Nguyễn Quang Anh (20227035) mới có quyền đặt lại dữ liệu gốc!', 'error');
+      return;
+    }
+
     if (window.confirm('Bạn có chắc chắn muốn khôi phục toàn bộ dữ liệu lịch trình về bản gốc ban đầu của ICEF 2026 không?')) {
       await dbService.resetToDefault();
       await loadAllData();
@@ -218,7 +340,7 @@ export default function App() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50 text-slate-600">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+          <div className="w-10 h-10 border-4 border-red-600 border-t-transparent rounded-full animate-spin"></div>
           <span className="text-sm font-semibold">Đang tải dữ liệu ICEF 2026...</span>
         </div>
       </div>
@@ -233,6 +355,9 @@ export default function App() {
         setSearchQuery={setSearchQuery}
         onOpenAddModal={handleOpenAddModal}
         onOpenBackupModal={() => setIsBackupModalOpen(true)}
+        currentUser={currentUser}
+        onOpenAuthModal={() => setIsAuthModalOpen(true)}
+        onLogout={handleLogout}
       />
 
       {/* Main Container */}
@@ -240,7 +365,7 @@ export default function App() {
         {/* Quick Stats */}
         <StatsBar schedules={schedules} members={members} />
 
-        {/* Member Filter & Selected Member Details */}
+        {/* Member Filter & Selected Member Details (Displays role and assignment) */}
         <MemberFilter
           members={members}
           selectedMember={selectedMember}
@@ -261,7 +386,7 @@ export default function App() {
           onExportICS={handleExportICS}
         />
 
-        {/* View Switching: Timeline List vs Google Calendar TimeGrid */}
+        {/* View Switching: Timeline List vs HUST Timetable Grid */}
         {viewMode === 'timeline' ? (
           <ScheduleList
             schedules={schedules}
@@ -270,6 +395,7 @@ export default function App() {
             selectedMember={selectedMember}
             searchQuery={searchQuery}
             showAllSessions={showAllSessions}
+            currentUser={currentUser}
             onEditEvent={handleOpenEditModal}
             onDeleteEvent={handleOpenDeleteModal}
           />
@@ -280,6 +406,7 @@ export default function App() {
             selectedMember={selectedMember}
             showAllSessions={showAllSessions}
             searchQuery={searchQuery}
+            currentUser={currentUser}
             onEventClick={handleOpenEditModal}
             onDeleteEvent={handleOpenDeleteModal}
           />
@@ -289,6 +416,17 @@ export default function App() {
       {/* Mobile Floating Action Button */}
       <FloatingAddButton onClick={handleOpenAddModal} />
 
+      {/* Modal: Full-page Floating Auth Form (MSSV Login / Switch User) */}
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        members={members}
+        currentUser={currentUser}
+        onLogin={handleLogin}
+        onSignUp={handleSignUp}
+        onGuestMode={handleGuestMode}
+      />
+
       {/* Modal 1: Add / Edit Event */}
       <EventModal
         isOpen={isEventModalOpen}
@@ -296,14 +434,16 @@ export default function App() {
         onSave={handleSaveEvent}
         eventData={editingEvent}
         members={members}
+        currentUser={currentUser}
       />
 
-      {/* Modal 2: Confirm Delete */}
+      {/* Modal 2: Confirm Delete with Role-based Permission */}
       <DeleteModal
         isOpen={!!deletingEvent}
         onClose={handleCloseDeleteModal}
         onConfirm={handleConfirmDelete}
         eventItem={deletingEvent}
+        currentUser={currentUser}
       />
 
       {/* Modal 3: Backup / Restore / Reset Database */}
@@ -314,6 +454,7 @@ export default function App() {
         onCopyJSON={handleCopyJSON}
         onImportJSON={handleImportJSON}
         onResetDefault={handleResetDefault}
+        currentUser={currentUser}
       />
 
       {/* Toast Notification Container */}

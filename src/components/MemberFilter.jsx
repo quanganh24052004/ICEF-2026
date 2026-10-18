@@ -1,8 +1,9 @@
 import React from 'react';
-import { Users, UserCheck, Bed, BookOpen, Key, Mic, Presentation, GraduationCap } from 'lucide-react';
+import { Users, UserCheck, Bed, BookOpen, Key, Mic, Presentation, GraduationCap, Crown } from 'lucide-react';
 
 export default function MemberFilter({ members = [], selectedMember, onSelectMember }) {
-  const getMemberIcon = (iconName) => {
+  const getMemberIcon = (iconName, isAdmin) => {
+    if (isAdmin) return <Crown className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />;
     switch (iconName) {
       case 'Key': return <Key className="w-3.5 h-3.5" />;
       case 'Mic': return <Mic className="w-3.5 h-3.5" />;
@@ -25,7 +26,7 @@ export default function MemberFilter({ members = [], selectedMember, onSelectMem
         <span className="text-xs font-semibold text-blue-700 bg-blue-50 px-2.5 py-1 rounded-full border border-blue-100">
           {selectedMember === 'all'
             ? `Đang xem: Tất cả (${members.length} thành viên)`
-            : `Đang lọc: ${currentMember?.name}`}
+            : `Đang lọc: ${currentMember?.name} (${currentMember?.mssv || ''})`}
         </span>
       </div>
 
@@ -46,6 +47,7 @@ export default function MemberFilter({ members = [], selectedMember, onSelectMem
 
         {members.map((m) => {
           const isActive = selectedMember === m.id;
+          const isAdmin = m.isAdmin || m.mssv === '20227035';
           return (
             <button
               key={m.id}
@@ -57,7 +59,7 @@ export default function MemberFilter({ members = [], selectedMember, onSelectMem
                   : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200/70'
               }`}
             >
-              {getMemberIcon(m.icon)}
+              {getMemberIcon(m.icon, isAdmin)}
               <span>{m.name}</span>
             </button>
           );
@@ -74,8 +76,20 @@ export default function MemberFilter({ members = [], selectedMember, onSelectMem
             </div>
             <div>
               <div className="text-[11px] text-slate-500 uppercase font-bold tracking-wider">Thành viên</div>
-              <div className="font-bold text-slate-900 text-sm">{currentMember.name}</div>
-              <span className="inline-block mt-1 text-[11px] bg-blue-100 text-blue-800 px-2 py-0.5 rounded font-semibold">
+              <div className="font-bold text-slate-900 text-sm flex items-center gap-1.5">
+                <span>{currentMember.name}</span>
+                {(currentMember.isAdmin || currentMember.mssv === '20227035') && (
+                  <Crown className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
+                )}
+              </div>
+              <div className="text-xs text-slate-600 font-mono mt-0.5">
+                MSSV: <strong>{currentMember.mssv || '---'}</strong>
+              </div>
+              <span className={`inline-block mt-1 text-[11px] px-2 py-0.5 rounded font-semibold ${
+                currentMember.isAdmin || currentMember.mssv === '20227035'
+                  ? 'bg-amber-100 text-amber-900'
+                  : 'bg-blue-100 text-blue-800'
+              }`}>
                 {currentMember.badge || 'Thành viên đoàn'}
               </span>
             </div>

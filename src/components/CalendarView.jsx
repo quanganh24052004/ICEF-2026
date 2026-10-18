@@ -9,7 +9,8 @@ import {
   Trash2,
   Clock,
   Star,
-  ExternalLink
+  ExternalLink,
+  Lock
 } from 'lucide-react';
 
 export default function CalendarView({
@@ -18,6 +19,7 @@ export default function CalendarView({
   selectedMember = 'all',
   showAllSessions = true,
   searchQuery = '',
+  currentUser = null,
   onEventClick,
   onDeleteEvent
 }) {
@@ -412,32 +414,51 @@ export default function CalendarView({
                               </h5>
 
                               {/* Quick Edit/Delete on Hover */}
-                              {isHovered && (
-                                <div className="flex items-center gap-1 shrink-0 ml-1">
-                                  <button
-                                    type="button"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      onEventClick && onEventClick(ev);
-                                    }}
-                                    className="p-1 rounded hover:bg-blue-50 text-slate-500 hover:text-blue-600 transition-colors"
-                                    title="Chỉnh sửa"
-                                  >
-                                    <Pen className="w-3 h-3" />
-                                  </button>
-                                  <button
-                                    type="button"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      onDeleteEvent && onDeleteEvent(ev);
-                                    }}
-                                    className="p-1 rounded hover:bg-red-50 text-slate-500 hover:text-red-600 transition-colors"
-                                    title="Xóa"
-                                  >
-                                    <Trash2 className="w-3 h-3" />
-                                  </button>
-                                </div>
-                              )}
+                              {isHovered && (() => {
+                                const isAdmin = currentUser?.isAdmin || currentUser?.mssv === '20227035';
+                                const canDelete = isAdmin || (ev.createdByMssv && ev.createdByMssv === currentUser?.mssv);
+
+                                return (
+                                  <div className="flex items-center gap-1 shrink-0 ml-1">
+                                    <button
+                                      type="button"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        onEventClick && onEventClick(ev);
+                                      }}
+                                      className="p-1 rounded hover:bg-blue-50 text-slate-500 hover:text-blue-600 transition-colors"
+                                      title="Chỉnh sửa"
+                                    >
+                                      <Pen className="w-3 h-3" />
+                                    </button>
+                                    {canDelete ? (
+                                      <button
+                                        type="button"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          onDeleteEvent && onDeleteEvent(ev);
+                                        }}
+                                        className="p-1 rounded hover:bg-red-50 text-slate-500 hover:text-red-600 transition-colors"
+                                        title="Xóa hoạt động"
+                                      >
+                                        <Trash2 className="w-3 h-3" />
+                                      </button>
+                                    ) : (
+                                      <button
+                                        type="button"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          onDeleteEvent && onDeleteEvent(ev);
+                                        }}
+                                        className="p-1 rounded text-slate-300 hover:text-amber-600 hover:bg-amber-50 transition-colors"
+                                        title="Chỉ Nguyễn Quang Anh (20227035) mới có quyền xóa sự kiện này"
+                                      >
+                                        <Lock className="w-3 h-3 text-slate-400" />
+                                      </button>
+                                    )}
+                                  </div>
+                                );
+                              })()}
                             </div>
 
                             {/* Row 1: Calendar icon 📅 + Time (Matches Image 2 & 3) */}

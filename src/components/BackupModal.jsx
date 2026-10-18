@@ -7,7 +7,8 @@ export default function BackupModal({
   onExportJSON,
   onCopyJSON,
   onImportJSON,
-  onResetDefault
+  onResetDefault,
+  currentUser = null
 }) {
   const fileInputRef = useRef(null);
 
@@ -75,45 +76,68 @@ export default function BackupModal({
           </div>
 
           {/* Import */}
-          <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 space-y-2">
-            <div className="text-xs sm:text-sm font-bold text-slate-900 font-heading flex items-center gap-1.5">
-              <Upload className="w-4 h-4 text-emerald-600" />
-              <span>2. Nhập Dữ Liệu Từ File (Import)</span>
-            </div>
-            <p className="text-xs text-slate-600 leading-relaxed">
-              Khôi phục dữ liệu từ file sao lưu JSON đã lưu trước đó.
-            </p>
-            <div className="pt-1">
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept=".json"
-                onChange={handleFileChange}
-                className="text-xs text-slate-700 file:mr-2.5 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 cursor-pointer"
-              />
-            </div>
-          </div>
+          {(() => {
+            const isAdmin = currentUser?.isAdmin || currentUser?.mssv === '20227035';
+            return (
+              <>
+                <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 space-y-2">
+                  <div className="text-xs sm:text-sm font-bold text-slate-900 font-heading flex items-center justify-between">
+                    <div className="flex items-center gap-1.5">
+                      <Upload className="w-4 h-4 text-emerald-600" />
+                      <span>2. Nhập Dữ Liệu Từ File (Import)</span>
+                    </div>
+                    {!isAdmin && (
+                      <span className="text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded">
+                        Chỉ Admin
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-xs text-slate-600 leading-relaxed">
+                    Khôi phục dữ liệu từ file sao lưu JSON đã lưu trước đó.
+                  </p>
+                  <div className="pt-1">
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept=".json"
+                      disabled={!isAdmin}
+                      onChange={handleFileChange}
+                      className="text-xs text-slate-700 file:mr-2.5 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                    />
+                  </div>
+                </div>
 
-          {/* Reset to Default */}
-          <div className="bg-amber-50/70 border border-amber-200 rounded-xl p-3.5 space-y-2">
-            <div className="text-xs sm:text-sm font-bold text-amber-900 font-heading flex items-center gap-1.5">
-              <RotateCcw className="w-4 h-4 text-amber-700" />
-              <span>3. Khôi Phục Dữ Liệu Mặc Định ICEF 2026</span>
-            </div>
-            <p className="text-xs text-amber-800/90 leading-relaxed">
-              Đặt lại toàn bộ hoạt động về dữ liệu gốc chuẩn của đoàn ICEF 2026.
-            </p>
-            <div className="pt-1">
-              <button
-                type="button"
-                onClick={onResetDefault}
-                className="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-xs transition-colors"
-              >
-                <RotateCcw className="w-3.5 h-3.5" />
-                <span>Khôi phục dữ liệu gốc</span>
-              </button>
-            </div>
-          </div>
+                {/* Reset to Default */}
+                <div className="bg-amber-50/70 border border-amber-200 rounded-xl p-3.5 space-y-2">
+                  <div className="text-xs sm:text-sm font-bold text-amber-900 font-heading flex items-center justify-between">
+                    <div className="flex items-center gap-1.5">
+                      <RotateCcw className="w-4 h-4 text-amber-700" />
+                      <span>3. Khôi Phục Dữ Liệu Mặc Định ICEF 2026</span>
+                    </div>
+                    {!isAdmin && (
+                      <span className="text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded">
+                        Chỉ Admin
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-xs text-amber-800/90 leading-relaxed">
+                    Đặt lại toàn bộ hoạt động về dữ liệu gốc chuẩn của đoàn ICEF 2026.
+                  </p>
+                  <div className="pt-1">
+                    <button
+                      type="button"
+                      disabled={!isAdmin}
+                      onClick={onResetDefault}
+                      className="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-xs transition-colors"
+                    >
+                      <RotateCcw className="w-3.5 h-3.5" />
+                      <span>Khôi phục dữ liệu gốc</span>
+                    </button>
+                  </div>
+                </div>
+              </>
+            );
+          })()}
         </div>
 
         {/* Footer */}

@@ -6,7 +6,8 @@ export default function EventModal({
   onClose,
   onSave,
   eventData = null,
-  members = []
+  members = [],
+  currentUser = null
 }) {
   const [day, setDay] = useState('22');
   const [time, setTime] = useState('');
@@ -118,7 +119,10 @@ export default function EventModal({
       isOptionalRef,
       participants,
       subItems: cleanSubItems.length > 0 ? cleanSubItems : undefined,
-      memberNotes: Object.keys(cleanNotes).length > 0 ? cleanNotes : undefined
+      memberNotes: Object.keys(cleanNotes).length > 0 ? cleanNotes : undefined,
+      createdByMssv: eventData?.createdByMssv || currentUser?.mssv || '20227035',
+      createdByName: eventData?.createdByName || currentUser?.name || 'Nguyễn Quang Anh',
+      updatedAt: new Date().toISOString()
     };
 
     onSave(item);

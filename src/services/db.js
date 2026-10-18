@@ -87,6 +87,14 @@ class DatabaseService {
         }
       }
     }
+
+    // Sync member MSSVs and roles
+    const members = await this.getAllMembers();
+    if (!members || members.length === 0 || !members[0].mssv) {
+      for (const m of INITIAL_MEMBERS) {
+        await this.updateMember(m);
+      }
+    }
   }
 
   // ==========================================

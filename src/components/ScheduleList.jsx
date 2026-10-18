@@ -9,6 +9,7 @@ export default function ScheduleList({
   selectedMember = 'all',
   searchQuery = '',
   showAllSessions = true,
+  currentUser = null,
   onEditEvent,
   onDeleteEvent
 }) {
@@ -93,6 +94,7 @@ export default function ScheduleList({
                   event={ev}
                   members={members}
                   selectedMember={selectedMember}
+                  currentUser={currentUser}
                   onEdit={onEditEvent}
                   onDelete={onDeleteEvent}
                 />
