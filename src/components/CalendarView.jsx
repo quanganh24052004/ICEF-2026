@@ -3,6 +3,14 @@ import FullCalendar from '@fullcalendar/react';
 import timeGridPlugin from '@fullcalendar/react/timegrid';
 import dayGridPlugin from '@fullcalendar/react/daygrid';
 import listPlugin from '@fullcalendar/react/list';
+import classicThemePlugin from '@fullcalendar/react/themes/classic';
+import viLocale from '@fullcalendar/react/locales/vi';
+
+// FullCalendar v7 Core & Theme Stylesheets
+import '@fullcalendar/react/skeleton.css';
+import '@fullcalendar/react/themes/classic/theme.css';
+import '@fullcalendar/react/themes/classic/palette.css';
+
 import { Star, MapPin } from 'lucide-react';
 
 export default function CalendarView({
@@ -129,7 +137,8 @@ export default function CalendarView({
     <div className="bg-white rounded-b-xl border border-slate-200/80 p-3 sm:p-5 shadow-sm overflow-hidden">
       <div className="fullcalendar-custom-wrapper">
         <FullCalendar
-          plugins={[timeGridPlugin, dayGridPlugin, listPlugin]}
+          plugins={[timeGridPlugin, dayGridPlugin, listPlugin, classicThemePlugin]}
+          locale={viLocale}
           initialView="timeGridThreeDays"
           initialDate="2026-10-22"
           slotMinTime="06:00:00"
@@ -157,7 +166,7 @@ export default function CalendarView({
               buttonText: 'Tháng'
             },
             listWeek: {
-              buttonText: 'Danh sách tuần'
+              buttonText: 'Danh sách'
             }
           }}
           events={calendarEvents}
