@@ -204,19 +204,45 @@ class DatabaseService {
   // ==========================================
 
   async getAllMembers() {
+    let rawMembers = [];
     if (this.useFallback) {
       const data = this._getFallbackData();
-      return data.members || [];
+      rawMembers = data.members || [];
+    } else {
+      rawMembers = await new Promise((resolve) => {
+        try {
+          const transaction = this.db.transaction([STORE_MEMBERS], 'readonly');
+          const store = transaction.objectStore(STORE_MEMBERS);
+          const request = store.getAll();
+          request.onsuccess = () => resolve(request.result || []);
+          request.onerror = () => resolve([]);
+        } catch {
+          resolve([]);
+        }
+      });
     }
 
-    return new Promise((resolve, reject) => {
-      const transaction = this.db.transaction([STORE_MEMBERS], 'readonly');
-      const store = transaction.objectStore(STORE_MEMBERS);
-      const request = store.getAll();
-
-      request.onsuccess = () => resolve(request.result || []);
-      request.onerror = () => reject(request.error);
+    // Merge with INITIAL_MEMBERS to ensure mssv, email, and admin flags are ALWAYS present
+    const mergedMembers = INITIAL_MEMBERS.map((initMem) => {
+      const found = rawMembers.find((m) => m.id === initMem.id);
+      return {
+        ...initMem,
+        ...(found || {}),
+        mssv: found?.mssv || initMem.mssv,
+        isAdmin: found?.isAdmin !== undefined ? found.isAdmin : initMem.isAdmin,
+        email: found?.email || initMem.email,
+        roleTitle: found?.roleTitle || initMem.roleTitle
+      };
     });
+
+    // Also include any user-created custom members that aren't in INITIAL_MEMBERS
+    rawMembers.forEach((raw) => {
+      if (!mergedMembers.some((m) => m.id === raw.id)) {
+        mergedMembers.push(raw);
+      }
+    });
+
+    return mergedMembers;
   }
 
   async updateMember(member) {

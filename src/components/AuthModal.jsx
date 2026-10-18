@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { INITIAL_MEMBERS } from '../data/initialData';
 import {
   Lock,
   Eye,
@@ -47,12 +48,30 @@ export default function AuthModal({
     }
 
     if (!isSignUp) {
-      // Secure Authentication: Check if cleanMssv matches a member
-      const member = members.find(
-        (m) =>
-          (m.mssv && m.mssv.trim().toLowerCase() === cleanMssv.toLowerCase()) ||
-          (m.email && m.email.trim().toLowerCase() === cleanMssv.toLowerCase())
-      );
+      // Build complete member pool combining INITIAL_MEMBERS and dynamic members
+      const pool = INITIAL_MEMBERS.map((im) => {
+        const fromProps = (members || []).find((m) => m.id === im.id);
+        return {
+          ...im,
+          ...(fromProps || {}),
+          mssv: im.mssv || fromProps?.mssv,
+          email: im.email || fromProps?.email,
+          isAdmin: im.isAdmin !== undefined ? im.isAdmin : fromProps?.isAdmin
+        };
+      });
+
+      (members || []).forEach((m) => {
+        if (!pool.some((p) => p.id === m.id)) {
+          pool.push(m);
+        }
+      });
+
+      const cleanInput = cleanMssv.toLowerCase();
+      const member = pool.find((m) => {
+        const mMssv = (m.mssv || '').trim().toLowerCase();
+        const mEmail = (m.email || '').trim().toLowerCase();
+        return (mMssv && mMssv === cleanInput) || (mEmail && mEmail === cleanInput);
+      });
 
       if (member) {
         onLogin(member);
