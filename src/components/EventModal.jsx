@@ -109,6 +109,8 @@ export default function EventModal({
     const item = {
       id: eventData ? eventData.id : undefined,
       day,
+      date: `2026-10-${day}`,
+      fullDate: `${day}.10.2026`,
       dayTitle: dayTitles[day] || `Ngày ${day}`,
       time: time.trim(),
       title: title.trim(),

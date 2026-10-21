@@ -127,6 +127,9 @@ export default function CalendarView({
         dateObj: dayDate,
         label: dayNames[i],
         fullDate,
+        month,
+        year,
+        isOct2026,
         isConference,
         title,
         isFocus,
@@ -144,16 +147,15 @@ export default function CalendarView({
   // Displayed days based on viewType
   const displayedDays = useMemo(() => {
     if (viewType === 'threeDays') {
-      const confDays = allDays.filter((d) => d.isConference);
-      if (confDays.length > 0) return confDays;
-
-      // Fallback: 3 core conference days of Oct 2026
       const now = new Date();
       return [
         {
           dayNumber: '22',
           label: 'Thứ năm',
           fullDate: '22.10.2026',
+          month: 10,
+          year: 2026,
+          isOct2026: true,
           isConference: true,
           title: 'Ngày 1: Pre-conf',
           isToday: now.getDate() === 22 && now.getMonth() === 9 && now.getFullYear() === 2026
@@ -162,6 +164,9 @@ export default function CalendarView({
           dayNumber: '23',
           label: 'Thứ sáu',
           fullDate: '23.10.2026',
+          month: 10,
+          year: 2026,
+          isOct2026: true,
           isConference: true,
           title: 'Ngày 2: Trọng tâm',
           isFocus: true,
@@ -171,6 +176,9 @@ export default function CalendarView({
           dayNumber: '24',
           label: 'Thứ bảy',
           fullDate: '24.10.2026',
+          month: 10,
+          year: 2026,
+          isOct2026: true,
           isConference: true,
           title: 'Ngày 3: Check-out',
           isToday: now.getDate() === 24 && now.getMonth() === 9 && now.getFullYear() === 2026
@@ -181,7 +189,7 @@ export default function CalendarView({
     if (viewType === 'day') {
       const todayInWeek = allDays.find((d) => d.isToday);
       if (todayInWeek) return [todayInWeek];
-      return [allDays.find((d) => d.dayNumber === '23') || allDays[0]];
+      return [allDays.find((d) => d.isOct2026 && d.dayNumber === '23') || allDays[0]];
     }
 
     return allDays;
@@ -258,16 +266,34 @@ export default function CalendarView({
   }, [schedules, selectedMember, showAllSessions, searchQuery]);
 
   // Group events by day and compute overlapping positions
+  // Các sự kiện hội thảo (day: '22' | '23' | '24') diễn ra duy nhất vào tháng 10/2026
   const eventsByDay = useMemo(() => {
     const map = {};
     displayedDays.forEach((d) => {
-      map[d.dayNumber] = [];
+      map[d.fullDate] = [];
     });
 
     filteredEvents.forEach((ev) => {
-      if (map[ev.day]) {
-        map[ev.day].push(ev);
-      }
+      displayedDays.forEach((d) => {
+        let isMatch = false;
+
+        if (ev.fullDate && ev.fullDate === d.fullDate) {
+          isMatch = true;
+        } else if (
+          ev.date &&
+          (ev.date === d.fullDate ||
+            ev.date === `${d.year}-${String(d.month).padStart(2, '0')}-${String(d.dayNumber).padStart(2, '0')}`)
+        ) {
+          isMatch = true;
+        } else if (d.isOct2026 && String(ev.day) === String(d.dayNumber)) {
+          // Lịch trình chỉ xuất hiện đúng vào ngày 22, 23, 24 tháng 10 năm 2026
+          isMatch = true;
+        }
+
+        if (isMatch) {
+          map[d.fullDate].push(ev);
+        }
+      });
     });
 
     // Compute overlapping positions for each day
@@ -445,7 +471,7 @@ export default function CalendarView({
             {/* Day Header Columns: Real-Time Label, Date & "Hôm nay" Badge */}
             {displayedDays.map((d) => (
               <div
-                key={d.dayNumber + d.fullDate}
+                key={d.fullDate}
                 className={`py-2 px-1.5 sm:py-2.5 sm:px-2 text-center border-r border-slate-200 last:border-r-0 transition-colors ${
                   d.isToday ? 'bg-red-50/70 border-b-2 border-b-red-600' : 'bg-white'
                 }`}
@@ -506,7 +532,7 @@ export default function CalendarView({
 
             {/* Days Columns Body with Real-Time Events & Indicator */}
             {displayedDays.map((d, dayIndex) => {
-              const dayEvents = eventsByDay[d.dayNumber] || [];
+              const dayEvents = eventsByDay[d.fullDate] || [];
 
               // Real-time calculation: ONLY show the line on today's actual column
               const showCurrentTime = d.isToday;
@@ -517,7 +543,7 @@ export default function CalendarView({
 
               return (
                 <div
-                  key={d.dayNumber + d.fullDate}
+                  key={d.fullDate}
                   className={`border-r border-slate-200 last:border-r-0 relative transition-colors ${
                     d.isToday ? 'bg-red-50/15' : 'bg-white'
                   }`}
