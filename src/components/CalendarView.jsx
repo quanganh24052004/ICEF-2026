@@ -46,10 +46,28 @@ export default function CalendarView({
     return () => clearInterval(interval);
   }, []);
 
+  // Density zoom levels: 'spacious' (110px/h - default) | 'comfortable' (90px/h) | 'compact' (70px/h)
+  const [density, setDensity] = useState(() => {
+    try {
+      return localStorage.getItem('icef2026_cal_density') || 'spacious';
+    } catch {
+      return 'spacious';
+    }
+  });
+
+  const handleSetDensity = (newDensity) => {
+    setDensity(newDensity);
+    try {
+      localStorage.setItem('icef2026_cal_density', newDensity);
+    } catch {
+      // ignore
+    }
+  };
+
   // Time slots: 06:00 to 22:00
   const START_HOUR = 6;
   const END_HOUR = 22;
-  const HOUR_HEIGHT = 68; // pixels per hour
+  const HOUR_HEIGHT = density === 'compact' ? 70 : density === 'comfortable' ? 90 : 110;
   const hours = Array.from({ length: END_HOUR - START_HOUR + 1 }, (_, i) => START_HOUR + i);
 
   // Auto-scroll to current live time on initial mount
@@ -62,7 +80,7 @@ export default function CalendarView({
         gridScrollRef.current.scrollTop = Math.max(0, topPx - 100);
       }
     }
-  }, []);
+  }, [HOUR_HEIGHT]);
 
   // Helper calculate Monday of the week for any given date
   const getMonday = (d) => {
@@ -249,7 +267,8 @@ export default function CalendarView({
     } else {
       endMin = startMin + 60; // default 1 hour duration
     }
-    return { startMin, endMin, durationMin: Math.max(endMin - startMin, 40) };
+    const rawDiff = endMin - startMin;
+    return { startMin, endMin, durationMin: rawDiff > 0 ? rawDiff : 30 };
   };
 
   // Harmonize single or multi-select members state
@@ -431,17 +450,63 @@ export default function CalendarView({
           </button>
         </div>
 
-        {/* Right: View Type Dropdown */}
-        <div className="relative">
-          <select
-            value={viewType}
-            onChange={(e) => setViewType(e.target.value)}
-            className="px-3.5 py-1.5 rounded-xl border-2 border-duo-border text-xs sm:text-sm font-black text-duo-dark bg-white hover:border-duo-blue focus:outline-none cursor-pointer shadow-xs pr-7 transition-colors"
-          >
-            <option value="week">Lịch tuần ({weekLabel})</option>
-            <option value="threeDays">Lịch 3 ngày hội thảo (22-24/10)</option>
-            <option value="day">Lịch hôm nay / Ngày trọng tâm</option>
-          </select>
+        {/* Right: Density Zoom Controls + View Type Dropdown */}
+        <div className="flex items-center gap-1.5 sm:gap-2.5">
+          {/* Density zoom controls */}
+          <div className="flex items-center bg-white p-0.5 sm:p-1 rounded-xl border-2 border-duo-border text-[11px] sm:text-xs font-black shadow-xs">
+            <span className="hidden md:inline text-[10px] text-slate-400 uppercase tracking-wider px-1.5 font-bold select-none">
+              Giãn giờ:
+            </span>
+            <button
+              type="button"
+              onClick={() => handleSetDensity('spacious')}
+              className={`px-2 sm:px-2.5 py-1 rounded-lg transition-all cursor-pointer ${
+                density === 'spacious'
+                  ? 'btn-3d-blue text-white shadow-[0_2px_0_#1899D6]'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+              }`}
+              title="Độ giãn Rộng rãi (110px/giờ) - Tối ưu chống đè sát giờ"
+            >
+              Rộng rãi
+            </button>
+            <button
+              type="button"
+              onClick={() => handleSetDensity('comfortable')}
+              className={`px-2 sm:px-2.5 py-1 rounded-lg transition-all cursor-pointer ${
+                density === 'comfortable'
+                  ? 'btn-3d-blue text-white shadow-[0_2px_0_#1899D6]'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+              }`}
+              title="Độ giãn Vừa vặn (90px/giờ)"
+            >
+              Vừa
+            </button>
+            <button
+              type="button"
+              onClick={() => handleSetDensity('compact')}
+              className={`px-2 sm:px-2.5 py-1 rounded-lg transition-all cursor-pointer ${
+                density === 'compact'
+                  ? 'btn-3d-blue text-white shadow-[0_2px_0_#1899D6]'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+              }`}
+              title="Độ giãn Thu gọn (70px/giờ)"
+            >
+              Thu gọn
+            </button>
+          </div>
+
+          {/* Right: View Type Dropdown */}
+          <div className="relative">
+            <select
+              value={viewType}
+              onChange={(e) => setViewType(e.target.value)}
+              className="px-2.5 sm:px-3.5 py-1.5 rounded-xl border-2 border-duo-border text-xs sm:text-sm font-black text-duo-dark bg-white hover:border-duo-blue focus:outline-none cursor-pointer shadow-xs pr-7 transition-colors"
+            >
+              <option value="week">Lịch tuần ({weekLabel})</option>
+              <option value="threeDays">Lịch 3 ngày hội thảo (22-24/10)</option>
+              <option value="day">Lịch hôm nay / Ngày trọng tâm</option>
+            </select>
+          </div>
         </div>
       </div>
 
@@ -449,7 +514,16 @@ export default function CalendarView({
           2. TIMETABLE GRID (Header with Dynamic Week Badge + Day Columns)
           ========================================================================= */}
       <div ref={gridScrollRef} className="overflow-x-auto relative">
-        <div className="min-w-[950px] select-none" style={{ width: '100%' }}>
+        <div
+          className={`select-none ${
+            viewType === 'week'
+              ? 'min-w-[1140px]'
+              : viewType === 'threeDays'
+              ? 'min-w-[840px]'
+              : 'min-w-[460px]'
+          }`}
+          style={{ width: '100%' }}
+        >
           
           {/* Header Row: Corner Crimson Badge + Day Columns */}
           <div
@@ -598,7 +672,29 @@ export default function CalendarView({
                   {/* Event Cards in Day Column */}
                   {dayEvents.map((ev) => {
                     const topPx = ((ev.startMin - START_HOUR * 60) / 60) * HOUR_HEIGHT;
-                    const heightPx = Math.max((ev.durationMin / 60) * HOUR_HEIGHT - 6, 52);
+
+                    // Find the next event that shares the same column (colIdx) and starts at or after this event
+                    const nextInSameCol = dayEvents
+                      .filter(
+                        (other) =>
+                          other.colIndex === ev.colIndex &&
+                          other.startMin >= ev.startMin &&
+                          other.id !== ev.id
+                      )
+                      .sort((a, b) => a.startMin - b.startMin)[0];
+
+                    // Space until the next event starts to strictly prevent overlap
+                    let maxAvailableHeightPx = 9999;
+                    if (nextInSameCol) {
+                      const gapMin = nextInSameCol.startMin - ev.startMin;
+                      if (gapMin > 0) {
+                        // Keep a crisp 3px gap before the next event starts
+                        maxAvailableHeightPx = Math.max(16, (gapMin / 60) * HOUR_HEIGHT - 3);
+                      }
+                    }
+
+                    const nominalHeightPx = (ev.durationMin / 60) * HOUR_HEIGHT - 3;
+                    const heightPx = Math.max(16, Math.min(nominalHeightPx, maxAvailableHeightPx));
                     const isHovered = hoveredEventId === ev.id;
                     const speaker = getSpeakerText(ev);
                     const timeLabel = formatEventTimeLabel(ev);
@@ -641,42 +737,77 @@ export default function CalendarView({
                           onClick={() => {
                             if (onEventClick) onEventClick(ev);
                           }}
-                          className={`w-full h-full rounded-xl border border-slate-200/90 border-l-[4px] border-l-red-600 bg-white p-1.5 sm:p-2 flex flex-col justify-between overflow-hidden cursor-pointer transition-all duration-150 ${
+                          className={`w-full h-full rounded-xl border border-slate-200/90 border-l-[4px] border-l-red-600 bg-white overflow-hidden cursor-pointer transition-all duration-150 ${
                             isHovered
                               ? 'ring-2 ring-red-500 shadow-md bg-red-50/20'
                               : 'shadow-xs hover:border-slate-300 hover:shadow-sm'
+                          } ${
+                            heightPx < 34
+                              ? 'px-1.5 py-0.5 flex items-center'
+                              : heightPx < 54
+                              ? 'p-1.5 flex flex-col justify-center'
+                              : 'p-2 flex flex-col justify-between'
                           }`}
                         >
-                          <div>
-                            <h5
-                              className="text-xs font-black text-red-600 leading-tight line-clamp-2"
-                              title={ev.title}
-                            >
+                          {heightPx < 34 ? (
+                            /* Ultra-compact chip for short 15-20 min events */
+                            <div className="flex items-center gap-1.5 overflow-hidden w-full">
                               {ev.isHighlight && (
-                                <Star className="inline w-3 h-3 fill-amber-500 text-amber-500 mr-1 shrink-0 -mt-0.5" />
+                                <Star className="w-2.5 h-2.5 fill-amber-500 text-amber-500 shrink-0" />
                               )}
-                              {ev.title}
-                            </h5>
-
-                            <div className="flex items-center gap-1 text-[10px] sm:text-[11px] text-slate-700 mt-1 truncate">
-                              <CalendarIcon className="w-3 h-3 text-slate-500 shrink-0 stroke-[1.75]" />
-                              <span className="font-bold text-slate-800 truncate">{timeLabel}</span>
+                              <span className="font-mono font-black text-[9px] text-red-600 bg-red-50 px-1 py-0.5 rounded shrink-0">
+                                {timeLabel.split(/–|-/)[0].trim()}
+                              </span>
+                              <span className="text-[11px] font-black text-slate-800 truncate leading-none">
+                                {ev.title}
+                              </span>
                             </div>
-
-                            {ev.location && heightPx >= 52 && (
-                              <div className="flex items-center gap-1 text-[10px] sm:text-[11px] text-slate-600 mt-0.5 truncate">
-                                <MapPin className="w-3 h-3 text-slate-400 shrink-0 stroke-[1.75]" />
-                                <span className="truncate">{ev.location}</span>
+                          ) : heightPx < 54 ? (
+                            /* Compact card for 25-35 min events */
+                            <div className="overflow-hidden w-full">
+                              <div className="flex items-center gap-1 text-[10px] text-slate-600 font-bold truncate">
+                                <span className="font-mono text-red-600 font-black truncate">{timeLabel}</span>
+                                {ev.isHighlight && (
+                                  <Star className="w-2.5 h-2.5 fill-amber-500 text-amber-500 shrink-0 inline" />
+                                )}
                               </div>
-                            )}
+                              <h5 className="text-[11px] font-black text-slate-900 leading-tight truncate mt-0.5" title={ev.title}>
+                                {ev.title}
+                              </h5>
+                            </div>
+                          ) : (
+                            /* Standard & Spacious card for 40+ min events */
+                            <div className="overflow-hidden w-full">
+                              <h5
+                                className="text-xs font-black text-red-600 leading-tight line-clamp-2"
+                                title={ev.title}
+                              >
+                                {ev.isHighlight && (
+                                  <Star className="inline w-3 h-3 fill-amber-500 text-amber-500 mr-1 shrink-0 -mt-0.5" />
+                                )}
+                                {ev.title}
+                              </h5>
 
-                            {speaker && heightPx >= 68 && (
-                              <div className="flex items-center gap-1 text-[10px] sm:text-[11px] text-slate-600 mt-0.5 truncate">
-                                <User className="w-3 h-3 text-slate-400 shrink-0 stroke-[1.75]" />
-                                <span className="truncate">{speaker}</span>
+                              <div className="flex items-center gap-1 text-[10px] sm:text-[11px] text-slate-700 mt-1 truncate">
+                                <CalendarIcon className="w-3 h-3 text-slate-500 shrink-0 stroke-[1.75]" />
+                                <span className="font-bold text-slate-800 truncate">{timeLabel}</span>
                               </div>
-                            )}
-                          </div>
+
+                              {ev.location && heightPx >= 70 && (
+                                <div className="flex items-center gap-1 text-[10px] sm:text-[11px] text-slate-600 mt-0.5 truncate">
+                                  <MapPin className="w-3 h-3 text-slate-400 shrink-0 stroke-[1.75]" />
+                                  <span className="truncate">{ev.location}</span>
+                                </div>
+                              )}
+
+                              {speaker && heightPx >= 90 && (
+                                <div className="flex items-center gap-1 text-[10px] sm:text-[11px] text-slate-600 mt-0.5 truncate">
+                                  <User className="w-3 h-3 text-slate-400 shrink-0 stroke-[1.75]" />
+                                  <span className="truncate">{speaker}</span>
+                                </div>
+                              )}
+                            </div>
+                          )}
                         </div>
 
                         {/* 2. Floating Popover on Hover */}
