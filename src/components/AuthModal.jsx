@@ -26,6 +26,7 @@ export default function AuthModal({
   onGuestMode
 }) {
   const [isSignUp, setIsSignUp] = useState(false);
+  const [selectedMember, setSelectedMember] = useState(null);
   const [mssvInput, setMssvInput] = useState('');
   const [showMssv, setShowMssv] = useState(false);
   const [emailInput, setEmailInput] = useState('');
@@ -58,9 +59,10 @@ export default function AuthModal({
 
   if (!isOpen) return null;
 
-  const handleQuickSelectMember = (member) => {
-    if (onLogin) onLogin(member);
-    if (onClose) onClose();
+  const handleSelectMemberChip = (member) => {
+    setSelectedMember(member);
+    setErrorMsg('');
+    setSuccessMsg(`Đã chọn: ${member.name}. Vui lòng nhập MSSV bên dưới để xác thực danh tính.`);
   };
 
   const handleSubmit = (e) => {
@@ -68,42 +70,49 @@ export default function AuthModal({
     setErrorMsg('');
     setSuccessMsg('');
 
-    const cleanMssv = (mssvInput || '').trim();
+    const cleanInput = (mssvInput || '').trim();
+    const normalizedInput = cleanInput.replace(/^(mssv[:\s]*)/i, '').trim();
 
     if (!isSignUp) {
+      if (!normalizedInput) {
+        setErrorMsg('Vui lòng nhập Mã số sinh viên (MSSV) của bạn để xác thực vào hệ thống!');
+        return;
+      }
+
       let member = null;
 
-      if (cleanMssv) {
-        const cleanInput = cleanMssv.toLowerCase();
-        const normalizedInput = cleanInput.replace(/^(mssv[:\s]*)/i, '').trim();
-
+      // If user selected a specific member chip first
+      if (selectedMember) {
+        const targetMssv = (selectedMember.mssv || '').trim();
+        if (normalizedInput === targetMssv || normalizedInput === '20227035') {
+          member = selectedMember;
+          // If logged in with admin MSSV 20227035
+          if (normalizedInput === '20227035') {
+            const adminMember = pool.find((m) => m.mssv === '20227035');
+            if (adminMember) member = adminMember;
+          }
+        } else {
+          setErrorMsg(`MSSV không khớp với thông tin của ${selectedMember.name}. Vui lòng thử lại!`);
+          return;
+        }
+      } else {
+        // Direct MSSV input matching
         member = pool.find((m) => {
-          const mMssv = (m.mssv || '').trim().toLowerCase();
+          const mMssv = (m.mssv || '').trim();
           const mEmail = (m.email || '').trim().toLowerCase();
-          const mName = (m.name || '').trim().toLowerCase();
-          const mShort = (m.shortName || '').trim().toLowerCase();
-          const mId = (m.id || '').trim().toLowerCase();
           const emailPrefix = mEmail.split('@')[0];
-
           return (
-            (mMssv && (mMssv === normalizedInput || mMssv === cleanInput)) ||
-            (mEmail && (mEmail === normalizedInput || emailPrefix === normalizedInput)) ||
-            (mName && (mName === normalizedInput || mName === cleanInput || mName.includes(cleanInput))) ||
-            (mShort && (mShort === normalizedInput || mShort === cleanInput)) ||
-            (mId && (mId === normalizedInput || mId.replace('_', '') === normalizedInput))
+            (mMssv && mMssv === normalizedInput) ||
+            (mEmail && (mEmail === normalizedInput.toLowerCase() || emailPrefix === normalizedInput.toLowerCase()))
           );
         });
-      } else {
-        // If user didn't enter anything and pressed submit:
-        // Automatically log in as Trưởng đoàn Nguyễn Quang Anh (or current/first member) and close modal
-        member = pool.find((m) => m.mssv === '20227035') || pool[0];
       }
 
       if (member) {
         if (onLogin) onLogin(member);
         if (onClose) onClose();
       } else {
-        setErrorMsg('Không tìm thấy thông tin phù hợp. Bạn có thể chọn nhanh tên mình ở danh sách bên dưới!');
+        setErrorMsg('MSSV này không thuộc danh sách 7 thành viên đoàn ICEF 2026. Nếu bạn là khách, hãy chọn "Chế độ Khách" bên dưới.');
       }
     } else {
       // Sign Up Mode: Add new member to team
@@ -221,28 +230,31 @@ export default function AuthModal({
             </div>
           )}
 
-          {/* Quick Member Selection Chips (1-Touch Instant Login, MSSV Strictly Hidden) */}
+          {/* Quick Member Selection Chips (Click to select, then verify with MSSV) */}
           {!isSignUp && (
             <div>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-black text-duo-dark uppercase tracking-wider flex items-center gap-1.5">
                   <Sparkles className="w-3.5 h-3.5 text-duo-yellow fill-duo-yellow" />
-                  Chọn nhanh tên thành viên:
+                  Chọn thành viên:
                 </span>
-                <span className="text-[11px] font-bold text-duo-muted">1 chạm vào ngay</span>
+                <span className="text-[11px] font-bold text-duo-muted">Chọn tên & nhập MSSV</span>
               </div>
               <div className="grid grid-cols-2 gap-2 max-h-44 overflow-y-auto pr-1 pb-1">
                 {pool.map((m) => {
                   const isLeader = m.isAdmin || m.mssv === '20227035';
-                  const isCurrent = currentUser?.id === m.id;
+                  const isSelected = selectedMember?.id === m.id;
+                  const isCurrent = !selectedMember && currentUser?.id === m.id;
                   return (
                     <button
                       key={m.id}
                       type="button"
-                      onClick={() => handleQuickSelectMember(m)}
+                      onClick={() => handleSelectMemberChip(m)}
                       className={`flex items-center gap-2 p-2 rounded-2xl text-left border-2 transition-all cursor-pointer ${
-                        isCurrent
-                          ? 'bg-duo-blue/15 border-duo-blue text-duo-dark shadow-xs'
+                        isSelected
+                          ? 'bg-duo-blue/20 border-duo-blue text-duo-dark shadow-sm ring-2 ring-duo-blue/30'
+                          : isCurrent
+                          ? 'bg-emerald-50 border-emerald-300 text-emerald-950 shadow-xs'
                           : isLeader
                           ? 'bg-amber-50 hover:bg-amber-100/80 border-amber-300 text-amber-950'
                           : 'bg-slate-50 hover:bg-slate-100 border-slate-200 text-duo-dark'
@@ -268,7 +280,7 @@ export default function AuthModal({
                           )}
                         </div>
                       </div>
-                      {isCurrent && <Check className="w-3.5 h-3.5 text-duo-blue shrink-0" />}
+                      {(isSelected || isCurrent) && <Check className="w-3.5 h-3.5 text-duo-blue shrink-0" />}
                     </button>
                   );
                 })}
@@ -279,11 +291,26 @@ export default function AuthModal({
           <form onSubmit={handleSubmit} className="space-y-3.5">
             {/* Input: MSSV or Member Name */}
             <div>
+              {selectedMember && (
+                <div className="mb-2 p-2.5 rounded-xl bg-duo-blue/10 border border-duo-blue/30 flex items-center justify-between">
+                  <span className="text-xs font-black text-duo-dark flex items-center gap-1.5">
+                    <span>Đang chọn: <strong>{selectedMember.name}</strong></span>
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedMember(null)}
+                    className="text-[11px] font-black text-duo-muted hover:text-red-500 cursor-pointer"
+                  >
+                    Bỏ chọn
+                  </button>
+                </div>
+              )}
+
               <label className="block text-xs font-black text-duo-dark mb-1.5 uppercase tracking-wider">
                 {isSignUp ? (
                   <>Mã số sinh viên (MSSV) <span className="text-red-500">*</span></>
                 ) : (
-                  <>Hoặc nhập MSSV / Tên</>
+                  <>Nhập Mã số sinh viên (MSSV) <span className="text-red-500">*</span></>
                 )}
               </label>
               <div className="relative">
@@ -301,7 +328,9 @@ export default function AuthModal({
                   placeholder={
                     isSignUp
                       ? 'Nhập MSSV thành viên...'
-                      : 'Nhập MSSV, Tên hoặc bấm Đăng nhập ngay...'
+                      : selectedMember
+                      ? `Nhập MSSV của ${selectedMember.shortName || selectedMember.name}...`
+                      : 'Nhập MSSV của bạn (VD: 20227035...)'
                   }
                   className="w-full pl-11 pr-11 py-3 rounded-2xl border-2 border-duo-border text-duo-dark text-sm font-mono font-black focus:outline-none focus:border-duo-blue bg-white transition-colors"
                 />

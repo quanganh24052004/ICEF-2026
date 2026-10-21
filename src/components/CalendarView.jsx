@@ -716,11 +716,12 @@ export default function CalendarView({
                     const totalGridHeight = (END_HOUR - START_HOUR) * HOUR_HEIGHT;
                     const isBottomHalf = topPx > totalGridHeight * 0.55 || (ev.startMin && ev.startMin >= 14 * 60);
 
+                    const isGuest = !currentUser || currentUser.id === 'guest' || currentUser.isGuest === true;
                     const isAdmin = currentUser?.isAdmin || currentUser?.mssv === '20227035';
                     const isPreExisting = !ev.createdByMssv || (typeof ev.id === 'string' && ev.id.startsWith('sch-'));
                     const isCreatedByMe = Boolean(ev.createdByMssv && ev.createdByMssv === currentUser?.mssv);
-                    const canEdit = isAdmin || (!isPreExisting && isCreatedByMe);
-                    const canDelete = isAdmin || (!isPreExisting && isCreatedByMe);
+                    const canEdit = !isGuest && (isAdmin || (!isPreExisting && isCreatedByMe));
+                    const canDelete = !isGuest && (isAdmin || (!isPreExisting && isCreatedByMe));
 
                     return (
                       <div
@@ -843,33 +844,35 @@ export default function CalendarView({
                                   </h4>
                                 </div>
 
-                                <div className="flex items-center gap-1 shrink-0 ml-1">
-                                  <button
-                                    type="button"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      if (onEventClick) onEventClick(ev);
-                                    }}
-                                    className="p-1 rounded-lg text-slate-500 hover:text-blue-600 hover:bg-blue-50 transition-colors"
-                                    title={canEdit ? 'Sửa hoạt động' : 'Xem chi tiết hoạt động'}
-                                  >
-                                    <Pen className="w-3.5 h-3.5" />
-                                  </button>
-
-                                  {canDelete && (
+                                {!isGuest && (
+                                  <div className="flex items-center gap-1 shrink-0 ml-1">
                                     <button
                                       type="button"
                                       onClick={(e) => {
                                         e.stopPropagation();
-                                        if (onDeleteEvent) onDeleteEvent(ev);
+                                        if (onEventClick) onEventClick(ev);
                                       }}
-                                      className="p-1 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors"
-                                      title="Xóa hoạt động"
+                                      className="p-1 rounded-lg text-slate-500 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+                                      title={canEdit ? 'Sửa hoạt động' : 'Xem chi tiết hoạt động'}
                                     >
-                                      <Trash2 className="w-3.5 h-3.5" />
+                                      <Pen className="w-3.5 h-3.5" />
                                     </button>
-                                  )}
-                                </div>
+
+                                    {canDelete && (
+                                      <button
+                                        type="button"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          if (onDeleteEvent) onDeleteEvent(ev);
+                                        }}
+                                        className="p-1 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+                                        title="Xóa hoạt động"
+                                      >
+                                        <Trash2 className="w-3.5 h-3.5" />
+                                      </button>
+                                    )}
+                                  </div>
+                                )}
                               </div>
                             </div>
 
@@ -929,7 +932,7 @@ export default function CalendarView({
                                 </div>
                               )}
 
-                              {!isAllMembers && ev.memberNotes && (
+                              {!isGuest && !isAllMembers && ev.memberNotes && (
                                 <div className="space-y-1.5 pt-1 border-t border-slate-100">
                                   {activeMembers.map((mId) => {
                                     const note = ev.memberNotes[mId];
@@ -950,7 +953,7 @@ export default function CalendarView({
 
                             {/* Popover Footer */}
                             <div className="px-3 py-1.5 bg-slate-50 border-t border-slate-100 rounded-b-2xl text-[10px] text-slate-400 flex items-center justify-between shrink-0">
-                              <span>Nhấp để mở chi tiết & chỉnh sửa</span>
+                              <span>{isGuest ? 'Nhấp để xem chi tiết' : canEdit ? 'Nhấp để mở chi tiết & chỉnh sửa' : 'Nhấp để xem chi tiết'}</span>
                               <span className="text-red-600 font-bold">ICEF 2026</span>
                             </div>
                           </div>

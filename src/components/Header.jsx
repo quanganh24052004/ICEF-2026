@@ -23,6 +23,7 @@ export default function Header({
   onLogout
 }) {
   const isAdmin = currentUser?.isAdmin || currentUser?.mssv === '20227035';
+  const isGuest = !currentUser || currentUser.id === 'guest' || currentUser.isGuest === true;
 
   return (
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b-2 border-duo-border px-3 sm:px-4 py-3 selection:bg-duo-green/20">
@@ -89,7 +90,7 @@ export default function Header({
           </div>
 
           {/* User Auth Profile Badge */}
-          {currentUser ? (
+          {!isGuest ? (
             <div className="flex items-center gap-1.5 btn-3d-white rounded-2xl px-2.5 py-1.5">
               <button
                 type="button"
@@ -124,7 +125,7 @@ export default function Header({
               <button
                 type="button"
                 onClick={onLogout}
-                className="p-1 rounded-xl text-red-500 hover:bg-red-50 transition-colors ml-0.5"
+                className="p-1 rounded-xl text-red-500 hover:bg-red-50 transition-colors ml-0.5 cursor-pointer"
                 title="Đăng xuất khỏi tài khoản"
               >
                 <LogOut className="w-3.5 h-3.5" />
@@ -134,34 +135,39 @@ export default function Header({
             <button
               type="button"
               onClick={onOpenAuthModal}
-              className="btn-3d-hust text-white font-black text-xs sm:text-sm px-3.5 py-2.5 rounded-2xl flex items-center gap-1.5 cursor-pointer"
+              className="btn-3d-hust text-white font-black text-xs sm:text-sm px-3.5 py-2 rounded-2xl flex items-center gap-1.5 cursor-pointer shadow-md"
+              title="Cổng xác thực dành cho 7 thành viên trong đoàn"
             >
               <User className="w-4 h-4" />
-              <span>Đăng Nhập</span>
+              <span>Đăng Nhập Nhóm</span>
             </button>
           )}
 
-          {/* Add Event Button (Tactile 3D Green) */}
-          <button
-            type="button"
-            onClick={onOpenAddModal}
-            className="btn-3d-green text-white font-black text-xs sm:text-sm px-4 py-2.5 rounded-2xl flex items-center gap-1.5 cursor-pointer"
-            title="Thêm hoạt động mới vào CSDL"
-          >
-            <Plus className="w-4 h-4 stroke-[3]" />
-            <span className="hidden xs:inline">Thêm Mới</span>
-          </button>
+          {/* Add Event Button (Tactile 3D Green) - Only for logged in team members & admin */}
+          {!isGuest && (
+            <button
+              type="button"
+              onClick={onOpenAddModal}
+              className="btn-3d-green text-white font-black text-xs sm:text-sm px-4 py-2.5 rounded-2xl flex items-center gap-1.5 cursor-pointer"
+              title="Thêm hoạt động mới vào CSDL"
+            >
+              <Plus className="w-4 h-4 stroke-[3]" />
+              <span className="hidden xs:inline">Thêm Mới</span>
+            </button>
+          )}
 
-          {/* Database Backup/Restore Button */}
-          <button
-            type="button"
-            onClick={onOpenBackupModal}
-            className="btn-3d-white text-duo-dark font-black text-xs sm:text-sm px-3 py-2.5 rounded-2xl flex items-center gap-1.5 cursor-pointer"
-            title={isAdmin ? 'Quản lý Cơ sở dữ liệu CSDL' : 'Sao lưu & Xem CSDL'}
-          >
-            <Database className="w-4 h-4 text-duo-blue" />
-            <span className="hidden sm:inline">CSDL</span>
-          </button>
+          {/* Database Backup/Restore Button - Only for logged in team members & admin */}
+          {!isGuest && (
+            <button
+              type="button"
+              onClick={onOpenBackupModal}
+              className="btn-3d-white text-duo-dark font-black text-xs sm:text-sm px-3 py-2.5 rounded-2xl flex items-center gap-1.5 cursor-pointer"
+              title={isAdmin ? 'Quản lý Cơ sở dữ liệu CSDL (Toàn quyền)' : 'Sao lưu & Xem CSDL'}
+            >
+              <Database className="w-4 h-4 text-duo-blue" />
+              <span className="hidden sm:inline">CSDL</span>
+            </button>
+          )}
 
           {/* Print Button */}
           <button

@@ -16,6 +16,18 @@ import BackupModal from './components/BackupModal';
 import AuthModal from './components/AuthModal';
 import ErrorBoundary from './components/ErrorBoundary';
 import Toast from './components/Toast';
+import { Globe, Lock, User, Sparkles } from 'lucide-react';
+
+const DEFAULT_GUEST_USER = {
+  id: 'guest',
+  name: 'Khách',
+  shortName: 'Khách',
+  mssv: '',
+  email: '',
+  isAdmin: false,
+  isGuest: true,
+  roleTitle: 'Chế độ Khách (Chỉ xem lịch trình)'
+};
 
 export default function App() {
   const [schedules, setSchedules] = useState([]);
@@ -23,16 +35,20 @@ export default function App() {
   const [hotelInfo, setHotelInfo] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Authentication State
+  // Authentication State: Defaults smoothly to Guest mode without forced popup
   const [currentUser, setCurrentUser] = useState(() => {
     try {
       const saved = localStorage.getItem('icef2026_current_user');
-      return saved ? JSON.parse(saved) : null;
+      return saved ? JSON.parse(saved) : DEFAULT_GUEST_USER;
     } catch {
-      return null;
+      return DEFAULT_GUEST_USER;
     }
   });
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+
+  // Permissions helpers
+  const isGuest = Boolean(!currentUser || currentUser.id === 'guest' || currentUser.isGuest === true);
+  const isAdmin = Boolean(currentUser?.isAdmin || currentUser?.mssv === '20227035');
 
   // Filter & Search states
   const [viewMode, setViewMode] = useState('calendar'); // Default to HUST Calendar view
@@ -76,12 +92,6 @@ export default function App() {
       setSchedules(sorted);
       setMembers(memData);
       setHotelInfo(hotData);
-
-      // If user hasn't logged in yet, prompt auth modal after loading
-      const savedUser = localStorage.getItem('icef2026_current_user');
-      if (!savedUser && !currentUser) {
-        setIsAuthModalOpen(true);
-      }
     } catch (err) {
       console.error('[App] Lỗi khi tải dữ liệu từ CSDL:', err);
       showToast('Lỗi khi tải dữ liệu: ' + err.message, 'error');
@@ -103,6 +113,8 @@ export default function App() {
   useEffect(() => {
     if (currentUser && currentUser.id && currentUser.id !== 'guest') {
       setSelectedMembers([currentUser.id]);
+    } else {
+      setSelectedMembers(['all']);
     }
   }, [currentUser]);
 
@@ -133,19 +145,10 @@ export default function App() {
 
   // Guest Mode
   const handleGuestMode = useCallback(() => {
-    const guestUser = {
-      id: 'guest',
-      name: 'Khách vãng lai',
-      shortName: 'Khách',
-      mssv: '',
-      email: '',
-      isAdmin: false,
-      roleTitle: 'Khách (Chế độ chỉ xem)'
-    };
-    setCurrentUser(guestUser);
+    setCurrentUser(DEFAULT_GUEST_USER);
     setSelectedMembers(['all']);
     setIsAuthModalOpen(false);
-    showToast('Đang xem lịch trình với tư cách Khách (Chế độ chỉ xem)', 'info');
+    showToast('Đang xem lịch trình dưới Chế độ Khách (Chỉ xem)', 'info');
   }, [showToast]);
 
   // Keyboard shortcut: '/' for search, 'Escape' to close modals
@@ -218,17 +221,17 @@ export default function App() {
 
   const handleLogout = () => {
     localStorage.removeItem('icef2026_current_user');
-    setCurrentUser(null);
+    setCurrentUser(DEFAULT_GUEST_USER);
     setSelectedMembers(['all']);
-    setIsAuthModalOpen(true);
-    showToast('Đã đăng xuất tài khoản.', 'info');
+    setIsAuthModalOpen(false);
+    showToast('Đã đăng xuất. Bạn đang ở Chế độ Khách (Chỉ xem).', 'info');
   };
 
   // CRUD Handlers
   const handleOpenAddModal = () => {
-    if (!currentUser) {
+    if (isGuest) {
       setIsAuthModalOpen(true);
-      showToast('Vui lòng đăng nhập tài khoản để thêm hoạt động mới!', 'error');
+      showToast('Vui lòng đăng nhập với tư cách thành viên đoàn để thêm hoạt động!', 'error');
       return;
     }
     setEditingEvent(null);
@@ -246,12 +249,21 @@ export default function App() {
   };
 
   const handleSaveEvent = async (eventItem) => {
-    const isAdmin = currentUser?.isAdmin || currentUser?.mssv === '20227035';
+    if (isGuest) {
+      showToast('Chế độ Khách chỉ có quyền xem, không thể lưu hoạt động!', 'error');
+      return;
+    }
+
     const isPreExisting = !eventItem.createdByMssv || (typeof eventItem.id === 'string' && eventItem.id.startsWith('sch-'));
     const isCreatedByMe = Boolean(eventItem.createdByMssv && eventItem.createdByMssv === currentUser?.mssv);
 
     if (eventItem.id && !isAdmin && isPreExisting) {
       showToast('Quyền bị từ chối! Các thành viên không thể sửa các sự kiện sẵn có của đoàn. Chỉ Trưởng đoàn Nguyễn Quang Anh mới có quyền.', 'error');
+      return;
+    }
+
+    if (eventItem.id && !isAdmin && !isCreatedByMe) {
+      showToast('Quyền bị từ chối! Bạn chỉ có thể sửa hoạt động do chính bạn tạo ra.', 'error');
       return;
     }
 
@@ -272,7 +284,11 @@ export default function App() {
   };
 
   const handleOpenDeleteModal = (event) => {
-    const isAdmin = currentUser?.isAdmin || currentUser?.mssv === '20227035';
+    if (isGuest) {
+      showToast('Chế độ Khách không thể xóa hoạt động!', 'error');
+      return;
+    }
+
     const isPreExisting = !event.createdByMssv || (typeof event.id === 'string' && event.id.startsWith('sch-'));
     const isCreatedByMe = Boolean(event.createdByMssv && event.createdByMssv === currentUser?.mssv);
 
@@ -291,7 +307,11 @@ export default function App() {
   };
 
   const handleConfirmDelete = async (eventId) => {
-    const isAdmin = currentUser?.isAdmin || currentUser?.mssv === '20227035';
+    if (isGuest) {
+      showToast('Chế độ Khách không thể xóa hoạt động!', 'error');
+      return;
+    }
+
     const isPreExisting = !deletingEvent?.createdByMssv || (typeof deletingEvent?.id === 'string' && deletingEvent?.id.startsWith('sch-'));
     const isCreatedByMe = Boolean(deletingEvent?.createdByMssv && deletingEvent?.createdByMssv === currentUser?.mssv);
 
@@ -420,24 +440,62 @@ export default function App() {
       {/* Main Container */}
       <main className="max-w-6xl mx-auto px-3.5 sm:px-4">
         {/* Quick Stats */}
-        <StatsBar schedules={schedules} members={members} />
+        <StatsBar schedules={schedules} members={members} isGuest={isGuest} />
 
-        {/* Member Filter & Selected Member Details (Multi-Select Enabled) */}
-        <MemberFilter
-          members={members}
-          selectedMembers={selectedMembers}
-          onToggleMember={handleToggleMember}
-          onResetAll={() => setSelectedMembers(['all'])}
-        />
+        {/* Member Filter (for 7 Group Members) OR Conference Welcome Banner (for Guests) */}
+        {!isGuest ? (
+          <MemberFilter
+            members={members}
+            selectedMembers={selectedMembers}
+            onToggleMember={handleToggleMember}
+            onResetAll={() => setSelectedMembers(['all'])}
+          />
+        ) : (
+          <div className="card-3d p-4 sm:p-5 mt-4 bg-gradient-to-r from-blue-50/80 via-white to-emerald-50/80 border-2 border-duo-border">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3.5">
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-duo-blue flex items-center justify-center text-white shadow-[0_3px_0_#1899D6] shrink-0 mt-0.5">
+                  <Globe className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h2 className="text-xs sm:text-sm font-black uppercase tracking-wider text-duo-dark">
+                      Lịch Trình Toàn Thể • Hội Thảo Quốc Tế ICEF 2026
+                    </h2>
+                    <span className="text-[10px] font-black uppercase bg-blue-100 text-blue-800 px-2.5 py-0.5 rounded-full border border-blue-200">
+                      Chế độ Khách (Chỉ xem)
+                    </span>
+                  </div>
+                  <p className="text-xs font-bold text-duo-muted mt-1 leading-relaxed">
+                    Bạn đang theo dõi toàn bộ chương trình hội thảo khoa học, các phiên Oral & Poster. 
+                    Thông tin phân công nội bộ đoàn (phòng nghỉ, nhiệm vụ cá nhân) được bảo mật.
+                  </p>
+                </div>
+              </div>
 
-        {/* Hotel & Academic Paper Overview (Collapsible) */}
-        <AccommodationsCard
-          hotelInfo={hotelInfo}
-          onOpenMap={(loc) => setMapModalLocation(loc)}
-        />
+              <button
+                type="button"
+                onClick={() => setIsAuthModalOpen(true)}
+                className="btn-3d-hust text-white font-black text-xs sm:text-sm px-4 py-2.5 rounded-2xl flex items-center justify-center gap-2 shrink-0 cursor-pointer shadow-md self-start sm:self-center"
+              >
+                <Lock className="w-4 h-4" />
+                <span>Đăng Nhập Thành Viên Đoàn</span>
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Hotel & Academic Paper Overview (Collapsible - Only visible to authenticated group members) */}
+        {!isGuest && (
+          <AccommodationsCard
+            hotelInfo={hotelInfo}
+            onOpenMap={(loc) => setMapModalLocation(loc)}
+          />
+        )}
 
         {/* Dedicated Interactive Conference Venues Card with Map (Collapsible) */}
         <LocationsCard
+          isGuest={isGuest}
           onOpenMapModal={(loc) => setMapModalLocation(loc)}
         />
 
@@ -486,13 +544,24 @@ export default function App() {
       {/* Mobile Sticky Bottom Bar (Tactile 3D Buttons for Mobile-First UX) */}
       <div className="fixed bottom-0 inset-x-0 z-40 md:hidden bg-white/95 backdrop-blur-md border-t-2 border-duo-border p-2.5">
         <div className="flex items-center gap-2 max-w-md mx-auto">
-          <button
-            type="button"
-            onClick={handleOpenAddModal}
-            className="flex-1 btn-3d-green text-white font-black text-xs py-3 rounded-2xl flex items-center justify-center gap-1.5 cursor-pointer"
-          >
-            <span>+ Thêm Hoạt Động</span>
-          </button>
+          {!isGuest ? (
+            <button
+              type="button"
+              onClick={handleOpenAddModal}
+              className="flex-1 btn-3d-green text-white font-black text-xs py-3 rounded-2xl flex items-center justify-center gap-1.5 cursor-pointer"
+            >
+              <span>+ Thêm Hoạt Động</span>
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setIsAuthModalOpen(true)}
+              className="flex-1 btn-3d-hust text-white font-black text-xs py-3 rounded-2xl flex items-center justify-center gap-1.5 cursor-pointer"
+            >
+              <User className="w-3.5 h-3.5" />
+              <span>Đăng Nhập Nhóm</span>
+            </button>
+          )}
           
           <button
             type="button"

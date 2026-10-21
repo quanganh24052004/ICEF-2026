@@ -1,7 +1,7 @@
 import React from 'react';
 import { CalendarDays, Star, Users, Hotel, Flame, Sparkles, CheckCircle2 } from 'lucide-react';
 
-export default function StatsBar({ schedules = [], members = [] }) {
+export default function StatsBar({ schedules = [], members = [], isGuest = false }) {
   const highlightCount = schedules.filter(
     (s) => s.isHighlight || s.category === 'highlight_oral' || s.category === 'highlight_poster'
   ).length;
@@ -52,27 +52,27 @@ export default function StatsBar({ schedules = [], members = [] }) {
           </div>
         </div>
 
-        {/* Stat 3: Delegation Members */}
+        {/* Stat 3: Delegation Members or Conference Delegates */}
         <div className="card-3d card-3d-hover p-4 sm:p-5 flex flex-col justify-between">
           <div className="flex items-center justify-between mb-2">
             <div className="w-11 h-11 rounded-2xl bg-duo-purple flex items-center justify-center shadow-[0_3px_0_#A55EEA] text-white">
               <Users className="w-5 h-5" />
             </div>
             <span className="text-[11px] font-black text-duo-purple bg-duo-purple/10 px-2.5 py-0.5 rounded-full">
-              HUST • HUCE
+              {isGuest ? 'QUỐC TẾ' : 'HUST • HUCE'}
             </span>
           </div>
           <div>
             <div className="text-2xl sm:text-3xl font-black text-duo-dark tracking-tight">
-              {members.length} Thành Viên
+              {isGuest ? 'ICEF 2026' : `${members.length} Thành Viên`}
             </div>
             <div className="text-xs font-bold text-duo-muted mt-0.5">
-              Thành Viên Đoàn Nghiên Cứu
+              {isGuest ? 'Đại Biểu & Diễn Giả Khoa Học' : 'Thành Viên Đoàn Nghiên Cứu'}
             </div>
           </div>
         </div>
 
-        {/* Stat 4: Hotel Status */}
+        {/* Stat 4: Hotel Status or Venue Location */}
         <div className="card-3d card-3d-hover p-4 sm:p-5 flex flex-col justify-between border-duo-green/80 bg-[#F0FBE8]/50">
           <div className="flex items-center justify-between mb-2">
             <div className="w-11 h-11 rounded-2xl bg-duo-green flex items-center justify-center shadow-[0_3px_0_#46A302] text-white">
@@ -80,15 +80,15 @@ export default function StatsBar({ schedules = [], members = [] }) {
             </div>
             <span className="text-[11px] font-black text-duo-greenDark bg-duo-green/20 px-2.5 py-0.5 rounded-full flex items-center gap-1">
               <CheckCircle2 className="w-3 h-3 text-duo-greenDark" />
-              ĐÃ TT 100%
+              {isGuest ? 'NINH BÌNH' : 'ĐÃ TT 100%'}
             </span>
           </div>
           <div>
             <div className="text-lg sm:text-xl font-black text-duo-dark tracking-tight truncate">
-              Alo Garden Ninh Bình
+              {isGuest ? 'Emeralda Resort' : 'Alo Garden Ninh Bình'}
             </div>
             <div className="text-xs font-bold text-duo-greenDark mt-0.5">
-              2 Phòng • 22 – 24/10/2026
+              {isGuest ? 'Địa Điểm Hội Thảo Chính Thức' : '2 Phòng • 22 – 24/10/2026'}
             </div>
           </div>
         </div>
@@ -101,11 +101,13 @@ export default function StatsBar({ schedules = [], members = [] }) {
           <span className="w-2.5 h-2.5 rounded-full bg-duo-green animate-ping"></span>
           <span className="flex items-center gap-1.5 text-duo-dark font-extrabold">
             <Sparkles className="w-4 h-4 text-duo-yellow fill-duo-yellow" />
-            Trạng thái sẵn sàng: Đã khớp toàn bộ khung giờ báo cáo ICEF 2026
+            {isGuest ? 'Lịch trình hội thảo khoa học quốc tế ICEF 2026 đã sẵn sàng' : 'Trạng thái sẵn sàng: Đã khớp toàn bộ khung giờ báo cáo ICEF 2026'}
           </span>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-duo-muted font-bold">Khởi hành: 11:30 Thứ 5 (22/10)</span>
+          <span className="text-duo-muted font-bold">
+            {isGuest ? 'Thời gian: 22/10 – 24/10/2026' : 'Khởi hành: 11:30 Thứ 5 (22/10)'}
+          </span>
           <div className="w-28 sm:w-36 h-2.5 bg-duo-border rounded-full overflow-hidden">
             <div className="w-full h-full bg-duo-green rounded-full"></div>
           </div>

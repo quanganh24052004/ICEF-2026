@@ -9,10 +9,11 @@ export default function EventModal({
   members = [],
   currentUser = null
 }) {
+  const isGuest = !currentUser || currentUser.id === 'guest' || currentUser.isGuest === true;
   const isAdmin = currentUser?.isAdmin || currentUser?.mssv === '20227035';
   const isPreExisting = eventData && (!eventData.createdByMssv || (typeof eventData.id === 'string' && eventData.id.startsWith('sch-')));
   const isCreatedByMe = Boolean(eventData?.createdByMssv && eventData?.createdByMssv === currentUser?.mssv);
-  const canEdit = !eventData || isAdmin || (!isPreExisting && isCreatedByMe);
+  const canEdit = !isGuest && (!eventData || isAdmin || (!isPreExisting && isCreatedByMe));
 
   const [day, setDay] = useState('22');
   const [time, setTime] = useState('');
@@ -151,10 +152,10 @@ export default function EventModal({
             </div>
             <div>
               <h3 className="text-base sm:text-lg font-black text-duo-dark">
-                {!canEdit ? 'Chi Tiết Hoạt Động (Chế Độ Chỉ Xem)' : eventData ? 'Chỉnh Sửa Hoạt Động' : 'Thêm Hoạt Động Mới'}
+                {isGuest ? 'Chi Tiết Hoạt Động Hội Thảo' : !canEdit ? 'Chi Tiết Hoạt Động (Chế Độ Chỉ Xem)' : eventData ? 'Chỉnh Sửa Hoạt Động' : 'Thêm Hoạt Động Mới'}
               </h3>
               <p className="text-xs font-bold text-duo-muted">
-                {!canEdit ? 'Sự kiện sẵn có của đoàn (Chỉ Trưởng đoàn mới có quyền chỉnh sửa)' : eventData ? 'Cập nhật thông tin vào CSDL' : 'Lưu hoạt động vào lịch trình hội thảo'}
+                {isGuest ? 'Thông tin phiên hội thảo khoa học ICEF 2026' : !canEdit ? 'Sự kiện sẵn có của đoàn (Chỉ Trưởng đoàn mới có quyền chỉnh sửa)' : eventData ? 'Cập nhật thông tin vào CSDL' : 'Lưu hoạt động vào lịch trình hội thảo'}
               </p>
             </div>
           </div>
@@ -172,10 +173,16 @@ export default function EventModal({
         {/* Read-only Notice Banner */}
         {!canEdit && (
           <div className="px-5 pt-4">
-            <div className="p-3.5 rounded-2xl bg-amber-50 border-2 border-amber-200 text-amber-900 text-xs font-bold flex items-start gap-2.5">
-              <Lock className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+            <div className={`p-3.5 rounded-2xl border-2 text-xs font-bold flex items-start gap-2.5 ${
+              isGuest ? 'bg-blue-50 border-blue-200 text-blue-900' : 'bg-amber-50 border-amber-200 text-amber-900'
+            }`}>
+              <Lock className={`w-4 h-4 shrink-0 mt-0.5 ${isGuest ? 'text-blue-600' : 'text-amber-600'}`} />
               <span>
-                <strong>Quyền chỉnh sửa & xóa bị giới hạn:</strong> Các thành viên đoàn chỉ có thể tự thêm mới và không thể xóa hoặc sửa các sự kiện sẵn có của đoàn. Chỉ có Trưởng đoàn Nguyễn Quang Anh mới có quyền chỉnh sửa & xóa cao nhất.
+                {isGuest ? (
+                  <><strong>Chế độ Khách (Chỉ xem):</strong> Bạn đang xem thông tin chính thức của phiên hội thảo ICEF 2026. Để thêm hoặc sửa đổi lịch cá nhân, vui lòng đăng nhập với tư cách thành viên nhóm.</>
+                ) : (
+                  <><strong>Quyền chỉnh sửa & xóa bị giới hạn:</strong> Các thành viên đoàn chỉ có thể tự thêm mới và không thể xóa hoặc sửa các sự kiện sẵn có của đoàn. Chỉ có Trưởng đoàn Nguyễn Quang Anh mới có toàn quyền chỉnh sửa & xóa cao nhất.</>
+                )}
               </span>
             </div>
           </div>
@@ -326,31 +333,33 @@ export default function EventModal({
             </label>
           </div>
 
-          {/* Participants */}
-          <div>
-            <label className="block text-xs font-black text-duo-dark mb-1.5 uppercase tracking-wider">
-              Thành Viên Tham Gia ({participants.length}/{members.length}):
-            </label>
-            <div className="flex flex-wrap gap-2 p-3 rounded-2xl border-2 border-duo-border bg-duo-bg">
-              {members.map((m) => {
-                const isChecked = participants.includes(m.id);
-                return (
-                  <button
-                    key={m.id}
-                    type="button"
-                    onClick={() => handleToggleParticipant(m.id)}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer ${
-                      isChecked
-                        ? 'btn-3d-blue text-white'
-                        : 'btn-3d-white text-duo-dark'
-                    }`}
-                  >
-                    {m.name}
-                  </button>
-                );
-              })}
+          {/* Participants - Hidden for guests to preserve group privacy */}
+          {!isGuest && (
+            <div>
+              <label className="block text-xs font-black text-duo-dark mb-1.5 uppercase tracking-wider">
+                Thành Viên Tham Gia ({participants.length}/{members.length}):
+              </label>
+              <div className="flex flex-wrap gap-2 p-3 rounded-2xl border-2 border-duo-border bg-duo-bg">
+                {members.map((m) => {
+                  const isChecked = participants.includes(m.id);
+                  return (
+                    <button
+                      key={m.id}
+                      type="button"
+                      onClick={() => handleToggleParticipant(m.id)}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer ${
+                        isChecked
+                          ? 'btn-3d-blue text-white'
+                          : 'btn-3d-white text-duo-dark'
+                      }`}
+                    >
+                      {m.name}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Sub-items (Papers in Session) */}
           <div className="space-y-2">
@@ -358,13 +367,15 @@ export default function EventModal({
               <label className="text-xs font-black text-duo-dark uppercase tracking-wider">
                 Danh Sách Bài Báo Con / Phiên Chi Tiết:
               </label>
-              <button
-                type="button"
-                onClick={handleAddSubItem}
-                className="btn-3d-white text-duo-blue font-black text-xs px-3 py-1.5 rounded-xl flex items-center gap-1 cursor-pointer"
-              >
-                <Plus className="w-3.5 h-3.5" /> Thêm bài báo
-              </button>
+              {canEdit && (
+                <button
+                  type="button"
+                  onClick={handleAddSubItem}
+                  className="btn-3d-white text-duo-blue font-black text-xs px-3 py-1.5 rounded-xl flex items-center gap-1 cursor-pointer"
+                >
+                  <Plus className="w-3.5 h-3.5" /> Thêm bài báo
+                </button>
+              )}
             </div>
 
             <div className="space-y-2 p-3 rounded-2xl border-2 border-duo-border bg-duo-bg">
@@ -389,50 +400,56 @@ export default function EventModal({
                       onChange={(e) => handleUpdateSubItem(index, 'text', e.target.value)}
                       className="flex-1 px-3 py-1.5 bg-white border-2 border-duo-border rounded-xl text-xs font-bold text-duo-dark"
                     />
-                    <label className="flex items-center gap-1 text-xs font-black text-duo-dark cursor-pointer px-2">
-                      <input
-                        type="checkbox"
-                        checked={sub.highlight}
-                        onChange={(e) => handleUpdateSubItem(index, 'highlight', e.target.checked)}
-                        className="rounded text-amber-500"
-                      />
-                      <span>⭐</span>
-                    </label>
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveSubItem(index)}
-                      className="btn-3d-white w-7 h-7 rounded-xl flex items-center justify-center text-red-500"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
+                    {canEdit && (
+                      <label className="flex items-center gap-1 text-xs font-black text-duo-dark cursor-pointer px-2">
+                        <input
+                          type="checkbox"
+                          checked={sub.highlight}
+                          onChange={(e) => handleUpdateSubItem(index, 'highlight', e.target.checked)}
+                          className="rounded text-amber-500"
+                        />
+                        <span>⭐</span>
+                      </label>
+                    )}
+                    {canEdit && (
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveSubItem(index)}
+                        className="btn-3d-white w-7 h-7 rounded-xl flex items-center justify-center text-red-500"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    )}
                   </div>
                 ))
               )}
             </div>
           </div>
 
-          {/* Member Notes Accordion */}
-          <details className="card-3d rounded-2xl p-3.5 bg-white">
-            <summary className="text-xs font-black text-duo-dark cursor-pointer select-none">
-              Phân công nhiệm vụ riêng cho từng thành viên (Tùy chọn)
-            </summary>
-            <div className="mt-3 space-y-2 pt-2.5 border-t-2 border-duo-border">
-              {members.map((m) => (
-                <div key={m.id} className="flex items-center gap-2">
-                  <span className="w-28 text-xs font-black text-duo-dark shrink-0 truncate">
-                    {m.shortName}:
-                  </span>
-                  <input
-                    type="text"
-                    placeholder={`Nhiệm vụ cho ${m.shortName}...`}
-                    value={memberNotes[m.id] || ''}
-                    onChange={(e) => handleMemberNoteChange(m.id, e.target.value)}
-                    className="flex-1 px-3 py-1.5 bg-white border-2 border-duo-border rounded-xl text-xs font-bold text-duo-dark focus:outline-none focus:border-duo-blue"
-                  />
-                </div>
-              ))}
-            </div>
-          </details>
+          {/* Member Notes Accordion - Hidden for guests to preserve group privacy */}
+          {!isGuest && (
+            <details className="card-3d rounded-2xl p-3.5 bg-white">
+              <summary className="text-xs font-black text-duo-dark cursor-pointer select-none">
+                Phân công nhiệm vụ riêng cho từng thành viên (Tùy chọn)
+              </summary>
+              <div className="mt-3 space-y-2 pt-2.5 border-t-2 border-duo-border">
+                {members.map((m) => (
+                  <div key={m.id} className="flex items-center gap-2">
+                    <span className="w-28 text-xs font-black text-duo-dark shrink-0 truncate">
+                      {m.shortName}:
+                    </span>
+                    <input
+                      type="text"
+                      placeholder={`Nhiệm vụ cho ${m.shortName}...`}
+                      value={memberNotes[m.id] || ''}
+                      onChange={(e) => handleMemberNoteChange(m.id, e.target.value)}
+                      className="flex-1 px-3 py-1.5 bg-white border-2 border-duo-border rounded-xl text-xs font-bold text-duo-dark focus:outline-none focus:border-duo-blue"
+                    />
+                  </div>
+                ))}
+              </div>
+            </details>
+          )}
           </fieldset>
 
           {/* Footer Actions */}

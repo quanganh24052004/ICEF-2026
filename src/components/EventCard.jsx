@@ -35,6 +35,7 @@ export default function EventCard({
     return ['all'];
   }, [selectedMembers, selectedMember]);
 
+  const isGuest = !currentUser || currentUser.id === 'guest' || currentUser.isGuest === true;
   const isAllMembers = activeMembers.includes('all') || activeMembers.length === 0;
 
   const getCategoryBadge = (category) => {
@@ -127,8 +128,8 @@ export default function EventCard({
             <span className="truncate max-w-[170px] sm:max-w-none group-hover/loc:underline">{event.location}</span>
           </button>
 
-          {/* Action buttons (Pen & Trash) */}
-          {(() => {
+          {/* Action buttons (Pen & Trash) - Only for team members & admin */}
+          {!isGuest && (() => {
             const isAdmin = currentUser?.isAdmin || currentUser?.mssv === '20227035';
             const isPreExisting = !event.createdByMssv || (typeof event.id === 'string' && event.id.startsWith('sch-'));
             const isCreatedByMe = Boolean(event.createdByMssv && event.createdByMssv === currentUser?.mssv);
@@ -206,8 +207,8 @@ export default function EventCard({
         </div>
       )}
 
-      {/* Personal Task Notes for Selected Members */}
-      {!isAllMembers && event.memberNotes && (
+      {/* Personal Task Notes for Selected Members (Internal group only, hidden for guests) */}
+      {!isGuest && !isAllMembers && event.memberNotes && (
         <div className="mt-3.5 space-y-2">
           {activeMembers.map((mId) => {
             const note = event.memberNotes[mId];
@@ -234,8 +235,8 @@ export default function EventCard({
         </div>
       )}
 
-      {/* All Member Tasks Summary (When on All Members & Card is Highlighted) */}
-      {isAllMembers && event.memberNotes && isHighlight && (
+      {/* All Member Tasks Summary (Internal group only, hidden for guests) */}
+      {!isGuest && isAllMembers && event.memberNotes && isHighlight && (
         <div className="mt-3.5 card-3d p-3.5 rounded-2xl border-2 border-duo-yellow/60 bg-white space-y-2">
           <div className="text-xs font-black uppercase tracking-wider text-amber-800 flex items-center gap-1.5">
             <ListChecks className="w-4 h-4 text-duo-orange" />

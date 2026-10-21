@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Map, MapPin, ChevronDown, Navigation, ExternalLink, Car, Building, UtensilsCrossed, Hotel, School, Phone } from 'lucide-react';
 import { KEY_LOCATIONS } from '../data/venuesData';
 
-export default function LocationsCard({ onOpenMapModal }) {
+export default function LocationsCard({ onOpenMapModal, isGuest = false }) {
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('emeralda'); // 'hust_c7' | 'alo_garden' | 'emeralda' | 'restaurant_1969'
 
@@ -10,14 +10,14 @@ export default function LocationsCard({ onOpenMapModal }) {
     {
       key: 'hust_c7',
       label: '1. C7 ĐHBK Hà Nội',
-      sub: 'BSX 29E 17655 • Lx Thùy 0986181412',
+      sub: isGuest ? 'Điểm tập kết đoàn ICEF 2026' : 'BSX 29E 17655 • Lx Thùy 0986181412',
       icon: School,
       color: 'text-red-600 bg-red-50 border-red-200'
     },
     {
       key: 'alo_garden',
       label: '2. ALO RESORT (Alo Garden)',
-      sub: 'Lưu trú 2 đêm • Đón Shuttle Bus',
+      sub: isGuest ? 'Điểm lưu trú & Shuttle Bus' : 'Lưu trú 2 đêm • Đón Shuttle Bus',
       icon: Hotel,
       color: 'text-emerald-700 bg-emerald-50 border-emerald-200'
     },
@@ -37,7 +37,16 @@ export default function LocationsCard({ onOpenMapModal }) {
     }
   ];
 
-  const currentVenue = KEY_LOCATIONS[activeTab] || KEY_LOCATIONS.emeralda;
+  const rawVenue = KEY_LOCATIONS[activeTab] || KEY_LOCATIONS.emeralda;
+  // Sanitize venue details if guest
+  const currentVenue = {
+    ...rawVenue,
+    badge: (isGuest && activeTab === 'hust_c7') ? 'Điểm Khởi Hành Đoàn ICEF 2026' : rawVenue.badge,
+    phone: (isGuest && activeTab === 'hust_c7') ? null : rawVenue.phone,
+    note: (isGuest && activeTab === 'hust_c7')
+      ? 'Điểm tập kết xe đưa đón đoàn Hội thảo ICEF 2026 tại Tòa nhà C7 ĐHBK Hà Nội.'
+      : rawVenue.note
+  };
 
   return (
     <div className="card-3d rounded-3xl overflow-hidden mt-4 bg-white transition-all">
