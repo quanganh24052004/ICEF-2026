@@ -31,8 +31,12 @@ export default function Header({
         
         {/* Left: Brand Logo & Title with 3D Icon */}
         <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-2xl bg-duo-hustRed flex items-center justify-center shadow-[0_4px_0_#991B1B] shrink-0 text-white">
-            <Sparkles className="w-6 h-6 fill-amber-300 text-amber-300" />
+          <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-white border-2 border-duo-border p-1 shadow-[0_4px_0_#E5E7EB] shrink-0 overflow-hidden flex items-center justify-center hover:scale-105 transition-transform cursor-pointer">
+            <img
+              src="./1K5E8GQ32_8U60RI.jpg"
+              alt="Logo Hội Thảo Quốc Tế ICEF 2026"
+              className="w-full h-full object-contain rounded-xl"
+            />
           </div>
 
           <div>

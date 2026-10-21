@@ -163,30 +163,41 @@ export default function AuthModal({
           <X className="w-4 h-4 stroke-[2.5]" />
         </button>
 
-        {/* Card Header with HUST Red 3D Banner */}
-        <div className="bg-gradient-to-r from-duo-hustDark via-duo-hustRed to-duo-hustDark text-white p-6 sm:p-7 relative overflow-hidden">
-          <div className="flex items-center gap-2 mb-2 flex-wrap">
-            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-white/20 backdrop-blur-sm text-[11px] font-black text-white shadow-xs">
-              <Sparkles className="w-3.5 h-3.5 text-duo-yellow fill-duo-yellow" />
-              ICEF 2026 • HUST
-            </span>
-            <span className="inline-flex items-center gap-1 text-[11px] font-black text-amber-200">
-              <Flame className="w-3.5 h-3.5 text-duo-orange fill-duo-orange" />
-              CỔNG XÁC THỰC
-            </span>
+        {/* Card Header with HUST Red 3D Banner & Official Logo */}
+        <div className="bg-gradient-to-r from-duo-hustDark via-duo-hustRed to-duo-hustDark text-white p-5 sm:p-6 relative overflow-hidden">
+          <div className="flex items-center gap-3.5 mb-2.5">
+            <div className="w-12 h-12 rounded-2xl bg-white p-1 border-2 border-white/40 shadow-lg shrink-0 flex items-center justify-center overflow-hidden">
+              <img
+                src="./1K5E8GQ32_8U60RI.jpg"
+                alt="Logo Hội Thảo ICEF 2026"
+                className="w-full h-full object-contain rounded-xl"
+              />
+            </div>
+            <div>
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-white/20 backdrop-blur-sm text-[11px] font-black text-white shadow-xs">
+                  <Sparkles className="w-3.5 h-3.5 text-duo-yellow fill-duo-yellow" />
+                  ICEF 2026 • HUST
+                </span>
+                <span className="inline-flex items-center gap-1 text-[11px] font-black text-amber-200">
+                  <Flame className="w-3.5 h-3.5 text-duo-orange fill-duo-orange" />
+                  CỔNG XÁC THỰC
+                </span>
+              </div>
+              <h2 className="text-lg sm:text-xl font-black tracking-tight text-white mt-0.5">
+                {isSignUp ? 'Đăng Ký Thành Viên Đoàn' : 'Đăng Nhập Cổng Lịch Trình'}
+              </h2>
+            </div>
           </div>
 
-          <h2 className="text-xl sm:text-2xl font-black tracking-tight text-white">
-            {isSignUp ? 'Đăng Ký Thành Viên Đoàn' : 'Đăng Nhập Cổng Lịch Trình'}
-          </h2>
-          <p className="text-xs sm:text-sm font-bold text-red-100/90 mt-1 leading-relaxed">
+          <p className="text-xs sm:text-sm font-bold text-red-100/90 leading-relaxed">
             {isSignUp
               ? 'Nhập thông tin thành viên để cấp quyền truy cập lịch trình cá nhân.'
               : 'Chọn tên thành viên hoặc nhập MSSV để truy cập lịch trình riêng biệt.'}
           </p>
 
           {/* Security Note */}
-          <div className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-black/30 text-[11px] font-black text-amber-200">
+          <div className="mt-2.5 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-black/30 text-[11px] font-black text-amber-200">
             <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
             <span>Chỉ Trưởng đoàn mới có quyền xóa & chỉnh sửa lịch chính thức</span>
           </div>
