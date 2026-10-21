@@ -713,10 +713,11 @@ export default function CalendarView({
                         : dayIndex >= displayedDays.length - 2 ||
                           (dayIndex >= displayedDays.length - 3 && colIdx >= 1);
 
-                    const isBottomHalf = ev.startMin >= 17 * 60; // 17:00 onwards
                     const isAdmin = currentUser?.isAdmin || currentUser?.mssv === '20227035';
-                    const canDelete =
-                      isAdmin || (ev.createdByMssv && ev.createdByMssv === currentUser?.mssv);
+                    const isPreExisting = !ev.createdByMssv || (typeof ev.id === 'string' && ev.id.startsWith('sch-'));
+                    const isCreatedByMe = Boolean(ev.createdByMssv && ev.createdByMssv === currentUser?.mssv);
+                    const canEdit = isAdmin || (!isPreExisting && isCreatedByMe);
+                    const canDelete = isAdmin || (!isPreExisting && isCreatedByMe);
 
                     return (
                       <div
@@ -847,7 +848,7 @@ export default function CalendarView({
                                       if (onEventClick) onEventClick(ev);
                                     }}
                                     className="p-1 rounded-lg text-slate-500 hover:text-blue-600 hover:bg-blue-50 transition-colors"
-                                    title="Sửa hoạt động"
+                                    title={canEdit ? 'Sửa hoạt động' : 'Xem chi tiết hoạt động'}
                                   >
                                     <Pen className="w-3.5 h-3.5" />
                                   </button>

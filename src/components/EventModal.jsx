@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Plus, CalendarPlus, PenSquare, Check, Trash2, Star } from 'lucide-react';
+import { X, Plus, CalendarPlus, PenSquare, Check, Trash2, Star, Lock } from 'lucide-react';
 
 export default function EventModal({
   isOpen,
@@ -9,6 +9,11 @@ export default function EventModal({
   members = [],
   currentUser = null
 }) {
+  const isAdmin = currentUser?.isAdmin || currentUser?.mssv === '20227035';
+  const isPreExisting = eventData && (!eventData.createdByMssv || (typeof eventData.id === 'string' && eventData.id.startsWith('sch-')));
+  const isCreatedByMe = Boolean(eventData?.createdByMssv && eventData?.createdByMssv === currentUser?.mssv);
+  const canEdit = !eventData || isAdmin || (!isPreExisting && isCreatedByMe);
+
   const [day, setDay] = useState('22');
   const [time, setTime] = useState('');
   const [title, setTitle] = useState('');
@@ -82,6 +87,10 @@ export default function EventModal({
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!canEdit) {
+      onClose();
+      return;
+    }
 
     const dayTitles = {
       '22': 'THỨ 5 (22/10/2026): Di chuyển, Check-in & Pre-conference Workshops',
@@ -135,15 +144,17 @@ export default function EventModal({
         {/* Header */}
         <div className="px-5 py-4 border-b-2 border-duo-border bg-[#F8FAFC] flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-duo-green flex items-center justify-center shadow-[0_3px_0_#46A302] text-white shrink-0">
-              {eventData ? <PenSquare className="w-5 h-5" /> : <CalendarPlus className="w-5 h-5" />}
+            <div className={`w-10 h-10 rounded-2xl flex items-center justify-center text-white shrink-0 ${
+              !canEdit ? 'bg-amber-500 shadow-[0_3px_0_#D97706]' : 'bg-duo-green shadow-[0_3px_0_#46A302]'
+            }`}>
+              {!canEdit ? <Lock className="w-5 h-5" /> : eventData ? <PenSquare className="w-5 h-5" /> : <CalendarPlus className="w-5 h-5" />}
             </div>
             <div>
               <h3 className="text-base sm:text-lg font-black text-duo-dark">
-                {eventData ? 'Chỉnh Sửa Hoạt Động' : 'Thêm Hoạt Động Mới'}
+                {!canEdit ? 'Chi Tiết Hoạt Động (Chế Độ Chỉ Xem)' : eventData ? 'Chỉnh Sửa Hoạt Động' : 'Thêm Hoạt Động Mới'}
               </h3>
               <p className="text-xs font-bold text-duo-muted">
-                {eventData ? 'Cập nhật thông tin vào CSDL' : 'Lưu hoạt động vào lịch trình hội thảo'}
+                {!canEdit ? 'Sự kiện sẵn có của đoàn (Chỉ Trưởng đoàn mới có quyền chỉnh sửa)' : eventData ? 'Cập nhật thông tin vào CSDL' : 'Lưu hoạt động vào lịch trình hội thảo'}
               </p>
             </div>
           </div>
@@ -158,8 +169,21 @@ export default function EventModal({
           </button>
         </div>
 
+        {/* Read-only Notice Banner */}
+        {!canEdit && (
+          <div className="px-5 pt-4">
+            <div className="p-3.5 rounded-2xl bg-amber-50 border-2 border-amber-200 text-amber-900 text-xs font-bold flex items-start gap-2.5">
+              <Lock className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+              <span>
+                <strong>Quyền chỉnh sửa & xóa bị giới hạn:</strong> Các thành viên đoàn chỉ có thể tự thêm mới và không thể xóa hoặc sửa các sự kiện sẵn có của đoàn. Chỉ có Trưởng đoàn Nguyễn Quang Anh mới có quyền chỉnh sửa & xóa cao nhất.
+              </span>
+            </div>
+          </div>
+        )}
+
         {/* Body Form */}
         <form onSubmit={handleSubmit} className="p-5 sm:p-6 space-y-4 max-h-[80vh] overflow-y-auto custom-scrollbar">
+          <fieldset disabled={!canEdit} className="space-y-4">
           
           {/* Day selection */}
           <div>
@@ -409,6 +433,7 @@ export default function EventModal({
               ))}
             </div>
           </details>
+          </fieldset>
 
           {/* Footer Actions */}
           <div className="pt-3 border-t-2 border-duo-border flex items-center justify-end gap-3">
@@ -417,15 +442,17 @@ export default function EventModal({
               onClick={onClose}
               className="btn-3d-white text-duo-dark font-black text-xs sm:text-sm px-5 py-2.5 rounded-2xl cursor-pointer"
             >
-              Hủy
+              {canEdit ? 'Hủy' : 'Đóng (Chỉ xem)'}
             </button>
-            <button
-              type="submit"
-              className="btn-3d-green text-white font-black text-xs sm:text-sm px-6 py-2.5 rounded-2xl flex items-center gap-2 cursor-pointer"
-            >
-              <Check className="w-4 h-4 stroke-[3]" />
-              <span>LƯU VÀO CSDL</span>
-            </button>
+            {canEdit && (
+              <button
+                type="submit"
+                className="btn-3d-green text-white font-black text-xs sm:text-sm px-6 py-2.5 rounded-2xl flex items-center gap-2 cursor-pointer"
+              >
+                <Check className="w-4 h-4 stroke-[3]" />
+                <span>{eventData ? 'LƯU VÀO CSDL' : 'THÊM VÀO LỊCH TRÌNH'}</span>
+              </button>
+            )}
           </div>
 
         </form>

@@ -130,7 +130,10 @@ export default function EventCard({
           {/* Action buttons (Pen & Trash) */}
           {(() => {
             const isAdmin = currentUser?.isAdmin || currentUser?.mssv === '20227035';
-            const canDelete = isAdmin || (event.createdByMssv && event.createdByMssv === currentUser?.mssv);
+            const isPreExisting = !event.createdByMssv || (typeof event.id === 'string' && event.id.startsWith('sch-'));
+            const isCreatedByMe = Boolean(event.createdByMssv && event.createdByMssv === currentUser?.mssv);
+            const canEdit = isAdmin || (!isPreExisting && isCreatedByMe);
+            const canDelete = isAdmin || (!isPreExisting && isCreatedByMe);
 
             return (
               <div className="flex items-center gap-1.5 opacity-90 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
@@ -138,7 +141,7 @@ export default function EventCard({
                   type="button"
                   onClick={() => onEdit(event)}
                   className="btn-3d-white w-8 h-8 rounded-xl flex items-center justify-center text-duo-dark hover:border-duo-blue hover:text-duo-blue transition-colors cursor-pointer"
-                  title="Chỉnh sửa hoạt động"
+                  title={canEdit ? 'Chỉnh sửa hoạt động' : 'Xem chi tiết hoạt động'}
                 >
                   <Pen className="w-3.5 h-3.5" />
                 </button>
@@ -157,7 +160,7 @@ export default function EventCard({
                     type="button"
                     onClick={() => onDelete(event)}
                     className="btn-3d-white w-8 h-8 rounded-xl flex items-center justify-center text-slate-300 hover:text-amber-600 transition-colors cursor-pointer"
-                    title="Chỉ Nguyễn Quang Anh (20227035) mới có quyền xóa sự kiện này"
+                    title="Sự kiện sẵn có của đoàn (Chỉ Trưởng đoàn Nguyễn Quang Anh mới có quyền xóa)"
                   >
                     <Lock className="w-3.5 h-3.5 text-duo-muted" />
                   </button>

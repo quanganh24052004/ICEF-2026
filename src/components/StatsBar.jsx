@@ -105,7 +105,7 @@ export default function StatsBar({ schedules = [], members = [] }) {
           </span>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-duo-muted font-bold">Khởi hành: 13:00 Thứ 5 (22/10)</span>
+          <span className="text-duo-muted font-bold">Khởi hành: 11:30 Thứ 5 (22/10)</span>
           <div className="w-28 sm:w-36 h-2.5 bg-duo-border rounded-full overflow-hidden">
             <div className="w-full h-full bg-duo-green rounded-full"></div>
           </div>

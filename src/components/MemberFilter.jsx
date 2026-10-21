@@ -286,7 +286,7 @@ export default function MemberFilter({
                           )}
                         </div>
                         <div className="text-[11px] font-bold text-duo-muted leading-tight">
-                          {m.mssv ? `MSSV: ${m.mssv}` : m.roleTitle}
+                          {m.roleTitle || 'Thành viên đoàn ICEF 2026'}
                         </div>
                       </div>
                     </div>

@@ -222,7 +222,7 @@ export default function App() {
   const handleOpenAddModal = () => {
     if (!currentUser) {
       setIsAuthModalOpen(true);
-      showToast('Vui lòng đăng nhập MSSV để thêm hoạt động mới!', 'error');
+      showToast('Vui lòng đăng nhập tài khoản để thêm hoạt động mới!', 'error');
       return;
     }
     setEditingEvent(null);
@@ -240,6 +240,15 @@ export default function App() {
   };
 
   const handleSaveEvent = async (eventItem) => {
+    const isAdmin = currentUser?.isAdmin || currentUser?.mssv === '20227035';
+    const isPreExisting = !eventItem.createdByMssv || (typeof eventItem.id === 'string' && eventItem.id.startsWith('sch-'));
+    const isCreatedByMe = Boolean(eventItem.createdByMssv && eventItem.createdByMssv === currentUser?.mssv);
+
+    if (eventItem.id && !isAdmin && isPreExisting) {
+      showToast('Quyền bị từ chối! Các thành viên không thể sửa các sự kiện sẵn có của đoàn. Chỉ Trưởng đoàn Nguyễn Quang Anh mới có quyền.', 'error');
+      return;
+    }
+
     try {
       if (eventItem.id) {
         await dbService.updateSchedule(eventItem);
@@ -258,12 +267,13 @@ export default function App() {
 
   const handleOpenDeleteModal = (event) => {
     const isAdmin = currentUser?.isAdmin || currentUser?.mssv === '20227035';
-    const isCreatedByMe = event.createdByMssv && event.createdByMssv === currentUser?.mssv;
+    const isPreExisting = !event.createdByMssv || (typeof event.id === 'string' && event.id.startsWith('sch-'));
+    const isCreatedByMe = Boolean(event.createdByMssv && event.createdByMssv === currentUser?.mssv);
 
     // Regular members can only delete events they created themselves
     if (!isAdmin && !isCreatedByMe) {
       showToast(
-        'Quyền bị từ chối! Các thành viên không thể xóa các sự kiện sẵn có. Chỉ Trưởng đoàn Nguyễn Quang Anh (20227035) mới có quyền xóa.',
+        'Quyền bị từ chối! Các thành viên không thể xóa các sự kiện sẵn có của đoàn. Chỉ Trưởng đoàn Nguyễn Quang Anh mới có quyền xóa.',
         'error'
       );
     }
@@ -276,10 +286,11 @@ export default function App() {
 
   const handleConfirmDelete = async (eventId) => {
     const isAdmin = currentUser?.isAdmin || currentUser?.mssv === '20227035';
-    const isCreatedByMe = deletingEvent?.createdByMssv && deletingEvent?.createdByMssv === currentUser?.mssv;
+    const isPreExisting = !deletingEvent?.createdByMssv || (typeof deletingEvent?.id === 'string' && deletingEvent?.id.startsWith('sch-'));
+    const isCreatedByMe = Boolean(deletingEvent?.createdByMssv && deletingEvent?.createdByMssv === currentUser?.mssv);
 
     if (!isAdmin && !isCreatedByMe) {
-      showToast('Bạn không có quyền xóa hoạt động này!', 'error');
+      showToast('Quyền bị từ chối! Các thành viên không thể xóa các sự kiện sẵn có của đoàn. Chỉ Trưởng đoàn Nguyễn Quang Anh mới có quyền xóa.', 'error');
       handleCloseDeleteModal();
       return;
     }
@@ -317,7 +328,7 @@ export default function App() {
   const handleImportJSON = async (jsonStr) => {
     const isAdmin = currentUser?.isAdmin || currentUser?.mssv === '20227035';
     if (!isAdmin) {
-      showToast('Chỉ Quản trị viên Nguyễn Quang Anh (20227035) mới có quyền khôi phục CSDL!', 'error');
+      showToast('Chỉ Quản trị viên Nguyễn Quang Anh mới có quyền khôi phục CSDL!', 'error');
       return;
     }
 
@@ -334,7 +345,7 @@ export default function App() {
   const handleResetDefault = async () => {
     const isAdmin = currentUser?.isAdmin || currentUser?.mssv === '20227035';
     if (!isAdmin) {
-      showToast('Chỉ Quản trị viên Nguyễn Quang Anh (20227035) mới có quyền đặt lại dữ liệu gốc!', 'error');
+      showToast('Chỉ Quản trị viên Nguyễn Quang Anh mới có quyền đặt lại dữ liệu gốc!', 'error');
       return;
     }
 

@@ -11,8 +11,9 @@ export default function DeleteModal({
   if (!isOpen || !eventItem) return null;
 
   const isAdmin = currentUser?.isAdmin || currentUser?.mssv === '20227035';
-  const isCreatedByMe = eventItem.createdByMssv && eventItem.createdByMssv === currentUser?.mssv;
-  const canDelete = isAdmin || isCreatedByMe;
+  const isPreExisting = !eventItem.createdByMssv || (typeof eventItem.id === 'string' && eventItem.id.startsWith('sch-'));
+  const isCreatedByMe = Boolean(eventItem.createdByMssv && eventItem.createdByMssv === currentUser?.mssv);
+  const canDelete = isAdmin || (!isPreExisting && isCreatedByMe);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fade-in">
@@ -71,7 +72,7 @@ export default function DeleteModal({
                 <ShieldCheck className="w-4 h-4 shrink-0 text-duo-greenDark" />
                 <span>
                   {isAdmin
-                    ? 'Bạn đang thao tác với tư cách Quản trị viên (Nguyễn Quang Anh - 20227035).'
+                    ? 'Bạn đang thao tác với tư cách Quản trị viên cao nhất (Trưởng đoàn Nguyễn Quang Anh).'
                     : 'Đây là sự kiện do chính bạn thêm mới.'}
                 </span>
               </div>
@@ -87,7 +88,7 @@ export default function DeleteModal({
                   Các thành viên đoàn chỉ có thể tự thêm mới và không thể xóa các sự kiện sẵn có của đoàn.
                 </p>
                 <p className="pt-1 text-[11px] font-black text-amber-800">
-                  Chỉ có <strong>Nguyễn Quang Anh (MSSV: 20227035)</strong> mới có quyền chỉnh sửa & xóa cao nhất.
+                  Chỉ có <strong>Trưởng đoàn Nguyễn Quang Anh</strong> mới có quyền chỉnh sửa & xóa cao nhất.
                 </p>
               </div>
 
