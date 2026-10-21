@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Map, MapPin, ChevronDown, Navigation, ExternalLink, Car, Building, UtensilsCrossed, Hotel, School } from 'lucide-react';
+import { Map, MapPin, ChevronDown, Navigation, ExternalLink, Car, Building, UtensilsCrossed, Hotel, School, Phone } from 'lucide-react';
 import { KEY_LOCATIONS } from '../data/venuesData';
 
 export default function LocationsCard({ onOpenMapModal }) {
@@ -16,7 +16,7 @@ export default function LocationsCard({ onOpenMapModal }) {
     },
     {
       key: 'alo_garden',
-      label: '2. Khách sạn Alo Garden',
+      label: '2. ALO RESORT (Alo Garden)',
       sub: 'Lưu trú 2 đêm • Đón Shuttle Bus',
       icon: Hotel,
       color: 'text-emerald-700 bg-emerald-50 border-emerald-200'
@@ -121,9 +121,20 @@ export default function LocationsCard({ onOpenMapModal }) {
                   </span>
                 )}
               </div>
-              <p className="text-xs font-bold text-duo-muted">
-                <strong>Địa chỉ:</strong> {currentVenue.address}
-              </p>
+              <div className="flex items-center gap-3 text-xs font-bold text-duo-muted flex-wrap">
+                <p>
+                  <strong>Địa chỉ:</strong> {currentVenue.address}
+                </p>
+                {currentVenue.phone && (
+                  <a
+                    href={`tel:${currentVenue.phone.replace(/\s+/g, '')}`}
+                    className="flex items-center gap-1 text-duo-greenDark hover:underline font-black bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200"
+                  >
+                    <Phone className="w-3 h-3 text-duo-greenDark shrink-0" />
+                    <span>Hotline: {currentVenue.phone}</span>
+                  </a>
+                )}
+              </div>
               <p className="text-xs font-bold text-duo-dark flex items-start gap-1.5 pt-1">
                 <Car className="w-3.5 h-3.5 text-duo-blue shrink-0 mt-0.5" />
                 <span>{currentVenue.note}</span>

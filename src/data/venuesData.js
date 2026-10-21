@@ -19,17 +19,23 @@ export const KEY_LOCATIONS = {
   },
   alo_garden: {
     id: 'alo_garden',
-    name: 'Khách sạn Alo Garden Ninh Bình',
-    shortName: 'Khách sạn Alo Garden',
+    name: 'ALO RESORT NINH BÌNH (Khách sạn Alo Garden)',
+    shortName: 'Alo Resort Ninh Bình',
     badge: 'Nơi Lưu Trú & Đón Shuttle Bus',
     badgeColor: 'bg-emerald-100 text-emerald-800 border-emerald-200',
     type: 'hotel',
-    address: 'Thôn Vân Long, Xã Gia Vân, Huyện Gia Viễn, Tỉnh Ninh Bình',
-    note: 'Lưu trú 2 đêm (22/10 & 23/10). Điểm đón/trả các chuyến Shuttle Bus: 14:30 (22/10), 07:40, 17:30, 18:30 (23/10).',
-    distance: '~1.5 km sang Emeralda Resort (khoảng 3 - 5 phút đi xe trung chuyển)',
-    mapQuery: 'Alo Garden Homestay Gia Van Gia Vien Ninh Binh',
-    embedUrl: 'https://maps.google.com/maps?q=Alo+Garden+Homestay+Gia+Van+Gia+Vien+Ninh+Binh&t=&z=16&ie=UTF8&iwloc=&output=embed',
-    directUrl: 'https://www.google.com/maps/search/?api=1&query=Alo+Garden+Ninh+Binh'
+    address: 'Số 7 Đường Võ Nguyên Giáp, Xã Ninh Khang, Huyện Hoa Lư, Tỉnh Ninh Bình',
+    phone: '+84 889 556 379',
+    coordinates: {
+      lat: 20.307108,
+      lng: 105.949081
+    },
+    note: 'Lưu trú 2 đêm (22/10 & 23/10). Điểm đón/trả các chuyến Shuttle Bus: 14:30 (22/10), 07:40, 17:30, 18:30 (23/10). Hotline: +84 889 556 379.',
+    distance: '~15 km sang Emeralda Resort (khoảng 15 - 20 phút xe trung chuyển) | ~6 km đến Nhà hàng 1969',
+    mapQuery: 'ALO RESORT NINH BINH 7 Vo Nguyen Giap Road Ninh Khang Ninh Binh',
+    embedUrl: 'https://maps.google.com/maps?q=20.307108,105.949081+(ALO+RESORT+NINH+B%C3%8CNH)&t=&z=16&ie=UTF8&iwloc=&output=embed',
+    directUrl: 'https://www.google.com/maps/search/?api=1&query=20.307108,105.949081',
+    bingUrl: 'https://www.bing.com/maps?&mepi=0~~Embedded~Address_Link&ty=18&q=ALO%20RESORT%20NINH%20B%C3%8CNH&ss=ypid.YN419317FCB8E833EB&ppois=20.30710792541504_105.94908142089844_ALO%20RESORT%20NINH%20B%C3%8CNH_YN419317FCB8E833EB~&cp=20.307108~105.949081&v=2&sV=1&FORM=MPSRPL'
   },
   emeralda: {
     id: 'emeralda',
@@ -40,7 +46,7 @@ export const KEY_LOCATIONS = {
     type: 'conference',
     address: 'Khu bảo tồn Đầm Vân Long, Xã Gia Vân, Huyện Gia Viễn, Tỉnh Ninh Bình',
     note: 'Địa điểm tổ chức: Van Long Ballroom (Phiên Toàn thể), Van Trinh 1 (Workshop & Session 1, 6), Van Trinh 2 (Session 2 - Oral PID 628, Session 7), Hoa Lu 1-3 (Session 3-5, 8-10), và Sảnh Hall (Triển lãm Poster PID 661).',
-    distance: '~90 km từ Hà Nội | ~1.5 km từ Alo Garden | ~12 km đến Nhà hàng 1969',
+    distance: '~90 km từ Hà Nội | ~15 km từ Alo Resort (Ninh Khang) | ~12 km đến Nhà hàng 1969',
     mapQuery: 'Emeralda Resort Ninh Binh',
     embedUrl: 'https://maps.google.com/maps?q=Emeralda+Resort+Ninh+Binh&t=&z=16&ie=UTF8&iwloc=&output=embed',
     directUrl: 'https://www.google.com/maps/search/?api=1&query=Emeralda+Resort+Ninh+Binh'
@@ -53,8 +59,8 @@ export const KEY_LOCATIONS = {
     badgeColor: 'bg-amber-100 text-amber-800 border-amber-200',
     type: 'dining',
     address: 'Đường Văn Tiến Dũng / Kim Đa, Phường Ninh Khánh (Hoa Lư), TP. Ninh Bình',
-    note: 'Địa điểm tổ chức Tiệc Chào Mừng (Welcome Dinner 18:30 Thứ 5, 22/10) và Tiệc Gala Dinner chính thức (19:00 Thứ 6, 23/10). Xe trung chuyển đón từ Alo Garden lúc 18:30.',
-    distance: '~12 km từ Emeralda Resort / Alo Garden (khoảng 15 - 20 phút đi xe)',
+    note: 'Địa điểm tổ chức Tiệc Chào Mừng (Welcome Dinner 18:30 Thứ 5, 22/10) và Tiệc Gala Dinner chính thức (19:00 Thứ 6, 23/10). Xe trung chuyển đón từ Alo Resort lúc 18:30.',
+    distance: '~6 km từ Alo Resort (khoảng 8 - 10 phút) | ~12 km từ Emeralda Resort',
     mapQuery: 'Nha hang 1969 Ninh Binh Van Tien Dung Kim Da',
     embedUrl: 'https://maps.google.com/maps?q=Nh%C3%A0+h%C3%A0ng+1969+Ninh+B%C3%ACnh&t=&z=16&ie=UTF8&iwloc=&output=embed',
     directUrl: 'https://www.google.com/maps/search/?api=1&query=Nhà+hàng+1969+Ninh+Bình'

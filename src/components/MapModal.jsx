@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, MapPin, Navigation, ExternalLink, Building2, Car, Compass } from 'lucide-react';
+import { X, MapPin, Navigation, ExternalLink, Building2, Car, Compass, Phone } from 'lucide-react';
 import { findVenueByLocationText } from '../data/venuesData';
 
 export default function MapModal({ isOpen, onClose, locationData }) {
@@ -37,10 +37,22 @@ export default function MapModal({ isOpen, onClose, locationData }) {
                   </span>
                 )}
               </div>
-              <p className="text-xs font-bold text-duo-muted mt-0.5 flex items-center gap-1">
-                <Compass className="w-3.5 h-3.5 text-duo-blue shrink-0" />
-                <span>{venue.address}</span>
-              </p>
+              <div className="flex items-center gap-3 text-xs font-bold text-duo-muted mt-1 flex-wrap">
+                <span className="flex items-center gap-1">
+                  <Compass className="w-3.5 h-3.5 text-duo-blue shrink-0" />
+                  <span>{venue.address}</span>
+                </span>
+                {venue.phone && (
+                  <a
+                    href={`tel:${venue.phone.replace(/\s+/g, '')}`}
+                    className="flex items-center gap-1 text-duo-greenDark hover:underline font-black bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200"
+                    title="Gọi hotline"
+                  >
+                    <Phone className="w-3 h-3 text-duo-greenDark shrink-0" />
+                    <span>{venue.phone}</span>
+                  </a>
+                )}
+              </div>
             </div>
           </div>
 

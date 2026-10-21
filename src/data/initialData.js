@@ -545,8 +545,10 @@ export const INITIAL_SCHEDULE = [
 ];
 
 export const INITIAL_HOTEL_INFO = {
-  hotelName: 'Khách sạn Alo Garden',
-  note: 'Đã thanh toán 2 đêm (22/10 & 23/10/2026), đã bao gồm ăn sáng và thuế. Thanh toán qua VietinBank: Đỗ Tiến Liêu - 103001060752. Có các tuyến Shuttle Bus đón/trả sang Emeralda Resort và Nhà hàng 1969.',
+  hotelName: 'ALO RESORT NINH BÌNH (Alo Garden)',
+  address: 'Số 7 Đường Võ Nguyên Giáp, Xã Ninh Khang, Huyện Hoa Lư, Tỉnh Ninh Bình',
+  phone: '+84 889 556 379',
+  note: 'Đã thanh toán 2 đêm (22/10 & 23/10/2026), đã bao gồm ăn sáng và thuế. Hotline lễ tân: +84 889 556 379. Thanh toán qua VietinBank: Đỗ Tiến Liêu - 103001060752. Có các tuyến Shuttle Bus đón/trả sang Emeralda Resort và Nhà hàng 1969.',
   rooms: [
     {
       id: 'room-nam',

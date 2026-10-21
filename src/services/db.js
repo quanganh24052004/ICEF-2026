@@ -133,10 +133,11 @@ class DatabaseService {
       await this.saveAppInfo(appInfo);
     }
 
-    // Auto-migrate to version 4: Remove unrelated university classes (LSĐ - SSH1141 & Mạng máy tính - IT3080)
+    // Auto-migrate to version 4: Remove unrelated university classes & update Alo Resort address/coordinates
     if (appInfo.dataVersion < 4) {
       await this.deleteSchedule('sch-hust-175507');
       await this.deleteSchedule('sch-hust-174386');
+      await this.saveHotelInfo(INITIAL_HOTEL_INFO);
       appInfo.dataVersion = 4;
       appInfo.version = '3.3.0-clean';
       await this.saveAppInfo(appInfo);
@@ -478,6 +479,7 @@ class DatabaseService {
               (s) => s.id !== 'sch-hust-175507' && s.id !== 'sch-hust-174386'
             );
           }
+          data.hotelInfo = JSON.parse(JSON.stringify(INITIAL_HOTEL_INFO));
           if (!data.meta) data.meta = {};
           data.meta.app_info = { key: 'app_info', version: '3.3.0-clean', dataVersion: 4 };
           this._saveFallbackData(data);
