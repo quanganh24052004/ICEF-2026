@@ -12,7 +12,8 @@ export default function ScheduleList({
   showAllSessions = true,
   currentUser = null,
   onEditEvent,
-  onDeleteEvent
+  onDeleteEvent,
+  onOpenMap
 }) {
   const query = searchQuery.toLowerCase().trim();
 
@@ -126,6 +127,7 @@ export default function ScheduleList({
                   currentUser={currentUser}
                   onEdit={onEditEvent}
                   onDelete={onDeleteEvent}
+                  onOpenMap={onOpenMap}
                 />
               ))}
             </div>

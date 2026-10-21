@@ -122,14 +122,14 @@ class DatabaseService {
       return;
     }
 
-    // Auto-migrate to version 2: Updated departure times (11:00 at C7, 11:45 departure) & Vehicle 1 details
-    if (!appInfo.dataVersion || appInfo.dataVersion < 2) {
-      const targetIds = ['sch-22-1', 'sch-22-2', 'sch-22-3'];
-      const targetSchedules = INITIAL_SCHEDULE.filter((s) => targetIds.includes(s.id));
-      for (const item of targetSchedules) {
+    // Auto-migrate to version 3: Official Conference Agenda (Shuttle Buses, Venues, Keynote 4 Dr. Baker, Session 4/6 swap, Nhà hàng 1969, 09:30 return)
+    if (!appInfo.dataVersion || appInfo.dataVersion < 3) {
+      for (const item of INITIAL_SCHEDULE) {
         await this.updateSchedule(item);
       }
-      appInfo.dataVersion = 2;
+      await this.saveHotelInfo(INITIAL_HOTEL_INFO);
+      appInfo.dataVersion = 3;
+      appInfo.version = '3.2.0-official';
       await this.saveAppInfo(appInfo);
     }
 
@@ -436,8 +436,8 @@ class DatabaseService {
 
     metaStore.put({
       key: 'app_info',
-      version: '3.1.0-react',
-      dataVersion: 2,
+      version: '3.2.0-official',
+      dataVersion: 3,
       lastReset: new Date().toISOString(),
       framework: 'React + TailwindCSS'
     });
@@ -456,22 +456,18 @@ class DatabaseService {
         members: JSON.parse(JSON.stringify(INITIAL_MEMBERS)),
         hotelInfo: JSON.parse(JSON.stringify(INITIAL_HOTEL_INFO)),
         meta: {
-          app_info: { key: 'app_info', version: '3.1.0-react', dataVersion: 2 }
+          app_info: { key: 'app_info', version: '3.2.0-official', dataVersion: 3 }
         }
       };
       this._saveFallbackData(initial);
     } else {
       try {
         const data = JSON.parse(existing);
-        if (!data.meta?.app_info?.dataVersion || data.meta.app_info.dataVersion < 2) {
-          const targetIds = ['sch-22-1', 'sch-22-2', 'sch-22-3'];
-          data.schedules = (data.schedules || []).map((s) => {
-            const found = INITIAL_SCHEDULE.find((init) => init.id === s.id && targetIds.includes(s.id));
-            return found || s;
-          });
+        if (!data.meta?.app_info?.dataVersion || data.meta.app_info.dataVersion < 3) {
+          data.schedules = JSON.parse(JSON.stringify(INITIAL_SCHEDULE));
+          data.hotelInfo = JSON.parse(JSON.stringify(INITIAL_HOTEL_INFO));
           if (!data.meta) data.meta = {};
-          if (!data.meta.app_info) data.meta.app_info = { key: 'app_info' };
-          data.meta.app_info.dataVersion = 2;
+          data.meta.app_info = { key: 'app_info', version: '3.2.0-official', dataVersion: 3 };
           this._saveFallbackData(data);
         }
       } catch (e) {

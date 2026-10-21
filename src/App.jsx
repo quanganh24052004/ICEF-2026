@@ -5,6 +5,8 @@ import Header from './components/Header';
 import StatsBar from './components/StatsBar';
 import MemberFilter from './components/MemberFilter';
 import AccommodationsCard from './components/AccommodationsCard';
+import LocationsCard from './components/LocationsCard';
+import MapModal from './components/MapModal';
 import DayTabs from './components/DayTabs';
 import ScheduleList from './components/ScheduleList';
 import CalendarView from './components/CalendarView';
@@ -43,6 +45,7 @@ export default function App() {
   const [editingEvent, setEditingEvent] = useState(null);
   const [deletingEvent, setDeletingEvent] = useState(null);
   const [isBackupModalOpen, setIsBackupModalOpen] = useState(false);
+  const [mapModalLocation, setMapModalLocation] = useState(null);
 
   // Toast notifications
   const [toasts, setToasts] = useState([]);
@@ -147,6 +150,7 @@ export default function App() {
         setEditingEvent(null);
         setDeletingEvent(null);
         setIsBackupModalOpen(false);
+        setMapModalLocation(null);
         // Only close auth modal with escape if a user is already logged in
         if (currentUser) {
           setIsAuthModalOpen(false);
@@ -410,7 +414,15 @@ export default function App() {
         />
 
         {/* Hotel & Academic Paper Overview (Collapsible) */}
-        <AccommodationsCard hotelInfo={hotelInfo} />
+        <AccommodationsCard
+          hotelInfo={hotelInfo}
+          onOpenMap={(loc) => setMapModalLocation(loc)}
+        />
+
+        {/* Dedicated Interactive Conference Venues Card with Map (Collapsible) */}
+        <LocationsCard
+          onOpenMapModal={(loc) => setMapModalLocation(loc)}
+        />
 
         {/* Day Tabs Navigation & View Mode Controls */}
         <DayTabs
@@ -435,6 +447,7 @@ export default function App() {
             currentUser={currentUser}
             onEditEvent={handleOpenEditModal}
             onDeleteEvent={handleOpenDeleteModal}
+            onOpenMap={(loc) => setMapModalLocation(loc)}
           />
         ) : (
           <CalendarView
@@ -446,6 +459,7 @@ export default function App() {
             currentUser={currentUser}
             onEventClick={handleOpenEditModal}
             onDeleteEvent={handleOpenDeleteModal}
+            onOpenMap={(loc) => setMapModalLocation(loc)}
           />
         )}
       </main>
@@ -510,6 +524,13 @@ export default function App() {
         onImportJSON={handleImportJSON}
         onResetDefault={handleResetDefault}
         currentUser={currentUser}
+      />
+
+      {/* Modal 4: Interactive Google Maps Modal */}
+      <MapModal
+        isOpen={!!mapModalLocation}
+        onClose={() => setMapModalLocation(null)}
+        locationData={mapModalLocation}
       />
 
       {/* Toast Notification Container */}

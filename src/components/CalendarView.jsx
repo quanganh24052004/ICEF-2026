@@ -20,7 +20,8 @@ export default function CalendarView({
   searchQuery = '',
   currentUser = null,
   onEventClick,
-  onDeleteEvent
+  onDeleteEvent,
+  onOpenMap
 }) {
   const [viewType, setViewType] = useState('week'); // 'week' | 'threeDays' | 'day'
   const [hoveredEventId, setHoveredEventId] = useState(null);
@@ -742,10 +743,18 @@ export default function CalendarView({
                               </div>
 
                               {ev.location && (
-                                <div className="flex items-center gap-1.5 text-slate-600 font-medium">
-                                  <MapPin className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                                  <span>{ev.location}</span>
-                                </div>
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    if (onOpenMap) onOpenMap(ev.location);
+                                  }}
+                                  className="flex items-center gap-1.5 text-slate-600 font-medium hover:text-blue-600 transition-colors cursor-pointer text-left group/popmap w-full"
+                                  title="Xem bản đồ và chỉ đường"
+                                >
+                                  <MapPin className="w-3.5 h-3.5 text-emerald-600 group-hover/popmap:text-blue-600 shrink-0 transition-colors" />
+                                  <span className="group-hover/popmap:underline truncate">{ev.location}</span>
+                                </button>
                               )}
 
                               {speaker && (

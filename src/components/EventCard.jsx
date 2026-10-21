@@ -22,7 +22,8 @@ export default function EventCard({
   selectedMember = 'all',
   currentUser = null,
   onEdit,
-  onDelete
+  onDelete,
+  onOpenMap
 }) {
   const isHighlight = event.isHighlight || event.category === 'highlight_oral' || event.category === 'highlight_poster';
 
@@ -116,10 +117,15 @@ export default function EventCard({
         </div>
 
         <div className="flex items-center gap-2.5 sm:gap-3">
-          <span className="text-xs font-bold text-duo-muted flex items-center gap-1">
-            <MapPin className="w-3.5 h-3.5 text-duo-greenDark shrink-0" />
-            <span className="truncate max-w-[170px] sm:max-w-none">{event.location}</span>
-          </span>
+          <button
+            type="button"
+            onClick={() => onOpenMap && onOpenMap(event.location)}
+            className="text-xs font-bold text-duo-muted hover:text-duo-blue flex items-center gap-1 group/loc transition-colors cursor-pointer text-left"
+            title="Nhấp để xem bản đồ & chỉ đường trên Google Maps"
+          >
+            <MapPin className="w-3.5 h-3.5 text-duo-greenDark group-hover/loc:text-duo-blue shrink-0 transition-colors" />
+            <span className="truncate max-w-[170px] sm:max-w-none group-hover/loc:underline">{event.location}</span>
+          </button>
 
           {/* Action buttons (Pen & Trash) */}
           {(() => {

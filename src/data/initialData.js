@@ -119,11 +119,13 @@ export const INITIAL_SCHEDULE = [
   {
     id: 'sch-hust-175507',
     day: '22',
+    date: '2026-10-22',
+    fullDate: '22.10.2026',
     dayTitle: 'THỨ 5 (22/10/2026): Lịch học Đại học Bách khoa Hà Nội',
     time: '06:45 – 09:10',
     periodText: 'Tiết 1 - 3 (06:45 - 09:10)',
     title: '175507 - Lịch sử Đảng cộng sản Việt Nam - SSH1141',
-    location: 'D5-301',
+    location: 'D5-301, Đại học Bách khoa Hà Nội',
     category: 'academic',
     participants: [...ALL_MEMBER_IDS],
     speaker: 'Lê Thị Lan',
@@ -135,17 +137,19 @@ export const INITIAL_SCHEDULE = [
   {
     id: 'sch-hust-174386',
     day: '22',
+    date: '2026-10-22',
+    fullDate: '22.10.2026',
     dayTitle: 'THỨ 5 (22/10/2026): Lịch học Đại học Bách khoa Hà Nội',
-    time: '09:20 – 11:45',
-    periodText: 'Tiết 4 - 6 (09:20 - 11:45)',
+    time: '09:20 – 11:00',
+    periodText: 'Tiết 4 - 5 (09:20 - 11:00)',
     title: '174386 - Hệ thống và Công nghệ Mạng - IT3080',
-    location: 'D7-404',
+    location: 'D7-404, Đại học Bách khoa Hà Nội',
     category: 'academic',
     participants: [...ALL_MEMBER_IDS],
     speaker: 'Ngô Thị Hiển',
     description: '174386 - Hệ thống và Công nghệ Mạng - IT3080\nGiảng viên: Ngô Thị Hiển\nĐịa điểm: D7-404 (Đại học Bách khoa Hà Nội)',
     memberNotes: {
-      quang_anh: 'Xin phép vắng mặt / học online để tham gia đoàn Hội thảo ICEF 2026 tại Ninh Bình.'
+      quang_anh: 'Xin phép vắng mặt / học online sớm để tham gia đoàn Hội thảo ICEF 2026 (tập trung lúc 11:00 tại C7).'
     }
   },
   {
@@ -154,12 +158,12 @@ export const INITIAL_SCHEDULE = [
     date: '2026-10-22',
     fullDate: '22.10.2026',
     dayTitle: 'THỨ 5 (22/10/2026): Di chuyển, Check-in & Pre-conference Workshops',
-    time: '11:00 – 11:45',
-    title: 'Có mặt tập trung tại C7 Đại học Bách khoa Hà Nội',
-    location: 'Nhà C7 - Đại học Bách khoa Hà Nội',
+    time: '11:00 – 11:30',
+    title: 'Có mặt tập trung tại Tòa nhà C7, ĐH Bách khoa Hà Nội',
+    location: 'Tòa nhà C7 - Đại học Bách khoa Hà Nội',
     category: 'travel',
     participants: [...ALL_MEMBER_IDS],
-    description: 'Có mặt đúng 11h00 tại C7 Đại học Bách khoa Hà Nội để tập trung, điểm danh và sắp xếp hành lý lên xe.\n\n🚗 Danh sách xe (Dự kiến):\n- Xe 1: Gồm đủ 6 thành viên của PID 628 (Nguyễn Quang Anh, Trần Đức Kiên, Đặng Thảo Nguyên, Nguyễn Khánh Linh, Trịnh Thị Hồng, Bùi Thị Phương Ly).\n- Thành viên Vũ Đình Khôi (PID 661) di chuyển theo phương án đoàn/xe riêng.',
+    description: 'Có mặt đúng 11h00 tại Tòa nhà C7 ĐH Bách khoa Hà Nội để tập trung, điểm danh và sắp xếp hành lý lên xe. (Lưu ý: Đại biểu tự túc ăn trưa trước hoặc trên đường di chuyển).\n\n🚗 Danh sách xe (Dự kiến):\n- Xe 1: Gồm đủ 6 thành viên của PID 628 (Nguyễn Quang Anh, Trần Đức Kiên, Đặng Thảo Nguyên, Nguyễn Khánh Linh, Trịnh Thị Hồng, Bùi Thị Phương Ly).\n- Thành viên Vũ Đình Khôi (PID 661) di chuyển theo phương án đoàn/xe riêng.',
     memberNotes: {
       quang_anh: 'Có mặt đúng 11h00 tại C7 ĐHBK. Điều phối danh sách Xe 1 (6 thành viên PID 628).',
       thao_nguyen: 'Có mặt đúng 11h00 tại C7 ĐHBK. Kiểm tra quân số các thành viên nữ lên Xe 1.',
@@ -176,14 +180,14 @@ export const INITIAL_SCHEDULE = [
     date: '2026-10-22',
     fullDate: '22.10.2026',
     dayTitle: 'THỨ 5 (22/10/2026): Di chuyển, Check-in & Pre-conference Workshops',
-    time: '11:45 – 13:45',
-    title: 'Xuất phát di chuyển đi Ninh Bình (Xe 1: 6 thành viên PID 628)',
-    location: 'C7 ĐHBK Hà Nội → Khách sạn Alo Garden / Emeralda Resort Ninh Bình',
+    time: '11:30 – 13:30',
+    title: 'Xe xuất phát khởi hành đi Ninh Bình (Xe 1: 6 thành viên PID 628)',
+    location: 'Tòa nhà C7 ĐHBK Hà Nội → Khách sạn Alo Garden Ninh Bình',
     category: 'travel',
     participants: [...ALL_MEMBER_IDS],
-    description: 'Xuất phát đúng 11h45 để bắt đầu hành trình di chuyển tới Ninh Bình.\n\n🚗 Danh sách xe (Dự kiến):\n- Xe 1: Đủ 6 thành viên của PID 628 (Quang Anh, Đức Kiên, Thảo Nguyên, Khánh Linh, Thị Hồng, Phương Ly).',
+    description: 'Xe xuất phát đúng 11h30 AM từ Tòa nhà C7 ĐHBK Hà Nội. Dự kiến tới Ninh Bình lúc ~13:30.\n\n🚗 Danh sách xe (Dự kiến):\n- Xe 1: Đủ 6 thành viên của PID 628 (Quang Anh, Đức Kiên, Thảo Nguyên, Khánh Linh, Thị Hồng, Phương Ly).',
     memberNotes: {
-      quang_anh: 'Xe 1 khởi hành đúng 11h45 đi Ninh Bình.',
+      quang_anh: 'Xe 1 khởi hành đúng 11h30 đi Ninh Bình.',
       dinh_khoi: 'Bảo quản cẩn thận poster PID 661 trong hành trình di chuyển.'
     }
   },
@@ -193,137 +197,183 @@ export const INITIAL_SCHEDULE = [
     date: '2026-10-22',
     fullDate: '22.10.2026',
     dayTitle: 'THỨ 5 (22/10/2026): Di chuyển, Check-in & Pre-conference Workshops',
-    time: '13:45 – 14:30',
-    title: 'Đến Ninh Bình, ăn trưa nhẹ và chuẩn bị nhận phòng',
-    location: 'Ninh Bình (Khu vực Alo Garden / Emeralda)',
-    category: 'meal',
-    participants: [...ALL_MEMBER_IDS],
-    description: 'Đoàn đến Ninh Bình lúc ~13h45, ăn nhẹ/nghỉ ngơi trước khi check-in khách sạn.'
-  },
-  {
-    id: 'sch-22-4',
-    day: '22',
-    dayTitle: 'THỨ 5 (22/10/2026): Di chuyển, Check-in & Pre-conference Workshops',
-    time: '14:00 – 15:00',
-    title: 'Làm thủ tục Check-in Khách sạn Alo Garden & Sang Emeralda Resort',
-    location: 'Khách sạn Alo Garden → Emeralda Resort Ninh Bình',
+    time: '13:30 – 14:30',
+    title: 'Đến Ninh Bình & Check-in Khách sạn Alo Garden',
+    location: 'Khách sạn Alo Garden Ninh Bình',
     category: 'hotel',
     participants: [...ALL_MEMBER_IDS],
-    description: 'Nhận 01 phòng Triple Nam (750k/đêm) và 01 phòng Quadruple Nữ (900k/đêm). Cất hành lý và di chuyển sang địa điểm hội thảo tại Emeralda Resort.',
+    description: 'Đoàn đến khách sạn Alo Garden lúc ~13h30. Nhận 01 phòng Triple Nam (750k/đêm) và 01 phòng Quadruple Nữ (900k/đêm). Cất hành lý, chuẩn bị trang phục dự Hội thảo chiều.',
     memberNotes: {
-      quang_anh: 'Đại diện Trưởng phòng Nam làm thủ tục nhận phòng Triple (xuất trình bill 1.500.000đ nếu cần).',
-      thao_nguyen: 'Đại diện Trưởng phòng Nữ làm thủ tục nhận phòng Quadruple (xuất trình bill 1.800.000đ nếu cần).'
+      quang_anh: 'Đại diện Trưởng phòng Nam làm thủ tục nhận phòng Triple.',
+      thao_nguyen: 'Đại diện Trưởng phòng Nữ làm thủ tục nhận phòng Quadruple.'
     }
+  },
+  {
+    id: 'sch-22-shuttle-1',
+    day: '22',
+    date: '2026-10-22',
+    fullDate: '22.10.2026',
+    dayTitle: 'THỨ 5 (22/10/2026): Di chuyển, Check-in & Pre-conference Workshops',
+    time: '14:30 – 14:50',
+    title: '🚌 Xe trung chuyển (Shuttle Transfer): Alo Garden → Emeralda Resort',
+    location: 'Khách sạn Alo Garden → Emeralda Resort Ninh Bình',
+    category: 'travel',
+    participants: [...ALL_MEMBER_IDS],
+    description: 'Xe trung chuyển của Ban tổ chức đón đại biểu tại khách sạn Alo Garden lúc 14:30 để sang Emeralda Resort tham dự các phiên Pre-conference Workshops tại Van Trinh 1 Ballroom.'
   },
   {
     id: 'sch-22-5',
     day: '22',
+    date: '2026-10-22',
+    fullDate: '22.10.2026',
     dayTitle: 'THỨ 5 (22/10/2026): Di chuyển, Check-in & Pre-conference Workshops',
     time: '15:00 – 16:30',
     title: 'Pre-conference Workshop 1: “GenAI-Mediated Academic Writing: Using AI Without Outsourcing Your Scholarship”',
-    location: 'Emeralda Resort Ninh Bình',
+    location: 'Van Trinh 1 Ballroom - Emeralda Resort Ninh Bình',
     category: 'academic',
     participants: [...ALL_MEMBER_IDS],
-    description: 'Diễn giả: Assoc. Prof. Lee Ju Seong (The Education University of Hong Kong — đồng thời là Chủ tọa Session 2 ngày mai của nhóm). (Song song có phiên online của University of Glasgow).'
+    description: 'Địa điểm: Van Trinh 1 Ballroom (Emeralda Resort).\nDiễn giả: Assoc. Prof. Lee Ju Seong (The Education University of Hong Kong — đồng thời là Chủ tọa Session 2 ngày mai của nhóm). (Song song có phiên online của University of Glasgow).'
   },
   {
     id: 'sch-22-6',
     day: '22',
+    date: '2026-10-22',
+    fullDate: '22.10.2026',
     dayTitle: 'THỨ 5 (22/10/2026): Di chuyển, Check-in & Pre-conference Workshops',
     time: '16:30 – 18:00',
     title: 'Pre-conference Workshop 3: “Publishing in Top Journals in the AI Era”',
-    location: 'Emeralda Resort Ninh Bình',
+    location: 'Van Trinh 1 Ballroom - Emeralda Resort Ninh Bình',
     category: 'academic',
     participants: [...ALL_MEMBER_IDS],
-    description: 'Diễn giả: Dr. Lizana Oberholzer (Chair of International Professional Development Association - IPDA, Anh).'
+    description: 'Địa điểm: Van Trinh 1 Ballroom (Emeralda Resort).\nDiễn giả: Dr. Lizana Oberholzer (Chair of International Professional Development Association - IPDA, Anh).'
   },
   {
     id: 'sch-22-7',
     day: '22',
+    date: '2026-10-22',
+    fullDate: '22.10.2026',
     dayTitle: 'THỨ 5 (22/10/2026): Di chuyển, Check-in & Pre-conference Workshops',
     time: '18:30 – 21:00',
     title: 'Tiệc Chào Mừng (Welcome Dinner)',
-    location: 'Emeralda Resort Ninh Bình',
+    location: 'Nhà hàng 1969 (Đường Văn Tiến Dũng / Kim Đa, Phường Hoa Lư, Ninh Bình)',
     category: 'meal',
     participants: [...ALL_MEMBER_IDS],
-    description: 'Tham dự tiệc tối giao lưu cùng Ban tổ chức và các đại biểu quốc tế, sau đó về khách sạn Alo Garden nghỉ ngơi.'
+    description: 'Tham dự tiệc tối Welcome Dinner giao lưu cùng Ban tổ chức và các đại biểu quốc tế tại Nhà hàng 1969 (Đường Văn Tiến Dũng / Kim Đa, Phường Hoa Lư, TP. Ninh Bình). Xe trung chuyển đưa đoàn về lại khách sạn Alo Garden sau tiệc.'
   },
 
   // ================= THỨ 6 (23/10/2026) - SÁNG =================
   {
+    id: 'sch-23-breakfast',
+    day: '23',
+    date: '2026-10-23',
+    fullDate: '23.10.2026',
+    dayTitle: 'THỨ 6 (23/10/2026): Phiên Toàn thể, Báo cáo Chuyên đề & Gala Dinner',
+    time: '06:45 – 07:35',
+    title: 'Ăn sáng tại khách sạn Alo Garden',
+    location: 'Khách sạn Alo Garden Ninh Bình',
+    category: 'meal',
+    participants: [...ALL_MEMBER_IDS],
+    description: 'Dùng bữa sáng tại khách sạn (đã bao gồm trong chi phí phòng). Chuẩn bị thẻ đại biểu, trang phục lịch sự và tài liệu báo cáo.'
+  },
+  {
+    id: 'sch-23-shuttle-morning',
+    day: '23',
+    date: '2026-10-23',
+    fullDate: '23.10.2026',
+    dayTitle: 'THỨ 6 (23/10/2026): Phiên Toàn thể, Báo cáo Chuyên đề & Gala Dinner',
+    time: '07:40 – 08:00',
+    title: '🚌 Xe trung chuyển (Shuttle Transfer): Alo Garden → Emeralda Resort',
+    location: 'Khách sạn Alo Garden → Emeralda Resort Ninh Bình',
+    category: 'travel',
+    participants: [...ALL_MEMBER_IDS],
+    description: 'Xe trung chuyển đón đại biểu lúc 07:40 tại khách sạn Alo Garden sang Emeralda Resort để kịp thời làm thủ tục check-in và tham dự Khai mạc Phiên Toàn thể.'
+  },
+  {
     id: 'sch-23-1',
     day: '23',
+    date: '2026-10-23',
+    fullDate: '23.10.2026',
     dayTitle: 'THỨ 6 (23/10/2026): Phiên Toàn thể, Báo cáo Chuyên đề & Gala Dinner',
-    time: '08:00 – 08:30',
+    time: '08:00 – 08:35',
     title: 'Đăng ký đại biểu (Registration)',
-    location: 'Sảnh chính - Emeralda Resort Ninh Bình',
+    location: 'Sảnh chính & Van Long Ballroom - Emeralda Resort Ninh Bình',
     category: 'general',
     participants: [...ALL_MEMBER_IDS],
-    description: 'Nhận thẻ đại biểu, tài liệu hội thảo. Kiểm tra phòng báo cáo Session 2 và vị trí treo Poster PID 661.',
+    description: 'Nhận thẻ đại biểu, tài liệu hội thảo. Kiểm tra phòng báo cáo Session 2 (Van Trinh 2 Ballroom) và khu vực Hall triển lãm Poster PID 661.',
     memberNotes: {
       khanh_linh: 'Kiểm tra danh sách trình chiếu bài PID 628 tại bàn BTC.',
       duc_kien: 'Kiểm tra kết nối file slide PID 628.',
-      dinh_khoi: 'Xác nhận vị trí bảng dán Poster PID 661 tại khu vực Poster Session 1–3.'
+      dinh_khoi: 'Xác nhận vị trí bảng dán Poster PID 661 tại khu vực Hall Poster Session No. 1–2.'
     }
   },
   {
     id: 'sch-23-2',
     day: '23',
+    date: '2026-10-23',
+    fullDate: '23.10.2026',
     dayTitle: 'THỨ 6 (23/10/2026): Phiên Toàn thể, Báo cáo Chuyên đề & Gala Dinner',
     time: '08:35 – 08:50',
     title: 'Khai mạc Phiên Toàn thể (Plenary Session)',
-    location: 'Hội trường chính - Emeralda Resort',
+    location: 'Van Long Ballroom - Emeralda Resort',
     category: 'plenary',
     participants: [...ALL_MEMBER_IDS],
-    description: '08:35 – 08:45: Giới thiệu chương trình và đại biểu tham dự.\n08:45 – 08:50: Phát biểu khai mạc của Trưởng Ban tổ chức.'
+    description: 'Địa điểm: Van Long Ballroom.\n08:35 – 08:45: Giới thiệu chương trình và đại biểu tham dự.\n08:45 – 08:50: Phát biểu khai mạc của Trưởng Ban tổ chức.'
   },
   {
     id: 'sch-23-3',
     day: '23',
+    date: '2026-10-23',
+    fullDate: '23.10.2026',
     dayTitle: 'THỨ 6 (23/10/2026): Phiên Toàn thể, Báo cáo Chuyên đề & Gala Dinner',
-    time: '08:50 – 10:00',
-    title: 'Keynote Speech Section 1 & Thảo luận bàn tròn 1',
-    location: 'Hội trường chính - Emeralda Resort',
+    time: '08:50 – 10:10',
+    title: 'Keynote Speech Section 1 (Moderator: Prof. Hatsuko Yoshikubo)',
+    location: 'Van Long Ballroom - Emeralda Resort',
     category: 'plenary',
     participants: [...ALL_MEMBER_IDS],
-    description: '• 08:50 – 09:10: Keynote 1 — Prof. Steffen Kersten (Dresden University of Technology, Đức)\n• 09:10 – 09:30: Keynote 2 — Dr. Lizana Oberholzer (Chair of IPDA, Anh)\n• 09:30 – 09:50: Keynote 3 — Assoc. Prof. Lee Ju Seong (Education University of Hong Kong)\n• 09:50 – 10:00: Thảo luận bàn tròn (Panel Discussion 1).'
+    description: 'Địa điểm: Van Long Ballroom. Điều phối (Moderator): Prof. Hatsuko Yoshikubo (Shibaura Institute of Technology, Nhật Bản).\n• 08:50 – 09:10: Keynote 1 — Prof. Steffen Kersten (Dresden University of Technology, Đức)\n• 09:10 – 09:30: Keynote 2 — Dr. Lizana Oberholzer (Chair of IPDA, Anh)\n• 09:30 – 09:50: Keynote 3 — Assoc. Prof. Lee Ju Seong (Education University of Hong Kong)\n• 09:50 – 10:10: ⭐ Keynote 4 (Bổ sung mới) — Dr. John R. Baker: “From Concept to Implementation: Blueprints for Developing Sustainable Self-access Learning Programs”.'
   },
   {
     id: 'sch-23-4',
     day: '23',
+    date: '2026-10-23',
+    fullDate: '23.10.2026',
     dayTitle: 'THỨ 6 (23/10/2026): Phiên Toàn thể, Báo cáo Chuyên đề & Gala Dinner',
-    time: '10:00 – 10:20',
+    time: '10:10 – 10:30',
     title: 'Chụp ảnh lưu niệm & Tiệc trà sáng (Photo Session & Tea Break)',
-    location: 'Khu vực Hội trường - Emeralda Resort',
+    location: 'Sảnh Van Long Ballroom - Emeralda Resort',
     category: 'meal',
     participants: [...ALL_MEMBER_IDS],
-    description: 'Cả nhóm chụp ảnh lưu niệm cùng toàn thể đại biểu hội thảo và dùng tiệc trà.'
+    description: 'Cả nhóm chụp ảnh lưu niệm cùng toàn thể đại biểu hội thảo và dùng tiệc trà tại sảnh Van Long Ballroom.'
   },
   {
     id: 'sch-23-5',
     day: '23',
+    date: '2026-10-23',
+    fullDate: '23.10.2026',
     dayTitle: 'THỨ 6 (23/10/2026): Phiên Toàn thể, Báo cáo Chuyên đề & Gala Dinner',
-    time: '10:20 – 11:45',
-    title: 'Keynote Speech Section 2, Thảo luận 2 & Bế mạc Phiên Toàn thể',
-    location: 'Hội trường chính - Emeralda Resort',
+    time: '10:30 – 12:00',
+    title: 'Keynote Speech Section 2 & Bế mạc Phiên Toàn thể (Moderator: Prof. Alandeom Oliveira)',
+    location: 'Van Long Ballroom - Emeralda Resort',
     category: 'plenary',
     participants: [...ALL_MEMBER_IDS],
-    description: 'Điều phối (Moderator): Prof. Alandeom Oliveira (University at Albany, SUNY, Mỹ).\n• 10:20 – 10:40: Keynote 4 — Prof. Susan Drake (Brock University, Canada)\n• 10:40 – 11:00: Keynote 5 — Prof. Gina O. Gonong (Philippine Normal University)\n• 11:00 – 11:20: Keynote 6 — Prof. Sujatha Mukiri (EFLU, Ấn Độ)\n• 11:20 – 11:30: Thảo luận bàn tròn (Panel Discussion 2)\n• 11:30 – 11:45: Bế mạc Phiên Toàn thể & Hướng dẫn di chuyển về các phòng phiên song song.'
+    description: 'Địa điểm: Van Long Ballroom. Điều phối (Moderator): Prof. Alandeom Oliveira (University at Albany, SUNY, Mỹ).\n• 10:30 – 10:50: Keynote 5 — Prof. Susan Drake (Brock University, Canada)\n• 10:50 – 11:10: Keynote 6 — Prof. Gina O. Gonong (Philippine Normal University)\n• 11:10 – 11:30: Keynote 7 — Prof. Sujatha Mukiri (EFLU, Ấn Độ)\n• 11:30 – 11:45: Thảo luận bàn tròn (Panel Discussion 2)\n• 11:45 – 12:00: Bế mạc Phiên Toàn thể & Hướng dẫn đại biểu về các phòng phân ban.'
   },
   {
     id: 'sch-23-6',
     day: '23',
+    date: '2026-10-23',
+    fullDate: '23.10.2026',
     dayTitle: 'THỨ 6 (23/10/2026): Phiên Toàn thể, Báo cáo Chuyên đề & Gala Dinner',
-    time: '11:45 – 13:15',
+    time: '12:00 – 13:15',
     title: 'Ăn trưa (Lunch) & Chuẩn bị thiết bị báo cáo Ca 1',
     location: 'Nhà hàng Emeralda Resort & Phòng báo cáo',
     category: 'meal',
     participants: [...ALL_MEMBER_IDS],
-    description: 'Dùng bữa trưa. Từ 12:45: Nhóm Oral di chuyển tới phòng Session 2 copy slide & test âm thanh; Vũ Đình Khôi hoàn tất trưng bày Poster PID 661.',
+    description: 'Dùng bữa trưa tại Nhà hàng Emeralda Resort (điều chỉnh bắt đầu lúc 12:00 do thêm bài Keynote 4). Từ 12:45: Nhóm Oral di chuyển tới phòng Van Trinh 2 Ballroom copy slide & test mic; Vũ Đình Khôi hoàn tất dán Poster PID 661 tại khu vực Hall.',
     memberNotes: {
-      khanh_linh: 'Có mặt tại phòng Session 2 trước 13:00 gặp Thư ký Nguyễn Trần Khánh Phương để nạp slide.',
-      duc_kien: 'Kiểm tra slide bài PID 628 và mic trình bày tại phòng Session 2.',
-      dinh_khoi: 'Hoàn tất treo Poster PID 661 trước 13:05.'
+      khanh_linh: 'Có mặt tại phòng Van Trinh 2 Ballroom trước 13:00 gặp Thư ký Nguyễn Trần Khánh Phương để nạp slide.',
+      duc_kien: 'Kiểm tra slide bài PID 628 và mic trình bày tại phòng Van Trinh 2 Ballroom.',
+      dinh_khoi: 'Hoàn tất treo Poster PID 661 tại khu vực Hall trước 13:05.'
     }
   },
 
@@ -331,62 +381,68 @@ export const INITIAL_SCHEDULE = [
   {
     id: 'sch-23-7',
     day: '23',
+    date: '2026-10-23',
+    fullDate: '23.10.2026',
     dayTitle: 'THỨ 6 (23/10/2026): Phiên Toàn thể, Báo cáo Chuyên đề & Gala Dinner',
     time: '13:15 – 15:10',
     title: '⭐ [NHIỆM VỤ ORAL] Session 2: Learner Development, Agency, and Educational Experience',
-    location: 'Phòng Session 2 - Emeralda Resort',
+    location: 'Van Trinh 2 Ballroom - Emeralda Resort',
     category: 'highlight_oral',
     isHighlight: true,
     participants: [...ORAL_TEAM_IDS],
-    description: 'Chủ tọa (Chair): Assoc. Prof. Lee Ju Seong | Thư ký: Ms. Nguyễn Trần Khánh Phương.\nThứ tự 6 bài báo trong phiên (mỗi bài ~18 phút):',
+    description: 'Chủ tọa (Chair): Assoc. Prof. Lee Ju Seong | Thư ký: Ms. Nguyễn Trần Khánh Phương.\nĐịa điểm: Van Trinh 2 Ballroom.\nThứ tự 6 bài báo trong phiên (mỗi bài ~18 phút):',
     subItems: [
       { time: '13:15 – 13:33', text: 'PID 1061 — Hùng Lương Bá (FPT University): From "Intellectual Crutch" to "Cognitive Scaffold"...' },
       { time: '13:33 – 13:51', text: 'PID 725 — Nguyen My Binh, My Dinh (HUST): Exploring the Influence of ChatGPT Use on Learner Autonomy...' },
-      { time: '13:51 – 14:09', text: '🔥 [TRỌNG TÂM] PID 628 — Integrating Learning Methods into an English Vocabulary Learning Application (Báo cáo viên: Nguyễn Khánh Linh & Trần Đức Kiên | Đồng tác giả: Quang Anh, Thị Hồng, Thảo Nguyên, Phương Ly, Thanh Tú)', highlight: true },
+      { time: '13:51 – 14:09', text: '🔥 [TRỌNG TÂM] PID 628 — Integrating Learning Methods into an English Vocabulary Learning Application (CapyVocab) (Báo cáo viên: Nguyễn Khánh Linh & Trần Đức Kiên | Đồng tác giả: Quang Anh, Thị Hồng, Thảo Nguyên, Phương Ly, Thanh Tú)', highlight: true },
       { time: '14:09 – 14:27', text: 'PID 886 — VAN HOA TO (UTT): Blended learning for enhancing learner autonomy and engagement...' },
       { time: '14:27 – 14:45', text: 'PID 638 — Chau Nguyen (IU - VNU HCM): Students’ Perceptions of Text-based and Text-plus-Image Glosses...' },
       { time: '14:45 – 15:03', text: 'PID 897 — Thi Loc Duong (Anglia Ruskin University, UK): Academic Anxiety, Cognitive Interference...' }
     ],
     memberNotes: {
-      khanh_linh: '🎤 Diễn giả chính trình bày bài PID 628 (khung 13:51 – 14:09) cùng Đức Kiên.',
-      duc_kien: '🎤 Diễn giả chính trình bày bài PID 628 (khung 13:51 – 14:09) cùng Khánh Linh.',
-      quang_anh: '📸 Dự nghe, phụ trách chụp ảnh/quay video phần trình bày của nhóm (13:51 – 14:09) & hỗ trợ Q&A.',
-      thao_nguyen: '📝 Dự nghe, ghi chép câu hỏi phản biện từ Chủ tọa Lee Ju Seong và hội đồng trong phần Q&A.',
-      thi_hong: '🤝 Dự nghe, hỗ trợ điều phối slide/thời gian và tổng hợp góp ý chuyên môn.',
-      phuong_ly: '🤝 Dự nghe, hỗ trợ nhóm trả lời câu hỏi thảo luận và chụp ảnh lưu niệm cùng phiên.'
+      khanh_linh: '🎤 Diễn giả chính trình bày bài PID 628 (khung 13:51 – 14:09) cùng Đức Kiên tại Van Trinh 2.',
+      duc_kien: '🎤 Diễn giả chính trình bày bài PID 628 (khung 13:51 – 14:09) cùng Khánh Linh tại Van Trinh 2.',
+      quang_anh: '📸 Dự nghe tại Van Trinh 2, phụ trách chụp ảnh/quay video phần trình bày của nhóm (13:51 – 14:09) & hỗ trợ Q&A.',
+      thao_nguyen: '📝 Dự nghe tại Van Trinh 2, ghi chép câu hỏi phản biện từ Chủ tọa Lee Ju Seong và hội đồng trong phần Q&A.',
+      thi_hong: '🤝 Dự nghe tại Van Trinh 2, hỗ trợ điều phối slide/thời gian và tổng hợp góp ý chuyên môn.',
+      phuong_ly: '🤝 Dự nghe tại Van Trinh 2, hỗ trợ nhóm trả lời câu hỏi thảo luận và chụp ảnh lưu niệm cùng phiên.'
     }
   },
   {
     id: 'sch-23-8',
     day: '23',
+    date: '2026-10-23',
+    fullDate: '23.10.2026',
     dayTitle: 'THỨ 6 (23/10/2026): Phiên Toàn thể, Báo cáo Chuyên đề & Gala Dinner',
     time: '13:15 – 15:10',
-    title: '⭐ [NHIỆM VỤ POSTER] Poster Sessions 1–3 (Triển lãm & Giải đáp trực tiếp)',
-    location: 'Khu vực Triển lãm Poster 1–3 - Emeralda Resort',
+    title: '⭐ [NHIỆM VỤ POSTER] Poster Session No. 1–2 (Triển lãm & Trực poster)',
+    location: 'Khu vực Hall Triển lãm Poster - Emeralda Resort',
     category: 'highlight_poster',
     isHighlight: true,
     participants: ['dinh_khoi'],
-    description: 'Chủ tọa (Chairs): Assoc. Prof. Phạm Thị Thanh Hải, Assoc. Prof. Bùi Thị Thúy Hằng & Dr. Sujatha Mukiri | Thư ký: Dr. Lê Phương Thủy.\n• ⭐ Bài báo cáo của nhóm: PID 661 — Vũ Đình Khôi (Hanoi University of Science and Technology).\n• Các bài cùng phiên (17 posters): PID 623, 692, 707, 639, 661, 646, 662, 710, 711, 713, 714, 733, 740, 750, 786, 800, 887.',
+    description: 'Chủ tọa (Chairs): Assoc. Prof. Phạm Thị Thanh Hải, Assoc. Prof. Bùi Thị Thúy Hằng & Dr. Sujatha Mukiri | Thư ký: Dr. Lê Phương Thủy.\n• ⭐ Bài báo cáo của nhóm: PID 661 — Báo cáo viên: Vũ Đình Khôi (Hanoi University of Science and Technology).\n• Phân định ca mới: Poster Session No. 1–2 (thay vì 1–3). Địa điểm: Khu vực Hall.',
     memberNotes: {
-      dinh_khoi: '🖼️ Có mặt xuyên suốt từ 13:15 – 15:10 tại vị trí Poster PID 661 để đón tiếp Ban giám khảo và đại biểu, thuyết trình tóm tắt và trả lời câu hỏi. (Sau 14:15 các thành viên nhóm Oral có thể ghé qua chụp ảnh hỗ trợ).'
+      dinh_khoi: '🖼️ Có mặt xuyên suốt từ 13:15 – 15:10 tại vị trí Poster PID 661 (khu vực Hall) để đón tiếp Ban giám khảo và đại biểu, thuyết trình tóm tắt và trả lời câu hỏi. (Sau 14:15 các thành viên nhóm Oral có thể ghé qua chụp ảnh hỗ trợ).'
     }
   },
   {
     id: 'sch-23-9',
     day: '23',
+    date: '2026-10-23',
+    fullDate: '23.10.2026',
     dayTitle: 'THỨ 6 (23/10/2026): Phiên Toàn thể, Báo cáo Chuyên đề & Gala Dinner',
     time: '13:15 – 15:10',
-    title: '[Tham khảo] Các Phiên Oral Song Song Khác trong Ca 1 (Session 1, 3, 4, 5)',
-    location: 'Các phòng họp phân ban - Emeralda Resort',
+    title: '[Tham khảo] Các Phiên Song Song Khác trong Ca 1 (Session 1, 3, 4, 5)',
+    location: 'Các phòng Van Trinh 1, Hoa Lu 1, Hoa Lu 2, Hoa Lu 3 - Emeralda Resort',
     category: 'other_sessions',
     isOptionalRef: true,
     participants: [...ALL_MEMBER_IDS],
-    description: 'Diễn ra đồng thời với Session 2 và Poster 1–3:',
+    description: 'Diễn ra đồng thời với Session 2 và Poster No. 1–2:',
     subItems: [
-      { time: 'Session 1', text: 'AI and Digital Innovation in Education (Chair: Prof. Hatsuko Yoshikubo): PID 570 (13:15–13:33), PID 719 (13:33–13:51), PID 767 (13:51–14:09), PID 705 (14:09–14:27), PID 689 (14:27–14:45), PID 688 (14:45–15:03).' },
-      { time: 'Session 3', text: 'Teacher Development, Professional Identity & Reflective Practice (Chair: Dr. Lizana Oberholzer): PID 1023, PID 576, PID 593, PID 666, PID 676, PID 909.' },
-      { time: 'Session 4', text: 'Digital Innovation in Foreign Language Education (Chair: Dr. Gina O. Gonong): PID 590, PID 656, PID 753, PID 773, PID 1074, PID 729.' },
-      { time: 'Session 5', text: 'Chinese Language Education & Teaching Innovation (Chair: Dr. Phan Vũ Tuấn Anh): PID 979, PID 599, PID 635, PID 777, PID 776.' }
+      { time: 'Session 1', text: 'AI and Digital Innovation in Education: Van Trinh 1 Ballroom (Chair: Prof. Hatsuko Yoshikubo | Secretary: Dr. Đỗ Minh Triều): PID 570, 719, 767, 705, 689, 688.' },
+      { time: 'Session 3', text: 'Teacher Development, Professional Identity & Reflective Practice: Hoa Lu 1 Ballroom (Chair: Dr. Lizana Oberholzer | Secretary: Dr. Vũ Thị Thanh Nhàn): PID 1023, 576, 593, 666, 676, 909.' },
+      { time: 'Session 4', text: '🔄 Digital Innovation in Foreign Language Education (Chuyển lên Ca 1): Hoa Lu 2 Ballroom (Chair: Dr. Gina O. Gonong | Secretary: Dr. Hoàng Thị Phương Thảo): PID 590, 656, 753, 773, 1074, 729.' },
+      { time: 'Session 5', text: 'Chinese Language Education & Teaching Innovation: Hoa Lu 3 Ballroom (Chair: Dr. Phan Vũ Tuấn Anh | Secretary: Dr. Nguyễn Thị Quỳnh Yến): PID 979, 599, 635, 777, 776.' }
     ]
   },
 
@@ -394,6 +450,8 @@ export const INITIAL_SCHEDULE = [
   {
     id: 'sch-23-10',
     day: '23',
+    date: '2026-10-23',
+    fullDate: '23.10.2026',
     dayTitle: 'THỨ 6 (23/10/2026): Phiên Toàn thể, Báo cáo Chuyên đề & Gala Dinner',
     time: '15:10 – 15:30',
     title: 'Tiệc trà chiều (Tea Break) & Chúc mừng hoàn thành báo cáo',
@@ -405,53 +463,87 @@ export const INITIAL_SCHEDULE = [
   {
     id: 'sch-23-11',
     day: '23',
+    date: '2026-10-23',
+    fullDate: '23.10.2026',
     dayTitle: 'THỨ 6 (23/10/2026): Phiên Toàn thể, Báo cáo Chuyên đề & Gala Dinner',
     time: '15:30 – 17:10',
-    title: 'Ca 2: Tự do tham dự các Phiên báo cáo chuyên đề (Session 6–10 & Poster 4–5)',
-    location: 'Các phòng họp phân ban - Emeralda Resort',
+    title: 'Ca 2: Tự do tham dự các Phiên báo cáo chuyên đề (Session 6–10 & Poster No. 3–4)',
+    location: 'Các phòng phân ban (Van Trinh 1-2, Hoa Lu 1-3) & Hall - Emeralda Resort',
     category: 'academic',
     participants: [...ALL_MEMBER_IDS],
-    description: 'Cả nhóm đã hoàn thành nhiệm vụ báo cáo ở Ca 1, tự do lựa chọn tham dự các phiên quan tâm (Tổng thời lượng 100 phút):',
+    description: 'Cả nhóm đã hoàn thành xuất sắc nhiệm vụ báo cáo ở Ca 1, tự do lựa chọn tham dự các phiên quan tâm (Tổng thời lượng 100 phút):',
     subItems: [
-      { time: 'Session 6', text: 'Educational Leadership & Future Workforce (Chair: Prof. Steffen Kersten) — 7 bài: PID 785 (PGS. Lê Hiếu Học), 1038, 1071, 837, 584, 942, 977.' },
-      { time: 'Session 7', text: 'Language, Culture & Intercultural Communication (Chair: Dr. Nguyễn Thị Cát Ngọc) — 6 bài: PID 1060, 679, 686, 749, 880, 964.' },
-      { time: 'Session 8', text: 'Translation, AI & Language Professional Practices (Chair: Dr. Alandeom Oliveira) — 6 bài: PID 808, 918, 966, 746, 717, 727.' },
-      { time: 'Session 9', text: 'Inclusive Education & Educational Practices (Chair: Dr. John R. Baker) — 6 bài: PID 845, 614, 620, 629, 674, 764.' },
-      { time: 'Session 10', text: 'Korean Language Teaching Innovations (Chair: Dr. Trần Thị Thu Phương) — 5 bài: PID 932, 703, 696, 636, 755.' },
-      { time: 'Poster 4–5', text: 'Triển lãm 16 bài Poster (Chairs: PGS. Nguyễn Việt Khoa, Dr. Susan Drake, Dr. Joanna Reid): PID 805, 811, 819, 868, 877, 885, 909, 919, 926, 992, 994, 1019, 1045, 1046, 1066, 1044.' }
+      { time: 'Session 6', text: '🔄 Educational Leadership, Higher Education & Future Workforce (Chuyển xuống Ca 2): Van Trinh 1 Ballroom (Chair: Prof. Steffen Kersten | Secretary: Dr. Phạm Thị Thu) — 7 bài: PID 785 (PGS. Lê Hiếu Học), 1038, 1071, 837, 584, 942, 977.' },
+      { time: 'Session 7', text: 'Language, Culture & Intercultural Communication: Van Trinh 2 Ballroom (Chair: Dr. Nguyễn Thị Cát Ngọc | Secretary: Dr. Lê Thị Lan) — 6 bài: PID 1060, 679, 686, 749, 880, 964.' },
+      { time: 'Session 8', text: 'Translation, AI & Language Professional Practices: Hoa Lu 1 Ballroom (Chair: Dr. Alandeom Oliveira | Secretary: Dr. Trần Thị Vân Oanh) — 6 bài: PID 808, 918, 966, 746, 717, 727.' },
+      { time: 'Session 9', text: 'Inclusive Education & Educational Practices: Hoa Lu 2 Ballroom (Chair: Dr. John R. Baker | Secretary: Dr. Nguyễn Thị Thu Trang) — 6 bài: PID 845, 614, 620, 629, 674, 764.' },
+      { time: 'Session 10', text: 'Korean Language Teaching Innovations: Hoa Lu 3 Ballroom (Chair: Dr. Trần Thị Thu Phương | Secretary: Dr. Lê Thị Hạnh) — 5 bài: PID 932, 703, 696, 636, 755.' },
+      { time: 'Poster No. 3–4', text: 'Triển lãm 16 bài Poster tại khu vực Hall (Chairs: Assoc. Prof. Nguyễn Việt Khoa, Dr. Susan Drake, Dr. Joanna Reid | Secretary: Dr. Hoàng Thu Thủy).' }
     ]
   },
   {
     id: 'sch-23-12',
     day: '23',
+    date: '2026-10-23',
+    fullDate: '23.10.2026',
     dayTitle: 'THỨ 6 (23/10/2026): Phiên Toàn thể, Báo cáo Chuyên đề & Gala Dinner',
     time: '17:10 – 17:30',
-    title: 'Báo cáo tổng kết kết quả toàn bộ các phiên Oral & Poster',
-    location: 'Hội trường chính - Emeralda Resort',
+    title: 'Báo cáo tổng kết toàn bộ các phiên Oral & Poster',
+    location: 'Van Long Ballroom - Emeralda Resort',
     category: 'plenary',
     participants: [...ALL_MEMBER_IDS],
-    description: 'Ban tổ chức tổng kết kết quả học thuật của 10 phiên Oral và các phiên Poster.'
+    description: 'Ban tổ chức tổng kết kết quả học thuật của 10 phiên Oral và các phiên Poster tại Van Long Ballroom.'
+  },
+  {
+    id: 'sch-23-shuttle-afternoon',
+    day: '23',
+    date: '2026-10-23',
+    fullDate: '23.10.2026',
+    dayTitle: 'THỨ 6 (23/10/2026): Phiên Toàn thể, Báo cáo Chuyên đề & Gala Dinner',
+    time: '17:30 – 17:50',
+    title: '🚌 Xe trung chuyển (Shuttle Transfer): Emeralda Resort → Alo Garden',
+    location: 'Emeralda Resort → Khách sạn Alo Garden Ninh Bình',
+    category: 'travel',
+    participants: [...ALL_MEMBER_IDS],
+    description: 'Xe đưa đại biểu từ Emeralda Resort về lại khách sạn Alo Garden sau khi kết thúc các phiên báo cáo để nghỉ ngơi và thay trang phục dự tiệc Gala Dinner.'
+  },
+  {
+    id: 'sch-23-shuttle-gala',
+    day: '23',
+    date: '2026-10-23',
+    fullDate: '23.10.2026',
+    dayTitle: 'THỨ 6 (23/10/2026): Phiên Toàn thể, Báo cáo Chuyên đề & Gala Dinner',
+    time: '18:30 – 19:00',
+    title: '🚌 Xe trung chuyển (Shuttle Transfer): Alo Garden → Nhà hàng 1969',
+    location: 'Khách sạn Alo Garden → Nhà hàng 1969 (Ninh Bình)',
+    category: 'travel',
+    participants: [...ALL_MEMBER_IDS],
+    description: 'Xe trung chuyển đón đại biểu lúc 18:30 tại khách sạn Alo Garden để di chuyển đến Nhà hàng 1969 tham dự tiệc Gala Dinner.'
   },
   {
     id: 'sch-23-13',
     day: '23',
+    date: '2026-10-23',
+    fullDate: '23.10.2026',
     dayTitle: 'THỨ 6 (23/10/2026): Phiên Toàn thể, Báo cáo Chuyên đề & Gala Dinner',
-    time: '18:45 – 21:30',
-    title: 'Tiệc Gala Dinner & Tham quan Phố cổ Hoa Lư',
-    location: 'Emeralda Resort & Phố cổ Hoa Lư (Ninh Bình)',
+    time: '19:00 – 21:30',
+    title: 'Tiệc Gala Dinner Chính Thức',
+    location: 'Nhà hàng 1969 (Đường Văn Tiến Dũng / Kim Đa, Phường Hoa Lư, TP. Ninh Bình)',
     category: 'meal',
     participants: [...ALL_MEMBER_IDS],
-    description: 'Tham dự tiệc Gala Dinner cùng hội thảo và chương trình tham quan trải nghiệm văn hóa tại Phố cổ Hoa Lư.'
+    description: 'Tham dự tiệc Gala Dinner trang trọng của Hội thảo ICEF 2026 tại Nhà hàng 1969 (Đường Văn Tiến Dũng / Kim Đa, Phường Hoa Lư, TP. Ninh Bình). Giao lưu âm nhạc, văn hóa và vinh danh bài báo xuất sắc.'
   },
 
   // ================= THỨ 7 (24/10/2026) =================
   {
     id: 'sch-24-1',
     day: '24',
+    date: '2026-10-24',
+    fullDate: '24.10.2026',
     dayTitle: 'THỨ 7 (24/10/2026): Check-out Khách sạn & Khởi hành về Hà Nội',
-    time: '06:00 – 08:30',
+    time: '06:30 – 08:30',
     title: 'Ăn sáng tại khách sạn Alo Garden',
-    location: 'Khách sạn Alo Garden',
+    location: 'Khách sạn Alo Garden Ninh Bình',
     category: 'meal',
     participants: [...ALL_MEMBER_IDS],
     description: 'Dùng bữa sáng tại khách sạn (đã bao gồm trong giá phòng).'
@@ -459,13 +551,15 @@ export const INITIAL_SCHEDULE = [
   {
     id: 'sch-24-2',
     day: '24',
+    date: '2026-10-24',
+    fullDate: '24.10.2026',
     dayTitle: 'THỨ 7 (24/10/2026): Check-out Khách sạn & Khởi hành về Hà Nội',
     time: '08:30 – 09:30',
     title: 'Thu dọn hành lý & Làm thủ tục Check-out khách sạn Alo Garden',
     location: 'Quầy lễ tân - Khách sạn Alo Garden',
     category: 'hotel',
     participants: [...ALL_MEMBER_IDS],
-    description: 'Kiểm tra kỹ đồ đạc cá nhân, giấy chứng nhận hội thảo (Certificate) và trả chìa khóa phòng.',
+    description: 'Kiểm tra kỹ đồ đạc cá nhân, giấy chứng nhận hội thảo (Certificate) và trả chìa khóa phòng trước 09:30.',
     memberNotes: {
       quang_anh: 'Trưởng phòng Nam kiểm tra phòng Triple và bàn giao chìa khóa.',
       thao_nguyen: 'Trưởng phòng Nữ kiểm tra phòng Quadruple và bàn giao chìa khóa.'
@@ -474,19 +568,21 @@ export const INITIAL_SCHEDULE = [
   {
     id: 'sch-24-3',
     day: '24',
+    date: '2026-10-24',
+    fullDate: '24.10.2026',
     dayTitle: 'THỨ 7 (24/10/2026): Check-out Khách sạn & Khởi hành về Hà Nội',
-    time: '10:00',
-    title: 'Xe di chuyển tập trung khởi hành về lại Hà Nội',
-    location: 'Ninh Bình → Thư viện Tạ Quang Bửu (ĐH Bách khoa Hà Nội)',
+    time: '09:30 – 11:30',
+    title: 'Xe xuất phát khởi hành về lại Hà Nội (Tòa nhà C7 ĐHBK)',
+    location: 'Khách sạn Alo Garden Ninh Bình → Tòa nhà C7 ĐH Bách khoa Hà Nội',
     category: 'travel',
     participants: [...ALL_MEMBER_IDS],
-    description: 'Khởi hành về lại điểm tập trung ban đầu tại ĐH Bách khoa Hà Nội. (Lưu ý: Nếu nhóm có nhu cầu tham quan Quần thể danh thắng Tràng An từ 09:00 – 12:00 theo lịch chung, cả nhóm có thể chủ động đăng ký hoặc thu xếp phương tiện cho chiều về).'
+    description: 'Đúng 09:30 xe xuất phát từ khách sạn Alo Garden đưa đoàn về lại điểm tập trung ban đầu tại Tòa nhà C7, ĐH Bách khoa Hà Nội.\n\n⚠️ Lưu ý chính thức: Đại biểu tham gia tour tham quan Tràng An sẽ đi theo khung thời gian và lịch trình riêng (Delegates joining the Tràng An tour will follow a separate schedule).'
   }
 ];
 
 export const INITIAL_HOTEL_INFO = {
   hotelName: 'Khách sạn Alo Garden',
-  note: 'Đã thanh toán 2 đêm (22/10 & 23/10/2026), đã bao gồm ăn sáng và thuế. Thanh toán qua VietinBank: Đỗ Tiến Liêu - 103001060752.',
+  note: 'Đã thanh toán 2 đêm (22/10 & 23/10/2026), đã bao gồm ăn sáng và thuế. Thanh toán qua VietinBank: Đỗ Tiến Liêu - 103001060752. Có các tuyến Shuttle Bus đón/trả sang Emeralda Resort và Nhà hàng 1969.',
   rooms: [
     {
       id: 'room-nam',
@@ -509,8 +605,9 @@ export const INITIAL_HOTEL_INFO = {
     {
       pid: 'PID 628',
       type: 'Oral Presentation',
-      session: 'Session 2 (13:15 – 15:10 Thứ 6, 23/10/2026)',
-      time: '13:51 – 14:09 (Dự kiến)',
+      session: 'Session 2: Learner Development, Agency, and Educational Experience (13:15 – 15:10 Thứ 6, 23/10/2026)',
+      room: 'Van Trinh 2 Ballroom - Emeralda Resort',
+      time: '13:51 – 14:09 (Chính thức)',
       title: 'Integrating Learning Methods into an English Vocabulary Learning Application (CapyVocab)',
       chair: 'Assoc. Prof. Lee Ju Seong (The Education University of Hong Kong)',
       secretary: 'Ms. Nguyễn Trần Khánh Phương',
@@ -520,7 +617,8 @@ export const INITIAL_HOTEL_INFO = {
     {
       pid: 'PID 661',
       type: 'Poster Presentation',
-      session: 'Poster Session 1–3 (Triển lãm 17 bài poster)',
+      session: 'Poster Session No. 1–2 (13:15 – 15:10 Thứ 6, 23/10/2026)',
+      room: 'Khu vực Hall Triển lãm Poster - Emeralda Resort',
       time: '13:15 – 15:10 Thứ 6, 23/10/2026',
       title: 'Nghiên cứu & Báo cáo Poster ICEF 2026',
       chair: 'Assoc. Prof. Phạm Thị Thanh Hải, Assoc. Prof. Bùi Thị Thúy Hằng, Dr. Sujatha Mukiri',

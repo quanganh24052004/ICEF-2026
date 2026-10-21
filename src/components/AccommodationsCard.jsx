@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Hotel, ChevronDown, Bed, BookOpen, CheckCircle2, Clock, Sparkles, Star } from 'lucide-react';
+import { Hotel, ChevronDown, Bed, BookOpen, CheckCircle2, Clock, Sparkles, Star, MapPin } from 'lucide-react';
 
-export default function AccommodationsCard({ hotelInfo }) {
+export default function AccommodationsCard({ hotelInfo, onOpenMap }) {
   const [isOpen, setIsOpen] = useState(false);
 
   if (!hotelInfo) return null;
@@ -59,6 +59,18 @@ export default function AccommodationsCard({ hotelInfo }) {
             <p className="text-duo-muted text-xs font-bold leading-relaxed">
               {hotelInfo.note}
             </p>
+
+            {hotelInfo.address && (
+              <button
+                type="button"
+                onClick={() => onOpenMap && onOpenMap(hotelInfo.hotelName)}
+                className="text-xs font-black text-duo-greenDark hover:text-duo-blue flex items-center gap-1.5 cursor-pointer text-left group/hotelmap transition-colors"
+                title="Xem vị trí khách sạn trên Google Maps"
+              >
+                <MapPin className="w-3.5 h-3.5 text-duo-greenDark group-hover/hotelmap:text-duo-blue shrink-0" />
+                <span className="group-hover/hotelmap:underline">{hotelInfo.address}</span>
+              </button>
+            )}
 
             <div className="space-y-2.5 pt-1">
               {hotelInfo.rooms?.map((room) => (
