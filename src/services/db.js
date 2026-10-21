@@ -133,6 +133,15 @@ class DatabaseService {
       await this.saveAppInfo(appInfo);
     }
 
+    // Auto-migrate to version 4: Remove unrelated university classes (LSĐ - SSH1141 & Mạng máy tính - IT3080)
+    if (appInfo.dataVersion < 4) {
+      await this.deleteSchedule('sch-hust-175507');
+      await this.deleteSchedule('sch-hust-174386');
+      appInfo.dataVersion = 4;
+      appInfo.version = '3.3.0-clean';
+      await this.saveAppInfo(appInfo);
+    }
+
     // Database is already initialized.
     // NEVER re-insert deleted schedules on F5!
     // Only ensure members list has latest structure if empty
@@ -436,8 +445,8 @@ class DatabaseService {
 
     metaStore.put({
       key: 'app_info',
-      version: '3.2.0-official',
-      dataVersion: 3,
+      version: '3.3.0-clean',
+      dataVersion: 4,
       lastReset: new Date().toISOString(),
       framework: 'React + TailwindCSS'
     });
@@ -463,11 +472,14 @@ class DatabaseService {
     } else {
       try {
         const data = JSON.parse(existing);
-        if (!data.meta?.app_info?.dataVersion || data.meta.app_info.dataVersion < 3) {
-          data.schedules = JSON.parse(JSON.stringify(INITIAL_SCHEDULE));
-          data.hotelInfo = JSON.parse(JSON.stringify(INITIAL_HOTEL_INFO));
+        if (!data.meta?.app_info?.dataVersion || data.meta.app_info.dataVersion < 4) {
+          if (Array.isArray(data.schedules)) {
+            data.schedules = data.schedules.filter(
+              (s) => s.id !== 'sch-hust-175507' && s.id !== 'sch-hust-174386'
+            );
+          }
           if (!data.meta) data.meta = {};
-          data.meta.app_info = { key: 'app_info', version: '3.2.0-official', dataVersion: 3 };
+          data.meta.app_info = { key: 'app_info', version: '3.3.0-clean', dataVersion: 4 };
           this._saveFallbackData(data);
         }
       } catch (e) {
