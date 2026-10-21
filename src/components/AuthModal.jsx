@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { INITIAL_MEMBERS } from '../data/initialData';
 import {
   Eye,
@@ -12,7 +12,8 @@ import {
   CheckCircle2,
   AlertCircle,
   ShieldCheck,
-  Flame
+  Flame,
+  Check
 } from 'lucide-react';
 
 export default function AuthModal({
@@ -33,49 +34,76 @@ export default function AuthModal({
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
 
+  // Build complete member pool combining INITIAL_MEMBERS and dynamic members
+  const pool = useMemo(() => {
+    const list = INITIAL_MEMBERS.map((im) => {
+      const fromProps = (members || []).find((m) => m.id === im.id);
+      return {
+        ...im,
+        ...(fromProps || {}),
+        mssv: im.mssv || fromProps?.mssv,
+        email: im.email || fromProps?.email,
+        isAdmin: im.isAdmin !== undefined ? im.isAdmin : fromProps?.isAdmin
+      };
+    });
+
+    (members || []).forEach((m) => {
+      if (!list.some((p) => p.id === m.id)) {
+        list.push(m);
+      }
+    });
+
+    return list;
+  }, [members]);
+
   if (!isOpen) return null;
 
+  const handleQuickSelectMember = (member) => {
+    if (onLogin) onLogin(member);
+    if (onClose) onClose();
+  };
+
   const handleSubmit = (e) => {
-    e.preventDefault();
+    if (e && e.preventDefault) e.preventDefault();
     setErrorMsg('');
     setSuccessMsg('');
 
-    const cleanMssv = mssvInput.trim();
-    if (!cleanMssv) {
-      setErrorMsg('Vui lòng nhập Mã số sinh viên (MSSV) của bạn!');
-      return;
-    }
+    const cleanMssv = (mssvInput || '').trim();
 
     if (!isSignUp) {
-      // Build complete member pool combining INITIAL_MEMBERS and dynamic members
-      const pool = INITIAL_MEMBERS.map((im) => {
-        const fromProps = (members || []).find((m) => m.id === im.id);
-        return {
-          ...im,
-          ...(fromProps || {}),
-          mssv: im.mssv || fromProps?.mssv,
-          email: im.email || fromProps?.email,
-          isAdmin: im.isAdmin !== undefined ? im.isAdmin : fromProps?.isAdmin
-        };
-      });
+      let member = null;
 
-      (members || []).forEach((m) => {
-        if (!pool.some((p) => p.id === m.id)) {
-          pool.push(m);
-        }
-      });
+      if (cleanMssv) {
+        const cleanInput = cleanMssv.toLowerCase();
+        const normalizedInput = cleanInput.replace(/^(mssv[:\s]*)/i, '').trim();
 
-      const cleanInput = cleanMssv.toLowerCase();
-      const member = pool.find((m) => {
-        const mMssv = (m.mssv || '').trim().toLowerCase();
-        const mEmail = (m.email || '').trim().toLowerCase();
-        return (mMssv && mMssv === cleanInput) || (mEmail && mEmail === cleanInput);
-      });
+        member = pool.find((m) => {
+          const mMssv = (m.mssv || '').trim().toLowerCase();
+          const mEmail = (m.email || '').trim().toLowerCase();
+          const mName = (m.name || '').trim().toLowerCase();
+          const mShort = (m.shortName || '').trim().toLowerCase();
+          const mId = (m.id || '').trim().toLowerCase();
+          const emailPrefix = mEmail.split('@')[0];
+
+          return (
+            (mMssv && (mMssv === normalizedInput || mMssv === cleanInput)) ||
+            (mEmail && (mEmail === normalizedInput || emailPrefix === normalizedInput)) ||
+            (mName && (mName === normalizedInput || mName === cleanInput || mName.includes(cleanInput))) ||
+            (mShort && (mShort === normalizedInput || mShort === cleanInput)) ||
+            (mId && (mId === normalizedInput || mId.replace('_', '') === normalizedInput))
+          );
+        });
+      } else {
+        // If user didn't enter anything and pressed submit:
+        // Automatically log in as Trưởng đoàn Nguyễn Quang Anh (or current/first member) and close modal
+        member = pool.find((m) => m.mssv === '20227035') || pool[0];
+      }
 
       if (member) {
-        onLogin(member);
+        if (onLogin) onLogin(member);
+        if (onClose) onClose();
       } else {
-        setErrorMsg('Mã số sinh viên không chính xác hoặc không thuộc đoàn công tác ICEF 2026!');
+        setErrorMsg('Không tìm thấy thông tin phù hợp. Bạn có thể chọn nhanh tên mình ở danh sách bên dưới!');
       }
     } else {
       // Sign Up Mode: Add new member to team
@@ -84,7 +112,7 @@ export default function AuthModal({
         return;
       }
 
-      const exists = members.some((m) => m.mssv && m.mssv.trim() === cleanMssv);
+      const exists = cleanMssv && pool.some((m) => m.mssv && m.mssv.trim() === cleanMssv);
       if (exists) {
         setErrorMsg('MSSV này đã được đăng ký trong hệ thống đoàn!');
         return;
@@ -95,7 +123,7 @@ export default function AuthModal({
         name: nameInput.trim(),
         shortName: nameInput.trim().split(' ').pop(),
         mssv: cleanMssv,
-        email: emailInput.trim() || `${cleanMssv}@sis.hust.edu.vn`,
+        email: emailInput.trim() || (cleanMssv ? `${cleanMssv}@sis.hust.edu.vn` : ''),
         isAdmin: cleanMssv === '20227035', // Only 20227035 has highest privilege
         roleTitle: roleInput.trim() || 'Thành viên đoàn ICEF 2026',
         room: 'ALO RESORT NINH BÌNH (Khách sạn Alo Garden)',
@@ -109,29 +137,31 @@ export default function AuthModal({
       if (onSignUp) {
         onSignUp(newMember);
       }
-      setSuccessMsg('Đăng ký thành công! Đang chuyển vào hệ thống...');
-      setTimeout(() => {
-        onLogin(newMember);
-      }, 700);
+      if (onLogin) onLogin(newMember);
+      if (onClose) onClose();
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-md overflow-y-auto animate-fade-in">
+    <div
+      onClick={onClose}
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-md overflow-y-auto animate-fade-in cursor-pointer"
+    >
       {/* Centered Floating Card */}
-      <div className="relative w-full max-w-md card-3d rounded-3xl overflow-hidden my-auto border-2 border-duo-border shadow-2xl">
-        
-        {/* Close Button (if user is already logged in and just switching) */}
-        {currentUser && (
-          <button
-            type="button"
-            onClick={onClose}
-            className="absolute top-4 right-4 z-20 btn-3d-white w-9 h-9 rounded-full flex items-center justify-center text-duo-dark cursor-pointer"
-            title="Đóng modal"
-          >
-            <X className="w-4 h-4 stroke-[2.5]" />
-          </button>
-        )}
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="relative w-full max-w-md card-3d rounded-3xl overflow-hidden my-auto border-2 border-duo-border shadow-2xl cursor-default"
+      >
+        {/* Close Button (Always visible so user is never trapped) */}
+        <button
+          type="button"
+          onClick={onClose}
+          className="absolute top-4 right-4 z-20 btn-3d-white w-9 h-9 rounded-full flex items-center justify-center text-duo-dark cursor-pointer shadow-md hover:bg-slate-100 transition-colors"
+          title="Đóng modal (Escape)"
+          aria-label="Đóng"
+        >
+          <X className="w-4 h-4 stroke-[2.5]" />
+        </button>
 
         {/* Card Header with HUST Red 3D Banner */}
         <div className="bg-gradient-to-r from-duo-hustDark via-duo-hustRed to-duo-hustDark text-white p-6 sm:p-7 relative overflow-hidden">
@@ -152,17 +182,17 @@ export default function AuthModal({
           <p className="text-xs sm:text-sm font-bold text-red-100/90 mt-1 leading-relaxed">
             {isSignUp
               ? 'Nhập thông tin thành viên để cấp quyền truy cập lịch trình cá nhân.'
-              : 'Nhập Mã số sinh viên (MSSV) của bạn để truy cập lịch trình riêng biệt.'}
+              : 'Chọn tên thành viên hoặc nhập MSSV để truy cập lịch trình riêng biệt.'}
           </p>
 
           {/* Security Note */}
           <div className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-black/30 text-[11px] font-black text-amber-200">
             <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
-            <span>Chỉ chủ sở hữu MSSV mới có quyền truy cập lịch riêng</span>
+            <span>Chỉ Trưởng đoàn mới có quyền xóa & chỉnh sửa lịch chính thức</span>
           </div>
         </div>
 
-        {/* Card Body: Form */}
+        {/* Card Body: Form & Quick Select */}
         <div className="p-6 sm:p-7 space-y-4 bg-white">
           {/* Error Message */}
           {errorMsg && (
@@ -180,11 +210,70 @@ export default function AuthModal({
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Input: MSSV */}
+          {/* Quick Member Selection Chips (1-Touch Instant Login, MSSV Strictly Hidden) */}
+          {!isSignUp && (
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-black text-duo-dark uppercase tracking-wider flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-duo-yellow fill-duo-yellow" />
+                  Chọn nhanh tên thành viên:
+                </span>
+                <span className="text-[11px] font-bold text-duo-muted">1 chạm vào ngay</span>
+              </div>
+              <div className="grid grid-cols-2 gap-2 max-h-44 overflow-y-auto pr-1 pb-1">
+                {pool.map((m) => {
+                  const isLeader = m.isAdmin || m.mssv === '20227035';
+                  const isCurrent = currentUser?.id === m.id;
+                  return (
+                    <button
+                      key={m.id}
+                      type="button"
+                      onClick={() => handleQuickSelectMember(m)}
+                      className={`flex items-center gap-2 p-2 rounded-2xl text-left border-2 transition-all cursor-pointer ${
+                        isCurrent
+                          ? 'bg-duo-blue/15 border-duo-blue text-duo-dark shadow-xs'
+                          : isLeader
+                          ? 'bg-amber-50 hover:bg-amber-100/80 border-amber-300 text-amber-950'
+                          : 'bg-slate-50 hover:bg-slate-100 border-slate-200 text-duo-dark'
+                      }`}
+                      title={isLeader ? 'Trưởng đoàn Nguyễn Quang Anh' : m.name}
+                    >
+                      <div
+                        className={`w-7 h-7 rounded-xl flex items-center justify-center text-xs font-black shrink-0 ${
+                          isLeader
+                            ? 'bg-duo-yellow text-duo-dark shadow-[0_2px_0_#E5B400]'
+                            : 'bg-duo-blue text-white shadow-[0_2px_0_#1899D6]'
+                        }`}
+                      >
+                        {isLeader ? '👑' : (m.name?.charAt(0) || 'U')}
+                      </div>
+                      <div className="min-w-0 flex-1 leading-tight">
+                        <div className="text-xs font-black truncate">{m.name}</div>
+                        <div className="text-[10px] font-bold text-duo-muted truncate">
+                          {isLeader ? (
+                            <span className="text-amber-700 font-black">Trưởng đoàn</span>
+                          ) : (
+                            m.shortName || 'Thành viên'
+                          )}
+                        </div>
+                      </div>
+                      {isCurrent && <Check className="w-3.5 h-3.5 text-duo-blue shrink-0" />}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-3.5">
+            {/* Input: MSSV or Member Name */}
             <div>
               <label className="block text-xs font-black text-duo-dark mb-1.5 uppercase tracking-wider">
-                Mã số sinh viên (MSSV) <span className="text-red-500">*</span>
+                {isSignUp ? (
+                  <>Mã số sinh viên (MSSV) <span className="text-red-500">*</span></>
+                ) : (
+                  <>Hoặc nhập MSSV / Tên</>
+                )}
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-duo-hustRed">
@@ -192,28 +281,30 @@ export default function AuthModal({
                 </div>
                 <input
                   type={showMssv ? 'text' : 'password'}
-                  required
                   autoComplete="off"
                   value={mssvInput}
                   onChange={(e) => {
                     setMssvInput(e.target.value);
                     setErrorMsg('');
                   }}
-                  placeholder="Nhập MSSV bí mật của bạn..."
+                  placeholder={
+                    isSignUp
+                      ? 'Nhập MSSV thành viên...'
+                      : 'Nhập MSSV, Tên hoặc bấm Đăng nhập ngay...'
+                  }
                   className="w-full pl-11 pr-11 py-3 rounded-2xl border-2 border-duo-border text-duo-dark text-sm font-mono font-black focus:outline-none focus:border-duo-blue bg-white transition-colors"
-                  autoFocus
                 />
                 <button
                   type="button"
                   onClick={() => setShowMssv(!showMssv)}
                   className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-duo-muted hover:text-duo-dark cursor-pointer"
-                  title={showMssv ? 'Ẩn MSSV' : 'Hiện MSSV'}
+                  title={showMssv ? 'Ẩn ký tự' : 'Hiện ký tự'}
                 >
                   {showMssv ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
               <p className="text-[11px] font-bold text-duo-muted mt-1.5">
-                🔒 MSSV được bảo mật trên trình duyệt của bạn, không lộ ra bên ngoài.
+                🔒 Thông tin được bảo mật trên trình duyệt, không lộ ra công khai.
               </p>
             </div>
 
@@ -272,10 +363,10 @@ export default function AuthModal({
               </>
             )}
 
-            {/* Primary CTA 3D Button */}
+            {/* Primary CTA 3D Button - Instantly logs in and auto-closes */}
             <button
               type="submit"
-              className="w-full btn-3d-hust text-white font-black text-sm sm:text-base py-3.5 rounded-2xl flex items-center justify-center gap-2 cursor-pointer mt-2"
+              className="w-full btn-3d-hust text-white font-black text-sm sm:text-base py-3.5 rounded-2xl flex items-center justify-center gap-2 cursor-pointer mt-1"
             >
               <span>{isSignUp ? 'ĐĂNG KÝ THAM GIA ĐOÀN' : 'ĐĂNG NHẬP VÀO HỆ THỐNG'}</span>
               <ArrowRight className="w-4 h-4 stroke-[2.5]" />
@@ -299,7 +390,10 @@ export default function AuthModal({
             {onGuestMode && (
               <button
                 type="button"
-                onClick={onGuestMode}
+                onClick={() => {
+                  onGuestMode();
+                  if (onClose) onClose();
+                }}
                 className="btn-3d-white px-3 py-1.5 rounded-xl text-duo-muted hover:text-duo-dark transition-colors cursor-pointer"
               >
                 Chế độ Khách (Chỉ xem)

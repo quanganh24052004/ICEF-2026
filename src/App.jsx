@@ -78,7 +78,7 @@ export default function App() {
 
       // If user hasn't logged in yet, prompt auth modal after loading
       const savedUser = localStorage.getItem('icef2026_current_user');
-      if (!savedUser) {
+      if (!savedUser && !currentUser) {
         setIsAuthModalOpen(true);
       }
     } catch (err) {
@@ -151,9 +151,9 @@ export default function App() {
         setDeletingEvent(null);
         setIsBackupModalOpen(false);
         setMapModalLocation(null);
-        // Only close auth modal with escape if a user is already logged in
-        if (currentUser) {
-          setIsAuthModalOpen(false);
+        setIsAuthModalOpen(false);
+        if (!currentUser) {
+          handleGuestMode();
         }
       }
     };
@@ -164,8 +164,12 @@ export default function App() {
 
   // Auth Handlers
   const handleLogin = (member) => {
+    try {
+      localStorage.setItem('icef2026_current_user', JSON.stringify(member));
+    } catch (e) {
+      console.warn('[App] LocalStorage save error:', e);
+    }
     setCurrentUser(member);
-    localStorage.setItem('icef2026_current_user', JSON.stringify(member));
     setSelectedMembers([member.id]);
     setIsAuthModalOpen(false);
 
@@ -499,7 +503,12 @@ export default function App() {
       {/* Modal: Full-page Floating Auth Form (MSSV Login / Switch User) */}
       <AuthModal
         isOpen={isAuthModalOpen}
-        onClose={() => setIsAuthModalOpen(false)}
+        onClose={() => {
+          setIsAuthModalOpen(false);
+          if (!currentUser) {
+            handleGuestMode();
+          }
+        }}
         members={members}
         currentUser={currentUser}
         onLogin={handleLogin}
