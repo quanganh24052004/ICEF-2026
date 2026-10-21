@@ -338,17 +338,24 @@ export default function App() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50 text-slate-600">
-        <div className="flex flex-col items-center gap-3">
-          <div className="w-10 h-10 border-4 border-red-600 border-t-transparent rounded-full animate-spin"></div>
-          <span className="text-sm font-semibold">Đang tải dữ liệu ICEF 2026...</span>
+      <div className="min-h-screen flex items-center justify-center bg-[#F7F7F7] p-4">
+        <div className="card-3d rounded-3xl p-6 sm:p-8 flex flex-col items-center gap-4 bg-white text-center max-w-xs border-2 border-duo-border shadow-2xl">
+          <div className="w-14 h-14 rounded-2xl bg-duo-green flex items-center justify-center text-white shadow-[0_4px_0_#46A302]">
+            <div className="w-6 h-6 border-3 border-white border-t-transparent rounded-full animate-spin"></div>
+          </div>
+          <div>
+            <h4 className="text-base font-black text-duo-dark">Đang Tải Lịch Trình</h4>
+            <p className="text-xs font-bold text-duo-muted mt-1">
+              Đoàn Công Tác ICEF 2026 • HUST & HUCE
+            </p>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-800">
+    <div className="min-h-screen bg-[#F7F7F7] text-duo-dark font-sans selection:bg-duo-green/20 pb-20 md:pb-12">
       {/* Header */}
       <Header
         searchQuery={searchQuery}
@@ -361,11 +368,11 @@ export default function App() {
       />
 
       {/* Main Container */}
-      <main className="max-w-6xl mx-auto px-3.5 sm:px-4 pb-20">
+      <main className="max-w-6xl mx-auto px-3.5 sm:px-4">
         {/* Quick Stats */}
         <StatsBar schedules={schedules} members={members} />
 
-        {/* Member Filter & Selected Member Details (Displays role and assignment) */}
+        {/* Member Filter & Selected Member Details */}
         <MemberFilter
           members={members}
           selectedMember={selectedMember}
@@ -413,8 +420,26 @@ export default function App() {
         )}
       </main>
 
-      {/* Mobile Floating Action Button */}
-      <FloatingAddButton onClick={handleOpenAddModal} />
+      {/* Mobile Sticky Bottom Bar (Tactile 3D Buttons for Mobile-First UX) */}
+      <div className="fixed bottom-0 inset-x-0 z-40 md:hidden bg-white/95 backdrop-blur-md border-t-2 border-duo-border p-2.5">
+        <div className="flex items-center gap-2 max-w-md mx-auto">
+          <button
+            type="button"
+            onClick={handleOpenAddModal}
+            className="flex-1 btn-3d-green text-white font-black text-xs py-3 rounded-2xl flex items-center justify-center gap-1.5 cursor-pointer"
+          >
+            <span>+ Thêm Hoạt Động</span>
+          </button>
+          
+          <button
+            type="button"
+            onClick={handleExportICS}
+            className="flex-1 btn-3d-blue text-white font-black text-xs py-3 rounded-2xl flex items-center justify-center gap-1.5 cursor-pointer"
+          >
+            <span>Xuất Lịch (.ics)</span>
+          </button>
+        </div>
+      </div>
 
       {/* Modal: Full-page Floating Auth Form (MSSV Login / Switch User) */}
       <AuthModal

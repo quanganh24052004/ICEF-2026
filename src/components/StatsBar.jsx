@@ -1,5 +1,5 @@
 import React from 'react';
-import { CalendarDays, Star, Users, Hotel } from 'lucide-react';
+import { CalendarDays, Star, Users, Hotel, Flame, Sparkles, CheckCircle2 } from 'lucide-react';
 
 export default function StatsBar({ schedules = [], members = [] }) {
   const highlightCount = schedules.filter(
@@ -7,56 +7,109 @@ export default function StatsBar({ schedules = [], members = [] }) {
   ).length;
 
   return (
-    <section className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-4 mt-4 sm:mt-6" aria-label="Thống kê tổng quan">
-      {/* Total Events */}
-      <div className="bg-white border border-slate-200/80 rounded-xl p-3 sm:p-4 shadow-sm hover:shadow-md transition-shadow flex items-center gap-3">
-        <div className="w-10 h-10 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center shrink-0">
-          <CalendarDays className="w-5 h-5" />
-        </div>
-        <div>
-          <div className="text-base sm:text-xl font-bold text-slate-900 font-heading leading-tight">
-            {schedules.length}
+    <section className="mt-5 space-y-3.5" aria-label="Thống kê tổng quan">
+      {/* 4 Tactile 3D Stat Cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        
+        {/* Stat 1: Total Events */}
+        <div className="card-3d card-3d-hover p-4 sm:p-5 flex flex-col justify-between">
+          <div className="flex items-center justify-between mb-2">
+            <div className="w-11 h-11 rounded-2xl bg-duo-blue flex items-center justify-center shadow-[0_3px_0_#1899D6] text-white">
+              <CalendarDays className="w-5 h-5" />
+            </div>
+            <span className="text-[11px] font-black text-duo-blue bg-duo-blue/10 px-2.5 py-0.5 rounded-full">
+              3 NGÀY
+            </span>
           </div>
-          <div className="text-[11px] sm:text-xs text-slate-500 font-medium">Tổng hoạt động</div>
+          <div>
+            <div className="text-2xl sm:text-3xl font-black text-duo-dark tracking-tight">
+              {schedules.length}
+            </div>
+            <div className="text-xs font-bold text-duo-muted mt-0.5">
+              Tổng Hoạt Động Lịch Trình
+            </div>
+          </div>
         </div>
+
+        {/* Stat 2: Highlight Presentations (CapyVocab PID 628 & Poster PID 661) */}
+        <div className="card-3d card-3d-hover p-4 sm:p-5 flex flex-col justify-between border-duo-yellow/80 bg-[#FFFDF5]">
+          <div className="flex items-center justify-between mb-2">
+            <div className="w-11 h-11 rounded-2xl bg-duo-yellow flex items-center justify-center shadow-[0_3px_0_#E5B400] text-duo-dark">
+              <Star className="w-5 h-5 fill-duo-dark" />
+            </div>
+            <span className="text-[11px] font-black text-amber-800 bg-duo-yellow/30 px-2.5 py-0.5 rounded-full flex items-center gap-1">
+              <Flame className="w-3 h-3 text-duo-orange fill-duo-orange" />
+              TRỌNG TÂM
+            </span>
+          </div>
+          <div>
+            <div className="text-2xl sm:text-3xl font-black text-duo-dark tracking-tight">
+              {highlightCount} Báo Cáo
+            </div>
+            <div className="text-xs font-extrabold text-amber-800 mt-0.5 truncate">
+              Oral 628 (CapyVocab) & Poster 661
+            </div>
+          </div>
+        </div>
+
+        {/* Stat 3: Delegation Members */}
+        <div className="card-3d card-3d-hover p-4 sm:p-5 flex flex-col justify-between">
+          <div className="flex items-center justify-between mb-2">
+            <div className="w-11 h-11 rounded-2xl bg-duo-purple flex items-center justify-center shadow-[0_3px_0_#A55EEA] text-white">
+              <Users className="w-5 h-5" />
+            </div>
+            <span className="text-[11px] font-black text-duo-purple bg-duo-purple/10 px-2.5 py-0.5 rounded-full">
+              HUST • HUCE
+            </span>
+          </div>
+          <div>
+            <div className="text-2xl sm:text-3xl font-black text-duo-dark tracking-tight">
+              {members.length} Nhân Sự
+            </div>
+            <div className="text-xs font-bold text-duo-muted mt-0.5">
+              Thành Viên Đoàn Nghiên Cứu
+            </div>
+          </div>
+        </div>
+
+        {/* Stat 4: Hotel Status */}
+        <div className="card-3d card-3d-hover p-4 sm:p-5 flex flex-col justify-between border-duo-green/80 bg-[#F0FBE8]/50">
+          <div className="flex items-center justify-between mb-2">
+            <div className="w-11 h-11 rounded-2xl bg-duo-green flex items-center justify-center shadow-[0_3px_0_#46A302] text-white">
+              <Hotel className="w-5 h-5" />
+            </div>
+            <span className="text-[11px] font-black text-duo-greenDark bg-duo-green/20 px-2.5 py-0.5 rounded-full flex items-center gap-1">
+              <CheckCircle2 className="w-3 h-3 text-duo-greenDark" />
+              ĐÃ TT 100%
+            </span>
+          </div>
+          <div>
+            <div className="text-lg sm:text-xl font-black text-duo-dark tracking-tight truncate">
+              Alo Garden Ninh Bình
+            </div>
+            <div className="text-xs font-bold text-duo-greenDark mt-0.5">
+              2 Phòng • 22 – 24/10/2026
+            </div>
+          </div>
+        </div>
+
       </div>
 
-      {/* Highlights */}
-      <div className="bg-white border border-slate-200/80 rounded-xl p-3 sm:p-4 shadow-sm hover:shadow-md transition-shadow flex items-center gap-3">
-        <div className="w-10 h-10 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
-          <Star className="w-5 h-5 fill-amber-400 text-amber-500" />
+      {/* Gamified Ready Banner */}
+      <div className="card-3d rounded-2xl px-4 py-3 bg-white flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-xs font-black">
+        <div className="flex items-center gap-2 text-duo-dark">
+          <span className="w-2.5 h-2.5 rounded-full bg-duo-green animate-ping"></span>
+          <span className="flex items-center gap-1.5 text-duo-dark font-extrabold">
+            <Sparkles className="w-4 h-4 text-duo-yellow fill-duo-yellow" />
+            Trạng thái sẵn sàng: Đã khớp toàn bộ khung giờ báo cáo ICEF 2026
+          </span>
         </div>
-        <div>
-          <div className="text-base sm:text-xl font-bold text-slate-900 font-heading leading-tight">
-            {highlightCount}
+        <div className="flex items-center gap-2">
+          <span className="text-duo-muted font-bold">Khởi hành: 13:00 Thứ 5 (22/10)</span>
+          <div className="w-28 sm:w-36 h-2.5 bg-duo-border rounded-full overflow-hidden">
+            <div className="w-full h-full bg-duo-green rounded-full"></div>
           </div>
-          <div className="text-[11px] sm:text-xs text-slate-500 font-medium truncate">Oral PID 628 & Poster 661</div>
-        </div>
-      </div>
-
-      {/* Members */}
-      <div className="bg-white border border-slate-200/80 rounded-xl p-3 sm:p-4 shadow-sm hover:shadow-md transition-shadow flex items-center gap-3">
-        <div className="w-10 h-10 rounded-lg bg-purple-50 text-purple-700 flex items-center justify-center shrink-0">
-          <Users className="w-5 h-5" />
-        </div>
-        <div>
-          <div className="text-base sm:text-xl font-bold text-slate-900 font-heading leading-tight">
-            {members.length}
-          </div>
-          <div className="text-[11px] sm:text-xs text-slate-500 font-medium">Thành viên HUST & HUCE</div>
-        </div>
-      </div>
-
-      {/* Hotel */}
-      <div className="bg-white border border-slate-200/80 rounded-xl p-3 sm:p-4 shadow-sm hover:shadow-md transition-shadow flex items-center gap-3">
-        <div className="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0">
-          <Hotel className="w-5 h-5" />
-        </div>
-        <div>
-          <div className="text-xs sm:text-sm font-bold text-slate-900 font-heading leading-tight truncate">
-            Alo Garden
-          </div>
-          <div className="text-[11px] sm:text-xs text-emerald-600 font-medium">2 Phòng • Đã TT 100%</div>
+          <span className="text-duo-greenDark font-black">100%</span>
         </div>
       </div>
     </section>

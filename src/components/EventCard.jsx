@@ -1,5 +1,20 @@
 import React from 'react';
-import { Clock, MapPin, Pen, Trash2, Star, Landmark, BookOpen, Bus, Hotel, Utensils, Pin, ListChecks, Lock } from 'lucide-react';
+import {
+  Clock,
+  MapPin,
+  Pen,
+  Trash2,
+  Star,
+  Landmark,
+  BookOpen,
+  Bus,
+  Hotel,
+  Utensils,
+  Pin,
+  ListChecks,
+  Lock,
+  Sparkles
+} from 'lucide-react';
 
 export default function EventCard({
   event,
@@ -15,83 +30,85 @@ export default function EventCard({
     switch (category) {
       case 'highlight_oral':
         return (
-          <span className="inline-flex items-center gap-1 bg-amber-500 text-white text-[11px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wide">
-            <Star className="w-3 h-3 fill-white" /> Báo cáo Oral (PID 628)
+          <span className="inline-flex items-center gap-1.5 bg-duo-yellow text-duo-dark font-black text-xs px-3 py-1 rounded-full shadow-[0_2px_0_#E5B400] uppercase tracking-wide">
+            <Star className="w-3.5 h-3.5 fill-duo-dark" /> Báo cáo Oral (CapyVocab PID 628)
           </span>
         );
       case 'highlight_poster':
         return (
-          <span className="inline-flex items-center gap-1 bg-purple-600 text-white text-[11px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wide">
-            <Star className="w-3 h-3 fill-white" /> Báo cáo Poster (PID 661)
+          <span className="inline-flex items-center gap-1.5 bg-duo-purple text-white font-black text-xs px-3 py-1 rounded-full shadow-[0_2px_0_#A55EEA] uppercase tracking-wide">
+            <Star className="w-3.5 h-3.5 fill-white" /> Báo cáo Poster (PID 661)
           </span>
         );
       case 'plenary':
         return (
-          <span className="inline-flex items-center gap-1 bg-indigo-100 text-indigo-800 text-[11px] font-semibold px-2.5 py-0.5 rounded-full">
-            <Landmark className="w-3 h-3" /> Phiên Toàn Thể
+          <span className="inline-flex items-center gap-1.5 bg-duo-hustRed text-white font-black text-xs px-3 py-1 rounded-full shadow-[0_2px_0_#991B1B]">
+            <Landmark className="w-3.5 h-3.5" /> Phiên Toàn Thể
           </span>
         );
       case 'academic':
         return (
-          <span className="inline-flex items-center gap-1 bg-blue-100 text-blue-800 text-[11px] font-semibold px-2.5 py-0.5 rounded-full">
-            <BookOpen className="w-3 h-3" /> Chuyên môn / Workshop
+          <span className="inline-flex items-center gap-1.5 bg-duo-blue text-white font-black text-xs px-3 py-1 rounded-full shadow-[0_2px_0_#1899D6]">
+            <BookOpen className="w-3.5 h-3.5" /> Chuyên Môn / Workshop
           </span>
         );
       case 'travel':
         return (
-          <span className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 text-[11px] font-semibold px-2.5 py-0.5 rounded-full">
-            <Bus className="w-3 h-3" /> Di chuyển
+          <span className="inline-flex items-center gap-1.5 bg-duo-green text-white font-black text-xs px-3 py-1 rounded-full shadow-[0_2px_0_#46A302]">
+            <Bus className="w-3.5 h-3.5" /> Di Chuyển
           </span>
         );
       case 'hotel':
         return (
-          <span className="inline-flex items-center gap-1 bg-teal-100 text-teal-800 text-[11px] font-semibold px-2.5 py-0.5 rounded-full">
-            <Hotel className="w-3 h-3" /> Khách sạn
+          <span className="inline-flex items-center gap-1.5 bg-teal-500 text-white font-black text-xs px-3 py-1 rounded-full shadow-[0_2px_0_#0D9488]">
+            <Hotel className="w-3.5 h-3.5" /> Khách Sạn
           </span>
         );
       case 'meal':
         return (
-          <span className="inline-flex items-center gap-1 bg-orange-100 text-orange-800 text-[11px] font-semibold px-2.5 py-0.5 rounded-full">
-            <Utensils className="w-3 h-3" /> Ẩm thực / Giao lưu
+          <span className="inline-flex items-center gap-1.5 bg-duo-orange text-white font-black text-xs px-3 py-1 rounded-full shadow-[0_2px_0_#CC7800]">
+            <Utensils className="w-3.5 h-3.5" /> Ẩm Thực / Gala Dinner
           </span>
         );
       case 'other_sessions':
         return (
-          <span className="inline-flex items-center gap-1 bg-slate-200 text-slate-700 text-[11px] font-semibold px-2.5 py-0.5 rounded-full">
+          <span className="inline-flex items-center gap-1.5 bg-duo-bg text-duo-muted border border-duo-border font-extrabold text-xs px-3 py-1 rounded-full">
             Phiên song song khác
           </span>
         );
       default:
         return (
-          <span className="inline-flex items-center gap-1 bg-slate-100 text-slate-700 text-[11px] font-semibold px-2.5 py-0.5 rounded-full">
+          <span className="inline-flex items-center gap-1.5 bg-duo-bg text-duo-dark border border-duo-border font-black text-xs px-3 py-1 rounded-full">
             Hoạt động chung
           </span>
         );
     }
   };
 
-  const cardBorderClass = isHighlight
-    ? 'border-2 border-amber-400 bg-amber-50/25 animate-pulse-border'
+  const cardContainerClass = isHighlight
+    ? 'card-3d-highlight p-4 sm:p-5 animate-pulse-border'
     : event.isOptionalRef
-    ? 'border border-dashed border-slate-300 bg-slate-50/70'
-    : 'border border-slate-200/90 bg-white hover:border-slate-300';
+    ? 'card-3d p-4 sm:p-5 border-dashed border-duo-border bg-[#FBFBFB]'
+    : 'card-3d card-3d-hover p-4 sm:p-5 bg-white';
 
   return (
-    <div className={`rounded-xl p-3.5 sm:p-4.5 shadow-sm transition-all group ${cardBorderClass}`}>
-      {/* Top Header Row */}
-      <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+    <div className={`transition-all group ${cardContainerClass}`}>
+      {/* Top Header Row: Time Badge, Category, Location, Actions */}
+      <div className="flex flex-wrap items-center justify-between gap-2.5 mb-2.5">
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="font-mono text-xs sm:text-sm font-bold px-2.5 py-1 rounded-md bg-slate-900 text-white flex items-center gap-1.5 shadow-xs">
-            <Clock className="w-3.5 h-3.5 text-slate-300" />
-            {event.time}
+          {/* Time Badge (3D Tactile Dark Button) */}
+          <span className="btn-3d-dark text-white font-mono font-black text-xs sm:text-sm px-3 py-1.5 rounded-xl flex items-center gap-1.5">
+            <Clock className="w-3.5 h-3.5 text-duo-blue" />
+            <span>{event.time}</span>
           </span>
+
           {getCategoryBadge(event.category)}
         </div>
 
-        <div className="flex items-center gap-2 sm:gap-3">
-          <span className="text-xs text-slate-500 flex items-center gap-1">
-            <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-            <span className="truncate max-w-[180px] sm:max-w-none">{event.location}</span>
+        <div className="flex items-center gap-2.5 sm:gap-3">
+          <span className="text-xs font-bold text-duo-muted flex items-center gap-1">
+            <MapPin className="w-3.5 h-3.5 text-duo-greenDark shrink-0" />
+            <span className="truncate max-w-[170px] sm:max-w-none">{event.location}</span>
           </span>
 
           {/* Action buttons (Pen & Trash) */}
@@ -100,20 +117,21 @@ export default function EventCard({
             const canDelete = isAdmin || (event.createdByMssv && event.createdByMssv === currentUser?.mssv);
 
             return (
-              <div className="flex items-center gap-1 opacity-80 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+              <div className="flex items-center gap-1.5 opacity-90 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                 <button
                   type="button"
                   onClick={() => onEdit(event)}
-                  className="w-7 h-7 rounded-md bg-slate-100 hover:bg-blue-50 text-slate-600 hover:text-blue-700 flex items-center justify-center transition-colors"
+                  className="btn-3d-white w-8 h-8 rounded-xl flex items-center justify-center text-duo-dark hover:border-duo-blue hover:text-duo-blue transition-colors cursor-pointer"
                   title="Chỉnh sửa hoạt động"
                 >
                   <Pen className="w-3.5 h-3.5" />
                 </button>
+
                 {canDelete ? (
                   <button
                     type="button"
                     onClick={() => onDelete(event)}
-                    className="w-7 h-7 rounded-md bg-slate-100 hover:bg-red-50 text-slate-600 hover:text-red-600 flex items-center justify-center transition-colors"
+                    className="btn-3d-white w-8 h-8 rounded-xl flex items-center justify-center text-red-500 hover:border-red-400 hover:text-red-600 transition-colors cursor-pointer"
                     title="Xóa hoạt động"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
@@ -122,10 +140,10 @@ export default function EventCard({
                   <button
                     type="button"
                     onClick={() => onDelete(event)}
-                    className="w-7 h-7 rounded-md bg-slate-100 text-slate-300 hover:text-amber-600 hover:bg-amber-50 flex items-center justify-center transition-colors"
+                    className="btn-3d-white w-8 h-8 rounded-xl flex items-center justify-center text-slate-300 hover:text-amber-600 transition-colors cursor-pointer"
                     title="Chỉ Nguyễn Quang Anh (20227035) mới có quyền xóa sự kiện này"
                   >
-                    <Lock className="w-3.5 h-3.5 text-slate-400" />
+                    <Lock className="w-3.5 h-3.5 text-duo-muted" />
                   </button>
                 )}
               </div>
@@ -135,33 +153,35 @@ export default function EventCard({
       </div>
 
       {/* Title */}
-      <h4 className="text-sm sm:text-base font-bold text-slate-900 mt-1 font-heading leading-snug">
+      <h4 className="text-base sm:text-lg font-black text-duo-dark leading-snug tracking-tight">
         {event.title}
       </h4>
 
       {/* Description */}
       {event.description && (
-        <p className="text-xs sm:text-sm text-slate-600 mt-1.5 whitespace-pre-line leading-relaxed">
+        <p className="text-xs sm:text-sm font-bold text-duo-muted mt-1.5 whitespace-pre-line leading-relaxed">
           {event.description}
         </p>
       )}
 
       {/* Sub-items (Session papers list) */}
       {event.subItems && event.subItems.length > 0 && (
-        <div className="mt-3 space-y-1.5">
+        <div className="mt-3.5 space-y-2">
           {event.subItems.map((sub, index) => (
             <div
               key={index}
-              className={`text-xs p-2 rounded-lg flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-2.5 ${
+              className={`text-xs p-2.5 rounded-xl flex flex-col sm:flex-row sm:items-start gap-1.5 sm:gap-3 transition-all ${
                 sub.highlight
-                  ? 'bg-amber-100/90 border border-amber-400 font-semibold text-amber-950 shadow-xs'
-                  : 'bg-slate-100/90 text-slate-700'
+                  ? 'card-3d border-2 border-duo-yellow bg-[#FFFDF5] text-duo-dark font-black shadow-[0_2px_0_#E5B400]'
+                  : 'bg-duo-bg border border-duo-border/80 text-duo-dark font-bold'
               }`}
             >
-              <span className={`font-mono font-bold whitespace-nowrap shrink-0 ${sub.highlight ? 'text-red-700' : 'text-slate-600'}`}>
+              <span className={`font-mono font-black whitespace-nowrap shrink-0 px-2 py-0.5 rounded-lg ${
+                sub.highlight ? 'bg-duo-yellow/40 text-amber-900' : 'bg-white text-duo-muted border border-duo-border'
+              }`}>
                 {sub.time}
               </span>
-              <span className="leading-snug">{sub.text}</span>
+              <span className="leading-snug pt-0.5">{sub.text}</span>
             </div>
           ))}
         </div>
@@ -169,28 +189,32 @@ export default function EventCard({
 
       {/* Personal Task Note for Selected Member */}
       {selectedMember !== 'all' && event.memberNotes && event.memberNotes[selectedMember] && (
-        <div className="mt-3 bg-blue-50 border-l-4 border-blue-600 p-2.5 sm:p-3 rounded-r-lg text-xs sm:text-sm text-blue-950 font-medium flex items-start gap-2 shadow-xs">
-          <Pin className="w-4 h-4 text-blue-700 shrink-0 mt-0.5" />
+        <div className="mt-3.5 card-3d-blue p-3.5 rounded-xl text-xs sm:text-sm text-duo-dark font-bold flex items-start gap-2.5">
+          <div className="w-6 h-6 rounded-lg bg-duo-blue text-white flex items-center justify-center shrink-0 mt-0.5">
+            <Pin className="w-3.5 h-3.5" />
+          </div>
           <div>
-            <strong>Nhiệm vụ của bạn:</strong> {event.memberNotes[selectedMember]}
+            <strong className="text-duo-blueDark font-black">Nhiệm vụ của bạn:</strong>{' '}
+            <span>{event.memberNotes[selectedMember]}</span>
           </div>
         </div>
       )}
 
       {/* All Member Tasks Summary (When on All Members & Card is Highlighted) */}
       {selectedMember === 'all' && event.memberNotes && isHighlight && (
-        <div className="mt-3 bg-white/95 border border-amber-200/90 p-3 rounded-xl space-y-1.5 shadow-xs">
-          <div className="text-xs font-bold uppercase tracking-wider text-amber-900 flex items-center gap-1.5 mb-1 font-heading">
-            <ListChecks className="w-3.5 h-3.5 text-amber-700" />
-            <span>Chi tiết phân công thành viên:</span>
+        <div className="mt-3.5 card-3d p-3.5 rounded-2xl border-2 border-duo-yellow/60 bg-white space-y-2">
+          <div className="text-xs font-black uppercase tracking-wider text-amber-800 flex items-center gap-1.5">
+            <ListChecks className="w-4 h-4 text-duo-orange" />
+            <span>Phân công nhiệm vụ thành viên:</span>
           </div>
-          <div className="space-y-1 text-xs text-slate-700">
+          <div className="space-y-1 text-xs text-duo-dark">
             {Object.entries(event.memberNotes).map(([mId, note]) => {
               const mObj = members.find((x) => x.id === mId);
               const name = mObj ? mObj.shortName : mId;
               return (
                 <div key={mId} className="leading-relaxed">
-                  <span className="font-semibold text-slate-900">• {name}:</span> {note}
+                  <span className="font-black text-duo-dark">• {name}:</span>{' '}
+                  <span className="font-bold text-duo-muted">{note}</span>
                 </div>
               );
             })}

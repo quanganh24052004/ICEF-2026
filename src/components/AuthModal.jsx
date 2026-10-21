@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { INITIAL_MEMBERS } from '../data/initialData';
 import {
-  Lock,
   Eye,
   EyeOff,
   User,
@@ -9,11 +8,11 @@ import {
   Mail,
   ArrowRight,
   Sparkles,
-  Crown,
   X,
   CheckCircle2,
   AlertCircle,
-  ShieldCheck
+  ShieldCheck,
+  Flame
 } from 'lucide-react';
 
 export default function AuthModal({
@@ -116,77 +115,78 @@ export default function AuthModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/85 backdrop-blur-md overflow-y-auto animate-fadeIn">
-      {/* Background Decorative Glow */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-red-600/15 rounded-full blur-3xl pointer-events-none -translate-x-1/2 -translate-y-1/2" />
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-600/15 rounded-full blur-3xl pointer-events-none translate-x-1/2 translate-y-1/2" />
-
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-md overflow-y-auto animate-fade-in">
       {/* Centered Floating Card */}
-      <div className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl border border-slate-200/90 overflow-hidden my-auto transition-all">
-        {/* Optional Close Button (only if user is already logged in and just switching) */}
+      <div className="relative w-full max-w-md card-3d rounded-3xl overflow-hidden my-auto border-2 border-duo-border shadow-2xl">
+        
+        {/* Close Button (if user is already logged in and just switching) */}
         {currentUser && (
           <button
             type="button"
             onClick={onClose}
-            className="absolute top-4 right-4 z-20 w-8 h-8 rounded-full bg-slate-100/80 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center transition-colors cursor-pointer"
+            className="absolute top-4 right-4 z-20 btn-3d-white w-9 h-9 rounded-full flex items-center justify-center text-duo-dark cursor-pointer"
             title="Đóng modal"
           >
-            <X className="w-4 h-4" />
+            <X className="w-4 h-4 stroke-[2.5]" />
           </button>
         )}
 
-        {/* Card Header with HUST Red Banner */}
-        <div className="bg-gradient-to-r from-[#8b0000] via-[#b91c1c] to-[#991b1b] text-white p-6 sm:p-7 relative overflow-hidden">
-          <div className="absolute -right-6 -bottom-6 w-32 h-32 bg-white/10 rounded-full blur-xl pointer-events-none" />
-
-          {/* Top Badge */}
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/20 backdrop-blur-sm text-[11px] font-semibold text-white mb-2 shadow-xs">
-            <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-            <span>HỘI THẢO ICEF 2026 • ĐẠI HỌC BÁCH KHOA HÀ NỘI</span>
+        {/* Card Header with HUST Red 3D Banner */}
+        <div className="bg-gradient-to-r from-duo-hustDark via-duo-hustRed to-duo-hustDark text-white p-6 sm:p-7 relative overflow-hidden">
+          <div className="flex items-center gap-2 mb-2 flex-wrap">
+            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-white/20 backdrop-blur-sm text-[11px] font-black text-white shadow-xs">
+              <Sparkles className="w-3.5 h-3.5 text-duo-yellow fill-duo-yellow" />
+              ICEF 2026 • HUST
+            </span>
+            <span className="inline-flex items-center gap-1 text-[11px] font-black text-amber-200">
+              <Flame className="w-3.5 h-3.5 text-duo-orange fill-duo-orange" />
+              CỔNG XÁC THỰC
+            </span>
           </div>
 
-          <h2 className="text-xl sm:text-2xl font-bold font-heading tracking-tight text-white">
+          <h2 className="text-xl sm:text-2xl font-black tracking-tight text-white">
             {isSignUp ? 'Đăng Ký Thành Viên Đoàn' : 'Đăng Nhập Cổng Lịch Trình'}
           </h2>
-          <p className="text-xs sm:text-sm text-red-100/90 mt-1 leading-relaxed">
+          <p className="text-xs sm:text-sm font-bold text-red-100/90 mt-1 leading-relaxed">
             {isSignUp
               ? 'Nhập thông tin thành viên để cấp quyền truy cập lịch trình cá nhân.'
               : 'Nhập Mã số sinh viên (MSSV) của bạn để truy cập lịch trình riêng biệt.'}
           </p>
 
           {/* Security Note */}
-          <div className="mt-3 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-black/30 text-[11px] text-amber-200 font-medium">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-            <span>Xác thực bảo mật: Chỉ chủ sở hữu MSSV mới có quyền truy cập</span>
+          <div className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-black/30 text-[11px] font-black text-amber-200">
+            <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+            <span>Chỉ chủ sở hữu MSSV mới có quyền truy cập lịch riêng</span>
           </div>
         </div>
 
-        {/* Card Body: Secure Form */}
-        <div className="p-6 sm:p-7 space-y-4">
-          {/* Error & Success Messages */}
+        {/* Card Body: Form */}
+        <div className="p-6 sm:p-7 space-y-4 bg-white">
+          {/* Error Message */}
           {errorMsg && (
-            <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs sm:text-sm flex items-start gap-2 animate-shake">
+            <div className="p-3.5 rounded-2xl bg-red-50 border-2 border-red-200 text-red-700 text-xs sm:text-sm font-black flex items-start gap-2.5">
               <AlertCircle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
               <span>{errorMsg}</span>
             </div>
           )}
 
+          {/* Success Message */}
           {successMsg && (
-            <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs sm:text-sm flex items-start gap-2">
+            <div className="p-3.5 rounded-2xl bg-emerald-50 border-2 border-emerald-200 text-emerald-800 text-xs sm:text-sm font-black flex items-start gap-2.5">
               <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
               <span>{successMsg}</span>
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Input: MSSV (Secure Password-masked Input with Eye Toggle) */}
+            {/* Input: MSSV */}
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wider">
+              <label className="block text-xs font-black text-duo-dark mb-1.5 uppercase tracking-wider">
                 Mã số sinh viên (MSSV) <span className="text-red-500">*</span>
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                  <GraduationCap className="w-5 h-5 text-red-700" />
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-duo-hustRed">
+                  <GraduationCap className="w-5 h-5" />
                 </div>
                 <input
                   type={showMssv ? 'text' : 'password'}
@@ -198,20 +198,20 @@ export default function AuthModal({
                     setErrorMsg('');
                   }}
                   placeholder="Nhập MSSV bí mật của bạn..."
-                  className="w-full pl-11 pr-11 py-2.5 rounded-xl border border-slate-300 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-red-600/30 focus:border-red-600 font-mono tracking-wider transition-all"
+                  className="w-full pl-11 pr-11 py-3 rounded-2xl border-2 border-duo-border text-duo-dark text-sm font-mono font-black focus:outline-none focus:border-duo-blue bg-white transition-colors"
                   autoFocus
                 />
                 <button
                   type="button"
                   onClick={() => setShowMssv(!showMssv)}
-                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 cursor-pointer"
+                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-duo-muted hover:text-duo-dark cursor-pointer"
                   title={showMssv ? 'Ẩn MSSV' : 'Hiện MSSV'}
                 >
                   {showMssv ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
-              <p className="text-[11px] text-slate-500 mt-1">
-                MSSV của bạn được bảo mật tuyệt đối, không hiển thị công khai cho người khác.
+              <p className="text-[11px] font-bold text-duo-muted mt-1.5">
+                🔒 MSSV được bảo mật trên trình duyệt của bạn, không lộ ra bên ngoài.
               </p>
             </div>
 
@@ -219,11 +219,11 @@ export default function AuthModal({
             {isSignUp && (
               <>
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wider">
+                  <label className="block text-xs font-black text-duo-dark mb-1.5 uppercase tracking-wider">
                     Họ và tên thành viên <span className="text-red-500">*</span>
                   </label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-duo-muted">
                       <User className="w-4 h-4" />
                     </div>
                     <input
@@ -232,17 +232,17 @@ export default function AuthModal({
                       value={nameInput}
                       onChange={(e) => setNameInput(e.target.value)}
                       placeholder="VD: Nguyễn Văn A"
-                      className="w-full pl-10 pr-4 py-2 rounded-xl border border-slate-300 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-red-600/30 focus:border-red-600"
+                      className="w-full pl-10 pr-4 py-2.5 rounded-2xl border-2 border-duo-border text-duo-dark text-sm font-black focus:outline-none focus:border-duo-blue bg-white"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wider">
+                  <label className="block text-xs font-black text-duo-dark mb-1.5 uppercase tracking-wider">
                     Email sinh viên (Tùy chọn)
                   </label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-duo-muted">
                       <Mail className="w-4 h-4" />
                     </div>
                     <input
@@ -250,13 +250,13 @@ export default function AuthModal({
                       value={emailInput}
                       onChange={(e) => setEmailInput(e.target.value)}
                       placeholder="VD: a.nv234567@sis.hust.edu.vn"
-                      className="w-full pl-10 pr-4 py-2 rounded-xl border border-slate-300 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-red-600/30 focus:border-red-600 font-mono"
+                      className="w-full pl-10 pr-4 py-2.5 rounded-2xl border-2 border-duo-border text-duo-dark text-sm font-mono font-bold focus:outline-none focus:border-duo-blue bg-white"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wider">
+                  <label className="block text-xs font-black text-duo-dark mb-1.5 uppercase tracking-wider">
                     Vai trò trong đoàn
                   </label>
                   <input
@@ -264,25 +264,24 @@ export default function AuthModal({
                     value={roleInput}
                     onChange={(e) => setRoleInput(e.target.value)}
                     placeholder="VD: Thành viên nhóm Oral Session 2"
-                    className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-red-600/30 focus:border-red-600"
+                    className="w-full px-4 py-2.5 rounded-2xl border-2 border-duo-border text-duo-dark text-sm font-black focus:outline-none focus:border-duo-blue bg-white"
                   />
                 </div>
               </>
             )}
 
-            {/* Primary CTA Button */}
+            {/* Primary CTA 3D Button */}
             <button
               type="submit"
-              className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-red-700 via-red-600 to-red-700 hover:from-red-800 hover:to-red-800 text-white font-bold text-sm shadow-md hover:shadow-red-600/25 transition-all flex items-center justify-center gap-2 group cursor-pointer"
+              className="w-full btn-3d-hust text-white font-black text-sm sm:text-base py-3.5 rounded-2xl flex items-center justify-center gap-2 cursor-pointer mt-2"
             >
-              <span>{isSignUp ? 'Đăng Ký Tham Gia Đoàn' : 'Đăng Nhập Vào Hệ Thống'}</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              <span>{isSignUp ? 'ĐĂNG KÝ THAM GIA ĐOÀN' : 'ĐĂNG NHẬP VÀO HỆ THỐNG'}</span>
+              <ArrowRight className="w-4 h-4 stroke-[2.5]" />
             </button>
           </form>
 
-          {/* Footer Controls: Switch Sign In / Sign Up & Guest Mode */}
-          <div className="pt-3 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-600">
-            {/* Switch Sign Up / Sign In Link */}
+          {/* Footer Controls */}
+          <div className="pt-3 border-t-2 border-duo-border flex flex-col sm:flex-row items-center justify-between gap-2.5 text-xs font-black">
             <button
               type="button"
               onClick={() => {
@@ -290,17 +289,16 @@ export default function AuthModal({
                 setErrorMsg('');
                 setSuccessMsg('');
               }}
-              className="text-red-700 hover:text-red-800 font-semibold underline underline-offset-2 transition-colors cursor-pointer"
+              className="text-duo-hustRed hover:underline transition-colors cursor-pointer"
             >
               {isSignUp ? '← Đã có tài khoản? Quay lại Đăng nhập' : 'Chưa có trong danh sách? Đăng ký mới'}
             </button>
 
-            {/* Guest Mode Link */}
             {onGuestMode && (
               <button
                 type="button"
                 onClick={onGuestMode}
-                className="text-slate-500 hover:text-slate-800 transition-colors cursor-pointer"
+                className="btn-3d-white px-3 py-1.5 rounded-xl text-duo-muted hover:text-duo-dark transition-colors cursor-pointer"
               >
                 Chế độ Khách (Chỉ xem)
               </button>

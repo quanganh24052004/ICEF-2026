@@ -1,5 +1,5 @@
 import React from 'react';
-import { CalendarX, CalendarCheck } from 'lucide-react';
+import { CalendarX, CalendarCheck, Sparkles } from 'lucide-react';
 import EventCard from './EventCard';
 
 export default function ScheduleList({
@@ -44,13 +44,15 @@ export default function ScheduleList({
 
   if (filtered.length === 0) {
     return (
-      <div className="bg-white rounded-b-xl border border-slate-200/80 p-8 sm:p-14 text-center text-slate-400">
-        <CalendarX className="w-12 h-12 mx-auto mb-3 text-slate-300 stroke-[1.5]" />
-        <h4 className="text-base font-semibold text-slate-700 font-heading">
-          Không tìm thấy hoạt động nào
+      <div className="card-3d rounded-3xl p-8 sm:p-14 text-center mt-4 bg-white border-2 border-duo-border">
+        <div className="w-16 h-16 rounded-3xl bg-duo-bg border-2 border-duo-border text-duo-muted flex items-center justify-center mx-auto mb-4 shadow-[0_3px_0_#E5E5E5]">
+          <CalendarX className="w-8 h-8 stroke-[2]" />
+        </div>
+        <h4 className="text-lg font-black text-duo-dark">
+          Không tìm thấy hoạt động nào!
         </h4>
-        <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-md mx-auto">
-          Không có hoạt động nào phù hợp với bộ lọc ngày, thành viên hoặc từ khóa tìm kiếm của bạn. Hãy thử thay đổi bộ lọc.
+        <p className="text-xs sm:text-sm font-bold text-duo-muted mt-1.5 max-w-md mx-auto leading-relaxed">
+          Không có sự kiện nào khớp với bộ lọc ngày, thành viên hoặc từ khóa tìm kiếm của bạn. Hãy thử chọn "Tất cả" hoặc xóa ô tìm kiếm.
         </p>
       </div>
     );
@@ -70,24 +72,37 @@ export default function ScheduleList({
   });
 
   return (
-    <div className="bg-white rounded-b-xl border border-slate-200/80 p-3.5 sm:p-6 space-y-8">
+    <div className="space-y-8 mt-5">
       {Object.keys(grouped).map((dayKey) => {
         const group = grouped[dayKey];
+        const isHighlightDay = dayKey === '23';
+
         return (
           <div key={dayKey} className="space-y-4">
-            {/* Sticky Day Header */}
-            <div className="sticky top-[58px] sm:top-[68px] z-30 bg-slate-100/95 backdrop-blur-md py-2.5 px-3.5 sm:px-4 rounded-xl border-l-4 border-blue-800 shadow-xs flex items-center justify-between">
-              <h3 className="font-bold text-xs sm:text-sm md:text-base text-blue-950 font-heading flex items-center gap-2">
-                <CalendarCheck className="w-4 h-4 text-blue-800 shrink-0" />
+            {/* Sticky Day Header with 3D Badge */}
+            <div className={`sticky top-[68px] sm:top-[74px] z-30 card-3d rounded-2xl py-3 px-4 sm:px-5 flex items-center justify-between backdrop-blur-md ${
+              isHighlightDay ? 'bg-[#FFFDF5] border-2 border-duo-yellow shadow-[0_4px_0_#E5B400]' : 'bg-white/95'
+            }`}>
+              <h3 className="font-black text-xs sm:text-sm md:text-base text-duo-dark flex items-center gap-2.5">
+                <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-white shrink-0 ${
+                  isHighlightDay ? 'bg-duo-yellow text-duo-dark shadow-[0_2px_0_#E5B400]' : 'bg-duo-blue shadow-[0_2px_0_#1899D6]'
+                }`}>
+                  <CalendarCheck className="w-4 h-4" />
+                </div>
                 <span>{group.title}</span>
               </h3>
-              <span className="text-xs font-semibold text-slate-600 bg-slate-200/80 px-2 py-0.5 rounded-full shrink-0">
-                {group.items.length} hoạt động
+
+              <span className={`text-xs font-black px-3 py-1 rounded-full border ${
+                isHighlightDay
+                  ? 'bg-duo-yellow/30 text-amber-900 border-duo-yellow'
+                  : 'bg-duo-bg text-duo-dark border-duo-border'
+              }`}>
+                {group.items.length} sự kiện
               </span>
             </div>
 
             {/* Day Events List */}
-            <div className="space-y-3 pl-2 sm:pl-4 border-l-2 border-slate-200 ml-1 sm:ml-2">
+            <div className="space-y-3.5 pl-1 sm:pl-3 border-l-4 border-duo-border/80 ml-2 sm:ml-4">
               {group.items.map((ev) => (
                 <EventCard
                   key={ev.id}

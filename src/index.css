@@ -9,12 +9,194 @@
   }
   
   body {
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-family: 'Nunito', system-ui, -apple-system, sans-serif;
+    color: #3C3C3C;
+    background-color: #F7F7F7;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Outfit', 'Inter', sans-serif;
+    font-family: 'Nunito', 'Outfit', sans-serif;
+    font-weight: 800;
   }
+}
+
+/* =========================================================================
+   3D DUOLINGO / MODERN TACTILE DESIGN SYSTEM
+   ========================================================================= */
+
+/* 3D Green Button (Success / Primary CTA) */
+.btn-3d-green {
+  background-color: #58CC02;
+  box-shadow: 0 4px 0 #46A302;
+  transition: all 0.1s ease;
+  user-select: none;
+}
+.btn-3d-green:hover:not(:disabled) {
+  filter: brightness(1.05);
+}
+.btn-3d-green:active:not(:disabled) {
+  transform: translateY(4px);
+  box-shadow: 0 0px 0 #46A302;
+}
+
+/* 3D Blue Button (Action / Active Pill) */
+.btn-3d-blue {
+  background-color: #1CB0F6;
+  box-shadow: 0 4px 0 #1899D6;
+  transition: all 0.1s ease;
+  user-select: none;
+}
+.btn-3d-blue:hover:not(:disabled) {
+  filter: brightness(1.05);
+}
+.btn-3d-blue:active:not(:disabled) {
+  transform: translateY(4px);
+  box-shadow: 0 0px 0 #1899D6;
+}
+
+/* 3D Yellow / Amber Button (Highlight / Rewards) */
+.btn-3d-yellow {
+  background-color: #FFC800;
+  box-shadow: 0 4px 0 #E5B400;
+  transition: all 0.1s ease;
+  user-select: none;
+}
+.btn-3d-yellow:hover:not(:disabled) {
+  filter: brightness(1.05);
+}
+.btn-3d-yellow:active:not(:disabled) {
+  transform: translateY(4px);
+  box-shadow: 0 0px 0 #E5B400;
+}
+
+/* 3D HUST Red Button (Brand Red / Delete / Admin) */
+.btn-3d-hust {
+  background-color: #DC2626;
+  box-shadow: 0 4px 0 #991B1B;
+  transition: all 0.1s ease;
+  user-select: none;
+}
+.btn-3d-hust:hover:not(:disabled) {
+  filter: brightness(1.06);
+}
+.btn-3d-hust:active:not(:disabled) {
+  transform: translateY(4px);
+  box-shadow: 0 0px 0 #991B1B;
+}
+
+/* 3D Purple Button (Special / Workshop / Session) */
+.btn-3d-purple {
+  background-color: #CE82FF;
+  box-shadow: 0 4px 0 #A55EEA;
+  transition: all 0.1s ease;
+  user-select: none;
+}
+.btn-3d-purple:hover:not(:disabled) {
+  filter: brightness(1.05);
+}
+.btn-3d-purple:active:not(:disabled) {
+  transform: translateY(4px);
+  box-shadow: 0 0px 0 #A55EEA;
+}
+
+/* 3D White Tactile Button (Default Inactive / Secondary) */
+.btn-3d-white {
+  background-color: #FFFFFF;
+  border: 2px solid #E5E5E5;
+  box-shadow: 0 4px 0 #E5E5E5;
+  transition: all 0.1s ease;
+  user-select: none;
+}
+.btn-3d-white:hover:not(:disabled) {
+  border-color: #CBD5E1;
+  background-color: #FBFBFB;
+}
+.btn-3d-white:active:not(:disabled) {
+  transform: translateY(4px);
+  box-shadow: 0 0px 0 #E5E5E5;
+}
+
+/* 3D Dark Button */
+.btn-3d-dark {
+  background-color: #334155;
+  box-shadow: 0 4px 0 #1E293B;
+  transition: all 0.1s ease;
+  user-select: none;
+}
+.btn-3d-dark:hover:not(:disabled) {
+  filter: brightness(1.1);
+}
+.btn-3d-dark:active:not(:disabled) {
+  transform: translateY(4px);
+  box-shadow: 0 0px 0 #1E293B;
+}
+
+/* =========================================================================
+   3D CARD SYSTEM
+   ========================================================================= */
+.card-3d {
+  background-color: #FFFFFF;
+  border: 2px solid #E5E5E5;
+  box-shadow: 0 5px 0 #E5E5E5;
+  border-radius: 1.25rem;
+  transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.card-3d-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 7px 0 #CBD5E1;
+  border-color: #CBD5E1;
+}
+
+.card-3d-highlight {
+  background-color: #FFFDF5;
+  border: 2px solid #FFC800;
+  box-shadow: 0 5px 0 #E5B400;
+  border-radius: 1.25rem;
+  transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.card-3d-blue {
+  background-color: #F0F9FF;
+  border: 2px solid #7DD3FC;
+  box-shadow: 0 5px 0 #38BDF8;
+  border-radius: 1.25rem;
+}
+
+.card-3d-green {
+  background-color: #F0FDF4;
+  border: 2px solid #86EFAC;
+  box-shadow: 0 5px 0 #4ADE80;
+  border-radius: 1.25rem;
+}
+
+/* 3D Badge / Chip */
+.badge-3d {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.65rem;
+  font-weight: 800;
+  font-size: 0.72rem;
+  border-radius: 9999px;
+  border: 1.5px solid transparent;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+/* 3D Flip Card utility */
+.perspective-1000 {
+  perspective: 1000px;
+}
+.transform-style-3d {
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.backface-hidden {
+  backface-visibility: hidden;
+}
+.rotate-y-180 {
+  transform: rotateY(180deg);
 }
 
 /* Custom scrollbar for mobile overflow */

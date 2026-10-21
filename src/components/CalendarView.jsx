@@ -211,27 +211,27 @@ export default function CalendarView({
   };
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden text-slate-800 font-sans">
+    <div className="card-3d rounded-3xl overflow-hidden mt-6 bg-white text-duo-dark">
       {/* =========================================================================
-          1. TOP CONTROLS BAR (Matches User Image 1: "Hôm nay", Calendar button, "Lịch tuần ⌵")
+          1. TOP CONTROLS BAR (3D Tactile Buttons & View Selector)
           ========================================================================= */}
-      <div className="px-4 py-2.5 border-b border-slate-200 flex items-center justify-between bg-white">
-        {/* Left: "Hôm nay" red pill button + circular red calendar button */}
+      <div className="px-4 py-3 border-b-2 border-duo-border flex items-center justify-between bg-[#F8FAFC]">
+        {/* Left: "Hôm nay" 3D Red Pill Button + Calendar Button */}
         <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={() => setViewType('week')}
-            className="px-4 py-1 rounded-full border border-red-600 text-red-600 font-medium text-xs sm:text-sm hover:bg-red-50 transition-colors shadow-2xs cursor-pointer"
+            className="btn-3d-hust text-white font-black text-xs sm:text-sm px-4 py-1.5 rounded-xl cursor-pointer"
           >
             Hôm nay
           </button>
           <button
             type="button"
             onClick={() => setViewType('week')}
-            className="w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-red-600 text-red-600 flex items-center justify-center hover:bg-red-50 transition-colors cursor-pointer"
+            className="btn-3d-white text-duo-dark w-8 h-8 rounded-xl flex items-center justify-center cursor-pointer"
             title="Lịch tuần"
           >
-            <CalendarIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            <CalendarIcon className="w-4 h-4 text-duo-blue" />
           </button>
         </div>
 
@@ -240,9 +240,9 @@ export default function CalendarView({
           <select
             value={viewType}
             onChange={(e) => setViewType(e.target.value)}
-            className="px-3 py-1.5 rounded-md border border-slate-300 text-xs sm:text-sm font-medium text-slate-700 bg-white hover:border-slate-400 focus:outline-none focus:ring-1 focus:ring-red-500 cursor-pointer shadow-2xs pr-7"
+            className="px-3.5 py-1.5 rounded-xl border-2 border-duo-border text-xs sm:text-sm font-black text-duo-dark bg-white hover:border-duo-blue focus:outline-none cursor-pointer shadow-xs pr-7 transition-colors"
           >
-            <option value="week">Lịch tuần</option>
+            <option value="week">Lịch tuần (Week 43)</option>
             <option value="threeDays">Lịch 3 ngày hội thảo</option>
             <option value="day">Lịch Thứ 6 (Trọng tâm)</option>
           </select>
