@@ -64,7 +64,7 @@ export default function StatsBar({ schedules = [], members = [] }) {
           </div>
           <div>
             <div className="text-2xl sm:text-3xl font-black text-duo-dark tracking-tight">
-              {members.length} Nhân Sự
+              {members.length} Thành Viên
             </div>
             <div className="text-xs font-bold text-duo-muted mt-0.5">
               Thành Viên Đoàn Nghiên Cứu
