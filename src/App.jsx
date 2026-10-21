@@ -14,6 +14,7 @@ import EventModal from './components/EventModal';
 import DeleteModal from './components/DeleteModal';
 import BackupModal from './components/BackupModal';
 import AuthModal from './components/AuthModal';
+import ErrorBoundary from './components/ErrorBoundary';
 import Toast from './components/Toast';
 
 export default function App() {
@@ -130,6 +131,23 @@ export default function App() {
     });
   };
 
+  // Guest Mode
+  const handleGuestMode = useCallback(() => {
+    const guestUser = {
+      id: 'guest',
+      name: 'Khách vãng lai',
+      shortName: 'Khách',
+      mssv: '',
+      email: '',
+      isAdmin: false,
+      roleTitle: 'Khách (Chế độ chỉ xem)'
+    };
+    setCurrentUser(guestUser);
+    setSelectedMembers(['all']);
+    setIsAuthModalOpen(false);
+    showToast('Đang xem lịch trình với tư cách Khách (Chế độ chỉ xem)', 'info');
+  }, [showToast]);
+
   // Keyboard shortcut: '/' for search, 'Escape' to close modals
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -160,7 +178,7 @@ export default function App() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isEventModalOpen, deletingEvent, isBackupModalOpen, isAuthModalOpen, currentUser]);
+  }, [isEventModalOpen, deletingEvent, isBackupModalOpen, isAuthModalOpen, currentUser, handleGuestMode]);
 
   // Auth Handlers
   const handleLogin = (member) => {
@@ -196,22 +214,6 @@ export default function App() {
       console.error('[App] Lỗi đăng ký thành viên:', err);
       showToast('Lỗi đăng ký: ' + err.message, 'error');
     }
-  };
-
-  const handleGuestMode = () => {
-    const guestUser = {
-      id: 'guest',
-      name: 'Khách vãng lai',
-      shortName: 'Khách',
-      mssv: '',
-      email: '',
-      isAdmin: false,
-      roleTitle: 'Khách (Chế độ chỉ xem)'
-    };
-    setCurrentUser(guestUser);
-    setSelectedMembers(['all']);
-    setIsAuthModalOpen(false);
-    showToast('Đang xem lịch trình với tư cách Khách (Chế độ chỉ xem)', 'info');
   };
 
   const handleLogout = () => {
@@ -450,33 +452,35 @@ export default function App() {
           onExportICS={handleExportICS}
         />
 
-        {/* View Switching: Timeline List vs HUST Timetable Grid */}
-        {viewMode === 'timeline' ? (
-          <ScheduleList
-            schedules={schedules}
-            members={members}
-            selectedDay={selectedDay}
-            selectedMembers={selectedMembers}
-            searchQuery={searchQuery}
-            showAllSessions={showAllSessions}
-            currentUser={currentUser}
-            onEditEvent={handleOpenEditModal}
-            onDeleteEvent={handleOpenDeleteModal}
-            onOpenMap={(loc) => setMapModalLocation(loc)}
-          />
-        ) : (
-          <CalendarView
-            schedules={schedules}
-            members={members}
-            selectedMembers={selectedMembers}
-            showAllSessions={showAllSessions}
-            searchQuery={searchQuery}
-            currentUser={currentUser}
-            onEventClick={handleOpenEditModal}
-            onDeleteEvent={handleOpenDeleteModal}
-            onOpenMap={(loc) => setMapModalLocation(loc)}
-          />
-        )}
+        {/* View Switching: Timeline List vs HUST Timetable Grid wrapped in ErrorBoundary */}
+        <ErrorBoundary onReset={loadAllData}>
+          {viewMode === 'timeline' ? (
+            <ScheduleList
+              schedules={schedules}
+              members={members}
+              selectedDay={selectedDay}
+              selectedMembers={selectedMembers}
+              searchQuery={searchQuery}
+              showAllSessions={showAllSessions}
+              currentUser={currentUser}
+              onEditEvent={handleOpenEditModal}
+              onDeleteEvent={handleOpenDeleteModal}
+              onOpenMap={(loc) => setMapModalLocation(loc)}
+            />
+          ) : (
+            <CalendarView
+              schedules={schedules}
+              members={members}
+              selectedMembers={selectedMembers}
+              showAllSessions={showAllSessions}
+              searchQuery={searchQuery}
+              currentUser={currentUser}
+              onEventClick={handleOpenEditModal}
+              onDeleteEvent={handleOpenDeleteModal}
+              onOpenMap={(loc) => setMapModalLocation(loc)}
+            />
+          )}
+        </ErrorBoundary>
       </main>
 
       {/* Mobile Sticky Bottom Bar (Tactile 3D Buttons for Mobile-First UX) */}

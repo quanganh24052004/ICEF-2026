@@ -713,6 +713,9 @@ export default function CalendarView({
                         : dayIndex >= displayedDays.length - 2 ||
                           (dayIndex >= displayedDays.length - 3 && colIdx >= 1);
 
+                    const totalGridHeight = (END_HOUR - START_HOUR) * HOUR_HEIGHT;
+                    const isBottomHalf = topPx > totalGridHeight * 0.55 || (ev.startMin && ev.startMin >= 14 * 60);
+
                     const isAdmin = currentUser?.isAdmin || currentUser?.mssv === '20227035';
                     const isPreExisting = !ev.createdByMssv || (typeof ev.id === 'string' && ev.id.startsWith('sch-'));
                     const isCreatedByMe = Boolean(ev.createdByMssv && ev.createdByMssv === currentUser?.mssv);

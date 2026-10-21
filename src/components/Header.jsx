@@ -10,7 +10,6 @@ import {
   User,
   LogOut,
   ChevronDown,
-  Sparkles,
   Flame
 } from 'lucide-react';
 
