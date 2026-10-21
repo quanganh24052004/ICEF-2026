@@ -34,7 +34,7 @@ export default function App() {
   // Filter & Search states
   const [viewMode, setViewMode] = useState('calendar'); // Default to HUST Calendar view
   const [selectedDay, setSelectedDay] = useState('all');
-  const [selectedMember, setSelectedMember] = useState('all');
+  const [selectedMembers, setSelectedMembers] = useState(['all']);
   const [searchQuery, setSearchQuery] = useState('');
   const [showAllSessions, setShowAllSessions] = useState(true);
 
@@ -95,12 +95,37 @@ export default function App() {
     initApp();
   }, [loadAllData]);
 
-  // Sync selectedMember with currentUser when logged in
+  // Sync selectedMembers with currentUser when logged in
   useEffect(() => {
     if (currentUser && currentUser.id && currentUser.id !== 'guest') {
-      setSelectedMember(currentUser.id);
+      setSelectedMembers([currentUser.id]);
     }
   }, [currentUser]);
+
+  // Toggle member in multi-select filter
+  const handleToggleMember = (memberId) => {
+    if (memberId === 'all') {
+      setSelectedMembers(['all']);
+      return;
+    }
+
+    setSelectedMembers((prev) => {
+      if (prev.includes('all')) {
+        return [memberId];
+      }
+
+      if (prev.includes(memberId)) {
+        const next = prev.filter((id) => id !== memberId);
+        return next.length === 0 ? ['all'] : next;
+      } else {
+        const next = [...prev, memberId];
+        if (members.length > 0 && next.length === members.length) {
+          return ['all'];
+        }
+        return next;
+      }
+    });
+  };
 
   // Keyboard shortcut: '/' for search, 'Escape' to close modals
   useEffect(() => {
@@ -319,17 +344,22 @@ export default function App() {
 
   // Export iCalendar (.ics) Handler for Google/Apple Calendar
   const handleExportICS = () => {
-    const curMember = members.find((m) => m.id === selectedMember);
-    const memberName = curMember ? curMember.name : 'Cả đoàn ICEF 2026';
+    const isAllMembers = selectedMembers.includes('all') || selectedMembers.length === 0;
 
-    const itemsToExport = selectedMember === 'all'
+    const itemsToExport = isAllMembers
       ? schedules
-      : schedules.filter((s) => s.participants?.includes(selectedMember));
+      : schedules.filter((s) => selectedMembers.some((mId) => s.participants?.includes(mId)));
 
     if (itemsToExport.length === 0) {
       showToast('Không có hoạt động nào để xuất lịch!', 'error');
       return;
     }
+
+    const memberName = isAllMembers
+      ? 'Cả đoàn ICEF 2026'
+      : selectedMembers
+          .map((id) => members.find((m) => m.id === id)?.shortName || id)
+          .join(', ');
 
     downloadICSFile(itemsToExport, memberName);
     showToast(`Đã xuất file .ics cho ${memberName}! Mở file trên điện thoại để thêm vào Lịch.`, 'success');
@@ -371,11 +401,12 @@ export default function App() {
         {/* Quick Stats */}
         <StatsBar schedules={schedules} members={members} />
 
-        {/* Member Filter & Selected Member Details */}
+        {/* Member Filter & Selected Member Details (Multi-Select Enabled) */}
         <MemberFilter
           members={members}
-          selectedMember={selectedMember}
-          onSelectMember={setSelectedMember}
+          selectedMembers={selectedMembers}
+          onToggleMember={handleToggleMember}
+          onResetAll={() => setSelectedMembers(['all'])}
         />
 
         {/* Hotel & Academic Paper Overview (Collapsible) */}
@@ -398,7 +429,7 @@ export default function App() {
             schedules={schedules}
             members={members}
             selectedDay={selectedDay}
-            selectedMember={selectedMember}
+            selectedMembers={selectedMembers}
             searchQuery={searchQuery}
             showAllSessions={showAllSessions}
             currentUser={currentUser}
@@ -409,7 +440,7 @@ export default function App() {
           <CalendarView
             schedules={schedules}
             members={members}
-            selectedMember={selectedMember}
+            selectedMembers={selectedMembers}
             showAllSessions={showAllSessions}
             searchQuery={searchQuery}
             currentUser={currentUser}

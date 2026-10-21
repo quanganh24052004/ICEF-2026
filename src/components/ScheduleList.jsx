@@ -6,6 +6,7 @@ export default function ScheduleList({
   schedules = [],
   members = [],
   selectedDay = 'all',
+  selectedMembers = ['all'],
   selectedMember = 'all',
   searchQuery = '',
   showAllSessions = true,
@@ -15,11 +16,23 @@ export default function ScheduleList({
 }) {
   const query = searchQuery.toLowerCase().trim();
 
+  // Harmonize single or multi-select members state
+  const activeMembers = React.useMemo(() => {
+    if (Array.isArray(selectedMembers)) return selectedMembers;
+    if (Array.isArray(selectedMember)) return selectedMember;
+    if (selectedMember && selectedMember !== 'all') return [selectedMember];
+    return ['all'];
+  }, [selectedMembers, selectedMember]);
+
+  const isAllMembers = activeMembers.includes('all') || activeMembers.length === 0;
+
   // Filter items
   const filtered = schedules.filter((item) => {
     if (selectedDay !== 'all' && item.day !== selectedDay) return false;
     if (!showAllSessions && item.isOptionalRef) return false;
-    if (selectedMember !== 'all' && !item.participants?.includes(selectedMember)) return false;
+    if (!isAllMembers && !activeMembers.some((mId) => item.participants?.includes(mId))) {
+      return false;
+    }
 
     if (query) {
       const inTitle = (item.title || '').toLowerCase().includes(query);
@@ -108,7 +121,8 @@ export default function ScheduleList({
                   key={ev.id}
                   event={ev}
                   members={members}
-                  selectedMember={selectedMember}
+                  selectedMembers={activeMembers}
+                  selectedMember={activeMembers[0] || 'all'}
                   currentUser={currentUser}
                   onEdit={onEditEvent}
                   onDelete={onDeleteEvent}

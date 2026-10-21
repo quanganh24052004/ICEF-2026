@@ -14,6 +14,7 @@ import {
 export default function CalendarView({
   schedules = [],
   members = [],
+  selectedMembers = ['all'],
   selectedMember = 'all',
   showAllSessions = true,
   searchQuery = '',
@@ -247,12 +248,24 @@ export default function CalendarView({
     return { startMin, endMin, durationMin: Math.max(endMin - startMin, 40) };
   };
 
+  // Harmonize single or multi-select members state
+  const activeMembers = useMemo(() => {
+    if (Array.isArray(selectedMembers)) return selectedMembers;
+    if (Array.isArray(selectedMember)) return selectedMember;
+    if (selectedMember && selectedMember !== 'all') return [selectedMember];
+    return ['all'];
+  }, [selectedMembers, selectedMember]);
+
+  const isAllMembers = activeMembers.includes('all') || activeMembers.length === 0;
+
   // Filter events
   const filteredEvents = useMemo(() => {
     const query = searchQuery.toLowerCase().trim();
     return schedules.filter((item) => {
       if (!showAllSessions && item.isOptionalRef) return false;
-      if (selectedMember !== 'all' && !item.participants?.includes(selectedMember)) return false;
+      if (!isAllMembers && !activeMembers.some((mId) => item.participants?.includes(mId))) {
+        return false;
+      }
 
       if (query) {
         const inTitle = (item.title || '').toLowerCase().includes(query);
@@ -263,7 +276,7 @@ export default function CalendarView({
       }
       return true;
     });
-  }, [schedules, selectedMember, showAllSessions, searchQuery]);
+  }, [schedules, activeMembers, isAllMembers, showAllSessions, searchQuery]);
 
   // Group events by day and compute overlapping positions
   // Các sự kiện hội thảo (day: '22' | '23' | '24') diễn ra duy nhất vào tháng 10/2026
@@ -769,9 +782,21 @@ export default function CalendarView({
                                 </div>
                               )}
 
-                              {selectedMember !== 'all' && ev.memberNotes && ev.memberNotes[selectedMember] && (
-                                <div className="p-2 rounded-lg bg-blue-50 border border-blue-200 text-blue-900 font-medium text-[11px]">
-                                  <strong>Nhiệm vụ của bạn:</strong> {ev.memberNotes[selectedMember]}
+                              {!isAllMembers && ev.memberNotes && (
+                                <div className="space-y-1.5 pt-1 border-t border-slate-100">
+                                  {activeMembers.map((mId) => {
+                                    const note = ev.memberNotes[mId];
+                                    if (!note) return null;
+                                    const mem = members.find((m) => m.id === mId);
+                                    return (
+                                      <div
+                                        key={mId}
+                                        className="p-2 rounded-lg bg-blue-50 border border-blue-200 text-blue-900 font-medium text-[11px]"
+                                      >
+                                        <strong>Nhiệm vụ ({mem?.shortName || mem?.name || mId}):</strong> {note}
+                                      </div>
+                                    );
+                                  })}
                                 </div>
                               )}
                             </div>

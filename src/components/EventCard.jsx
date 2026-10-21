@@ -18,12 +18,23 @@ import {
 export default function EventCard({
   event,
   members = [],
+  selectedMembers = ['all'],
   selectedMember = 'all',
   currentUser = null,
   onEdit,
   onDelete
 }) {
   const isHighlight = event.isHighlight || event.category === 'highlight_oral' || event.category === 'highlight_poster';
+
+  // Harmonize single or multi-select members state
+  const activeMembers = React.useMemo(() => {
+    if (Array.isArray(selectedMembers)) return selectedMembers;
+    if (Array.isArray(selectedMember)) return selectedMember;
+    if (selectedMember && selectedMember !== 'all') return [selectedMember];
+    return ['all'];
+  }, [selectedMembers, selectedMember]);
+
+  const isAllMembers = activeMembers.includes('all') || activeMembers.length === 0;
 
   const getCategoryBadge = (category) => {
     switch (category) {
@@ -186,21 +197,36 @@ export default function EventCard({
         </div>
       )}
 
-      {/* Personal Task Note for Selected Member */}
-      {selectedMember !== 'all' && event.memberNotes && event.memberNotes[selectedMember] && (
-        <div className="mt-3.5 card-3d-blue p-3.5 rounded-xl text-xs sm:text-sm text-duo-dark font-bold flex items-start gap-2.5">
-          <div className="w-6 h-6 rounded-lg bg-duo-blue text-white flex items-center justify-center shrink-0 mt-0.5">
-            <Pin className="w-3.5 h-3.5" />
-          </div>
-          <div>
-            <strong className="text-duo-blueDark font-black">Nhiệm vụ của bạn:</strong>{' '}
-            <span>{event.memberNotes[selectedMember]}</span>
-          </div>
+      {/* Personal Task Notes for Selected Members */}
+      {!isAllMembers && event.memberNotes && (
+        <div className="mt-3.5 space-y-2">
+          {activeMembers.map((mId) => {
+            const note = event.memberNotes[mId];
+            if (!note) return null;
+            const mObj = members.find((x) => x.id === mId);
+            const name = mObj ? mObj.name : mId;
+            return (
+              <div
+                key={mId}
+                className="card-3d-blue p-3 sm:p-3.5 rounded-xl text-xs sm:text-sm text-duo-dark font-bold flex items-start gap-2.5"
+              >
+                <div className="w-6 h-6 rounded-lg bg-duo-blue text-white flex items-center justify-center shrink-0 mt-0.5">
+                  <Pin className="w-3.5 h-3.5" />
+                </div>
+                <div>
+                  <strong className="text-duo-blueDark font-black">
+                    {activeMembers.length === 1 ? 'Nhiệm vụ của bạn:' : `Nhiệm vụ (${name}):`}
+                  </strong>{' '}
+                  <span>{note}</span>
+                </div>
+              </div>
+            );
+          })}
         </div>
       )}
 
       {/* All Member Tasks Summary (When on All Members & Card is Highlighted) */}
-      {selectedMember === 'all' && event.memberNotes && isHighlight && (
+      {isAllMembers && event.memberNotes && isHighlight && (
         <div className="mt-3.5 card-3d p-3.5 rounded-2xl border-2 border-duo-yellow/60 bg-white space-y-2">
           <div className="text-xs font-black uppercase tracking-wider text-amber-800 flex items-center gap-1.5">
             <ListChecks className="w-4 h-4 text-duo-orange" />

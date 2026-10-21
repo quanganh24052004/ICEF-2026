@@ -151,40 +151,54 @@ export const INITIAL_SCHEDULE = [
   {
     id: 'sch-22-1',
     day: '22',
+    date: '2026-10-22',
+    fullDate: '22.10.2026',
     dayTitle: 'THỨ 5 (22/10/2026): Di chuyển, Check-in & Pre-conference Workshops',
-    time: '09:30 – 10:00',
-    title: 'Tập trung tại Đại học Bách khoa Hà Nội',
-    location: 'Thư viện Tạ Quang Bửu (Đi vào cổng đường Trần Đại Nghĩa)',
+    time: '11:00 – 11:45',
+    title: 'Có mặt tập trung tại C7 Đại học Bách khoa Hà Nội',
+    location: 'Nhà C7 - Đại học Bách khoa Hà Nội',
     category: 'travel',
     participants: [...ALL_MEMBER_IDS],
-    description: 'Cả nhóm 7 thành viên có mặt đúng giờ để điểm danh và chuẩn bị lên xe tập trung.',
+    description: 'Có mặt đúng 11h00 tại C7 Đại học Bách khoa Hà Nội để tập trung, điểm danh và sắp xếp hành lý lên xe.\n\n🚗 Danh sách xe (Dự kiến):\n- Xe 1: Gồm đủ 6 thành viên của PID 628 (Nguyễn Quang Anh, Trần Đức Kiên, Đặng Thảo Nguyên, Nguyễn Khánh Linh, Trịnh Thị Hồng, Bùi Thị Phương Ly).\n- Thành viên Vũ Đình Khôi (PID 661) di chuyển theo phương án đoàn/xe riêng.',
     memberNotes: {
-      quang_anh: 'Kiểm tra quân số phòng Nam (3 người).',
-      thao_nguyen: 'Kiểm tra quân số phòng Nữ (4 người).',
-      dinh_khoi: 'Kiểm tra ống đựng Poster PID 661 mang theo xe.'
+      quang_anh: 'Có mặt đúng 11h00 tại C7 ĐHBK. Điều phối danh sách Xe 1 (6 thành viên PID 628).',
+      thao_nguyen: 'Có mặt đúng 11h00 tại C7 ĐHBK. Kiểm tra quân số các thành viên nữ lên Xe 1.',
+      dinh_khoi: 'Có mặt đúng 11h00 tại C7 ĐHBK. Kiểm tra và bảo quản cẩn thận ống đựng Poster PID 661.',
+      khanh_linh: 'Có mặt đúng 11h00 tại C7 ĐHBK. Chuẩn bị lên Xe 1 cùng nhóm PID 628.',
+      duc_kien: 'Có mặt đúng 11h00 tại C7 ĐHBK. Chuẩn bị lên Xe 1 cùng nhóm PID 628.',
+      thi_hong: 'Có mặt đúng 11h00 tại C7 ĐHBK. Chuẩn bị lên Xe 1 cùng nhóm PID 628.',
+      phuong_ly: 'Có mặt đúng 11h00 tại C7 ĐHBK. Chuẩn bị lên Xe 1 cùng nhóm PID 628.'
     }
   },
   {
     id: 'sch-22-2',
     day: '22',
+    date: '2026-10-22',
+    fullDate: '22.10.2026',
     dayTitle: 'THỨ 5 (22/10/2026): Di chuyển, Check-in & Pre-conference Workshops',
-    time: '10:00 – 12:00',
-    title: 'Xe di chuyển tập trung khởi hành đi Ninh Bình',
-    location: 'Hà Nội → Ninh Bình',
+    time: '11:45 – 13:45',
+    title: 'Xuất phát di chuyển đi Ninh Bình (Xe 1: 6 thành viên PID 628)',
+    location: 'C7 ĐHBK Hà Nội → Khách sạn Alo Garden / Emeralda Resort Ninh Bình',
     category: 'travel',
     participants: [...ALL_MEMBER_IDS],
-    description: 'Di chuyển theo xe đoàn tới Ninh Bình.'
+    description: 'Xuất phát đúng 11h45 để bắt đầu hành trình di chuyển tới Ninh Bình.\n\n🚗 Danh sách xe (Dự kiến):\n- Xe 1: Đủ 6 thành viên của PID 628 (Quang Anh, Đức Kiên, Thảo Nguyên, Khánh Linh, Thị Hồng, Phương Ly).',
+    memberNotes: {
+      quang_anh: 'Xe 1 khởi hành đúng 11h45 đi Ninh Bình.',
+      dinh_khoi: 'Bảo quản cẩn thận poster PID 661 trong hành trình di chuyển.'
+    }
   },
   {
     id: 'sch-22-3',
     day: '22',
+    date: '2026-10-22',
+    fullDate: '22.10.2026',
     dayTitle: 'THỨ 5 (22/10/2026): Di chuyển, Check-in & Pre-conference Workshops',
-    time: '12:00 – 13:30',
-    title: 'Đến Ninh Bình, ăn trưa và nghỉ ngơi',
-    location: 'Ninh Bình',
+    time: '13:45 – 14:30',
+    title: 'Đến Ninh Bình, ăn trưa nhẹ và chuẩn bị nhận phòng',
+    location: 'Ninh Bình (Khu vực Alo Garden / Emeralda)',
     category: 'meal',
     participants: [...ALL_MEMBER_IDS],
-    description: 'Cả đoàn dùng bữa trưa và nghỉ ngơi trước giờ nhận phòng.'
+    description: 'Đoàn đến Ninh Bình lúc ~13h45, ăn nhẹ/nghỉ ngơi trước khi check-in khách sạn.'
   },
   {
     id: 'sch-22-4',

@@ -91,6 +91,28 @@ class DatabaseService {
     });
   }
 
+  async saveAppInfo(info) {
+    if (this.useFallback) {
+      const data = this._getFallbackData();
+      if (!data.meta) data.meta = {};
+      data.meta['app_info'] = info;
+      this._saveFallbackData(data);
+      return true;
+    }
+
+    return new Promise((resolve, reject) => {
+      try {
+        const tx = this.db.transaction([STORE_META], 'readwrite');
+        const store = tx.objectStore(STORE_META);
+        store.put({ key: 'app_info', ...info });
+        tx.oncomplete = () => resolve(true);
+        tx.onerror = () => reject(tx.error);
+      } catch (err) {
+        reject(err);
+      }
+    });
+  }
+
   async _seedInitialDataIfNeeded() {
     // Check if the database has already been initialized
     const appInfo = await this.getAppInfo();
@@ -98,6 +120,17 @@ class DatabaseService {
       // First-time load on this browser: initialize default data
       await this.resetToDefault();
       return;
+    }
+
+    // Auto-migrate to version 2: Updated departure times (11:00 at C7, 11:45 departure) & Vehicle 1 details
+    if (!appInfo.dataVersion || appInfo.dataVersion < 2) {
+      const targetIds = ['sch-22-1', 'sch-22-2', 'sch-22-3'];
+      const targetSchedules = INITIAL_SCHEDULE.filter((s) => targetIds.includes(s.id));
+      for (const item of targetSchedules) {
+        await this.updateSchedule(item);
+      }
+      appInfo.dataVersion = 2;
+      await this.saveAppInfo(appInfo);
     }
 
     // Database is already initialized.
@@ -403,7 +436,8 @@ class DatabaseService {
 
     metaStore.put({
       key: 'app_info',
-      version: '3.0.0-react',
+      version: '3.1.0-react',
+      dataVersion: 2,
       lastReset: new Date().toISOString(),
       framework: 'React + TailwindCSS'
     });
@@ -420,9 +454,29 @@ class DatabaseService {
       const initial = {
         schedules: JSON.parse(JSON.stringify(INITIAL_SCHEDULE)),
         members: JSON.parse(JSON.stringify(INITIAL_MEMBERS)),
-        hotelInfo: JSON.parse(JSON.stringify(INITIAL_HOTEL_INFO))
+        hotelInfo: JSON.parse(JSON.stringify(INITIAL_HOTEL_INFO)),
+        meta: {
+          app_info: { key: 'app_info', version: '3.1.0-react', dataVersion: 2 }
+        }
       };
       this._saveFallbackData(initial);
+    } else {
+      try {
+        const data = JSON.parse(existing);
+        if (!data.meta?.app_info?.dataVersion || data.meta.app_info.dataVersion < 2) {
+          const targetIds = ['sch-22-1', 'sch-22-2', 'sch-22-3'];
+          data.schedules = (data.schedules || []).map((s) => {
+            const found = INITIAL_SCHEDULE.find((init) => init.id === s.id && targetIds.includes(s.id));
+            return found || s;
+          });
+          if (!data.meta) data.meta = {};
+          if (!data.meta.app_info) data.meta.app_info = { key: 'app_info' };
+          data.meta.app_info.dataVersion = 2;
+          this._saveFallbackData(data);
+        }
+      } catch (e) {
+        console.error('Fallback migration error', e);
+      }
     }
   }
 
