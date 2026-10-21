@@ -343,6 +343,31 @@ class DatabaseService {
     });
   }
 
+  async saveHotelInfo(hotelInfo) {
+    if (this.useFallback) {
+      const data = this._getFallbackData();
+      data.hotelInfo = hotelInfo;
+      this._saveFallbackData(data);
+      return true;
+    }
+
+    return new Promise((resolve, reject) => {
+      try {
+        const tx = this.db.transaction([STORE_HOTEL], 'readwrite');
+        const store = tx.objectStore(STORE_HOTEL);
+        store.put({
+          id: 'main',
+          data: JSON.parse(JSON.stringify(hotelInfo)),
+          updatedAt: new Date().toISOString()
+        });
+        tx.oncomplete = () => resolve(true);
+        tx.onerror = () => reject(tx.error);
+      } catch (err) {
+        reject(err);
+      }
+    });
+  }
+
   // ==========================================
   // BACKUP & RESTORE
   // ==========================================
