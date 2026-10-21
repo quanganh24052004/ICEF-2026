@@ -166,7 +166,7 @@ export default function App() {
   const handleLogin = (member) => {
     setCurrentUser(member);
     localStorage.setItem('icef2026_current_user', JSON.stringify(member));
-    setSelectedMember(member.id);
+    setSelectedMembers([member.id]);
     setIsAuthModalOpen(false);
 
     const isAdmin = member.isAdmin || member.mssv === '20227035';
@@ -205,7 +205,7 @@ export default function App() {
       roleTitle: 'Khách (Chế độ chỉ xem)'
     };
     setCurrentUser(guestUser);
-    setSelectedMember('all');
+    setSelectedMembers(['all']);
     setIsAuthModalOpen(false);
     showToast('Đang xem lịch trình với tư cách Khách (Chế độ chỉ xem)', 'info');
   };
@@ -213,7 +213,7 @@ export default function App() {
   const handleLogout = () => {
     localStorage.removeItem('icef2026_current_user');
     setCurrentUser(null);
-    setSelectedMember('all');
+    setSelectedMembers(['all']);
     setIsAuthModalOpen(true);
     showToast('Đã đăng xuất tài khoản.', 'info');
   };

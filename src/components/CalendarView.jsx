@@ -26,6 +26,7 @@ export default function CalendarView({
   const [viewType, setViewType] = useState('week'); // 'week' | 'threeDays' | 'day'
   const [hoveredEventId, setHoveredEventId] = useState(null);
   const [selectedDate, setSelectedDate] = useState(() => new Date());
+  const [todayDate, setTodayDate] = useState(() => new Date());
   const [currentTime, setCurrentTime] = useState(() => {
     const now = new Date();
     return { hour: now.getHours(), minute: now.getMinutes() };
@@ -38,6 +39,7 @@ export default function CalendarView({
     const updateTime = () => {
       const now = new Date();
       setCurrentTime({ hour: now.getHours(), minute: now.getMinutes() });
+      setTodayDate(now);
     };
     updateTime();
     const interval = setInterval(updateTime, 10000);
@@ -84,10 +86,9 @@ export default function CalendarView({
   // Dynamically compute the 7 days of the selected week based on real time
   const { allDays, weekLabel } = useMemo(() => {
     const monday = getMonday(selectedDate);
-    const now = new Date();
-    const todayDay = now.getDate();
-    const todayMonth = now.getMonth();
-    const todayYear = now.getFullYear();
+    const todayDay = todayDate.getDate();
+    const todayMonth = todayDate.getMonth();
+    const todayYear = todayDate.getFullYear();
 
     const dayNames = ['Thứ hai', 'Thứ ba', 'Thứ tư', 'Thứ năm', 'Thứ sáu', 'Thứ bảy', 'Chủ nhật'];
     const days = [];
@@ -144,12 +145,14 @@ export default function CalendarView({
     const label = `W${weekNum} - ${weekYear}`;
 
     return { allDays: days, weekLabel: label };
-  }, [selectedDate]);
+  }, [selectedDate, todayDate]);
 
   // Displayed days based on viewType
   const displayedDays = useMemo(() => {
     if (viewType === 'threeDays') {
-      const now = new Date();
+      const todayDay = todayDate.getDate();
+      const todayMonth = todayDate.getMonth();
+      const todayYear = todayDate.getFullYear();
       return [
         {
           dayNumber: '22',
@@ -160,7 +163,7 @@ export default function CalendarView({
           isOct2026: true,
           isConference: true,
           title: 'Ngày 1: Pre-conf',
-          isToday: now.getDate() === 22 && now.getMonth() === 9 && now.getFullYear() === 2026
+          isToday: todayDay === 22 && todayMonth === 9 && todayYear === 2026
         },
         {
           dayNumber: '23',
@@ -172,7 +175,7 @@ export default function CalendarView({
           isConference: true,
           title: 'Ngày 2: Trọng tâm',
           isFocus: true,
-          isToday: now.getDate() === 23 && now.getMonth() === 9 && now.getFullYear() === 2026
+          isToday: todayDay === 23 && todayMonth === 9 && todayYear === 2026
         },
         {
           dayNumber: '24',
@@ -183,7 +186,7 @@ export default function CalendarView({
           isOct2026: true,
           isConference: true,
           title: 'Ngày 3: Check-out',
-          isToday: now.getDate() === 24 && now.getMonth() === 9 && now.getFullYear() === 2026
+          isToday: todayDay === 24 && todayMonth === 9 && todayYear === 2026
         }
       ];
     }
@@ -195,7 +198,7 @@ export default function CalendarView({
     }
 
     return allDays;
-  }, [viewType, allDays]);
+  }, [viewType, allDays, todayDate]);
 
   // Week navigation handlers
   const handlePrevWeek = () => {

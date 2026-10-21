@@ -141,7 +141,19 @@ export default function LocationsCard({ onOpenMapModal }) {
               </p>
             </div>
 
-            <div className="flex items-center gap-2 shrink-0 pt-2 md:pt-0">
+            <div className="flex items-center gap-2 shrink-0 pt-2 md:pt-0 flex-wrap">
+              {onOpenMapModal && (
+                <button
+                  type="button"
+                  onClick={() => onOpenMapModal(currentVenue)}
+                  className="btn-3d-white text-duo-dark font-black text-xs px-3 py-2 rounded-xl flex items-center gap-1.5 cursor-pointer"
+                  title="Mở bản đồ popup"
+                >
+                  <MapPin className="w-3.5 h-3.5 text-duo-blue" />
+                  <span>Phóng to</span>
+                </button>
+              )}
+
               <button
                 type="button"
                 onClick={() => window.open(currentVenue.directUrl, '_blank', 'noopener,noreferrer')}

@@ -98,7 +98,7 @@ export default function AuthModal({
         email: emailInput.trim() || `${cleanMssv}@sis.hust.edu.vn`,
         isAdmin: cleanMssv === '20227035', // Only 20227035 has highest privilege
         roleTitle: roleInput.trim() || 'Thành viên đoàn ICEF 2026',
-        room: 'Khách sạn Alo Garden Ninh Bình',
+        room: 'ALO RESORT NINH BÌNH (Khách sạn Alo Garden)',
         roomRole: 'Thành viên',
         academicRole: 'Thành viên tham dự đoàn ICEF 2026',
         badge: cleanMssv === '20227035' ? '👑 Admin / Trưởng đoàn' : 'Thành viên đoàn',
@@ -106,7 +106,9 @@ export default function AuthModal({
         icon: 'User'
       };
 
-      onSignUp && onSignUp(newMember);
+      if (onSignUp) {
+        onSignUp(newMember);
+      }
       setSuccessMsg('Đăng ký thành công! Đang chuyển vào hệ thống...');
       setTimeout(() => {
         onLogin(newMember);
