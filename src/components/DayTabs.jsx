@@ -1,5 +1,4 @@
-import React from 'react';
-import { Calendar as CalendarIcon, ListOrdered, Download, Sparkles, Flame } from 'lucide-react';
+import { Calendar as CalendarIcon, ListOrdered, Download } from 'lucide-react';
 
 export default function DayTabs({
   selectedDay,

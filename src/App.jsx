@@ -13,7 +13,6 @@ import DeleteModal from './components/DeleteModal';
 import BackupModal from './components/BackupModal';
 import AuthModal from './components/AuthModal';
 import Toast from './components/Toast';
-import FloatingAddButton from './components/FloatingAddButton';
 
 export default function App() {
   const [schedules, setSchedules] = useState([]);

@@ -1,5 +1,5 @@
 import React from 'react';
-import { CalendarX, CalendarCheck, Sparkles } from 'lucide-react';
+import { CalendarX, CalendarCheck } from 'lucide-react';
 import EventCard from './EventCard';
 
 export default function ScheduleList({

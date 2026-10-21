@@ -12,8 +12,7 @@ import {
   Utensils,
   Pin,
   ListChecks,
-  Lock,
-  Sparkles
+  Lock
 } from 'lucide-react';
 
 export default function EventCard({

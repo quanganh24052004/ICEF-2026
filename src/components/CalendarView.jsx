@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import {
   Calendar as CalendarIcon,
   MapPin,
@@ -8,9 +8,7 @@ import {
   Pen,
   Trash2,
   Clock,
-  Star,
-  ExternalLink,
-  Lock
+  Star
 } from 'lucide-react';
 
 export default function CalendarView({
@@ -25,45 +23,199 @@ export default function CalendarView({
 }) {
   const [viewType, setViewType] = useState('week'); // 'week' | 'threeDays' | 'day'
   const [hoveredEventId, setHoveredEventId] = useState(null);
-  const [currentTime, setCurrentTime] = useState({ hour: 5, minute: 43 });
+  const [selectedDate, setSelectedDate] = useState(() => new Date());
+  const [currentTime, setCurrentTime] = useState(() => {
+    const now = new Date();
+    return { hour: now.getHours(), minute: now.getMinutes() };
+  });
 
-  // Update current time indicator (matches 05:43 in user screenshot or live time)
+  const gridScrollRef = useRef(null);
+
+  // Update current live time every 10 seconds
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
       setCurrentTime({ hour: now.getHours(), minute: now.getMinutes() });
     };
     updateTime();
-    const interval = setInterval(updateTime, 60000);
+    const interval = setInterval(updateTime, 10000);
     return () => clearInterval(interval);
   }, []);
 
-  // Time slots: 02:00 to 22:00 to match user screenshot range
+  // Time slots: 06:00 to 22:00
   const START_HOUR = 6;
   const END_HOUR = 22;
   const HOUR_HEIGHT = 68; // pixels per hour
   const hours = Array.from({ length: END_HOUR - START_HOUR + 1 }, (_, i) => START_HOUR + i);
 
-  // Week 43 days (19.10.2026 - 25.10.2026) exactly matching user's Image 1
-  const allDays = [
-    { dayNumber: '19', label: 'Thứ hai', fullDate: '19.10.2026', isConference: false, isToday: true },
-    { dayNumber: '20', label: 'Thứ ba', fullDate: '20.10.2026', isConference: false },
-    { dayNumber: '21', label: 'Thứ tư', fullDate: '21.10.2026', isConference: false },
-    { dayNumber: '22', label: 'Thứ năm', fullDate: '22.10.2026', isConference: true, title: 'Ngày 1: Pre-conf' },
-    { dayNumber: '23', label: 'Thứ sáu', fullDate: '23.10.2026', isConference: true, title: 'Ngày 2: Trọng tâm', isFocus: true },
-    { dayNumber: '24', label: 'Thứ bảy', fullDate: '24.10.2026', isConference: true, title: 'Ngày 3: Check-out' },
-    { dayNumber: '25', label: 'Chủ nhật', fullDate: '25.10.2026', isConference: false }
-  ];
+  // Auto-scroll to current live time on initial mount
+  useEffect(() => {
+    if (gridScrollRef.current) {
+      const now = new Date();
+      const currentMin = now.getHours() * 60 + now.getMinutes();
+      if (currentMin >= START_HOUR * 60 && currentMin <= END_HOUR * 60) {
+        const topPx = ((currentMin - START_HOUR * 60) / 60) * HOUR_HEIGHT;
+        gridScrollRef.current.scrollTop = Math.max(0, topPx - 100);
+      }
+    }
+  }, []);
 
+  // Helper calculate Monday of the week for any given date
+  const getMonday = (d) => {
+    const date = new Date(d);
+    const day = date.getDay(); // 0 is Sunday, 1 is Monday...
+    const diff = date.getDate() - day + (day === 0 ? -6 : 1);
+    const monday = new Date(date.setDate(diff));
+    monday.setHours(0, 0, 0, 0);
+    return monday;
+  };
+
+  // Helper calculate ISO week number
+  const getISOWeekNumber = (d) => {
+    const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+    const dayNum = date.getUTCDay() || 7;
+    date.setUTCDate(date.getUTCDate() + 4 - dayNum);
+    const yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
+    return Math.ceil(((date - yearStart) / 86400000 + 1) / 7);
+  };
+
+  // Dynamically compute the 7 days of the selected week based on real time
+  const { allDays, weekLabel } = useMemo(() => {
+    const monday = getMonday(selectedDate);
+    const now = new Date();
+    const todayDay = now.getDate();
+    const todayMonth = now.getMonth();
+    const todayYear = now.getFullYear();
+
+    const dayNames = ['Thứ hai', 'Thứ ba', 'Thứ tư', 'Thứ năm', 'Thứ sáu', 'Thứ bảy', 'Chủ nhật'];
+    const days = [];
+
+    for (let i = 0; i < 7; i++) {
+      const dayDate = new Date(monday);
+      dayDate.setDate(monday.getDate() + i);
+
+      const dayOfMonth = dayDate.getDate();
+      const month = dayDate.getMonth() + 1; // 1-12
+      const year = dayDate.getFullYear();
+      const dayStr = String(dayOfMonth);
+      const fullDate = `${String(dayOfMonth).padStart(2, '0')}.${String(month).padStart(2, '0')}.${year}`;
+
+      const isToday =
+        dayDate.getDate() === todayDay &&
+        dayDate.getMonth() === todayMonth &&
+        dayDate.getFullYear() === todayYear;
+
+      const isOct2026 = year === 2026 && month === 10;
+      let isConference = false;
+      let title = '';
+      let isFocus = false;
+
+      if (isOct2026 && dayOfMonth === 22) {
+        isConference = true;
+        title = 'Ngày 1: Pre-conf';
+      } else if (isOct2026 && dayOfMonth === 23) {
+        isConference = true;
+        title = 'Ngày 2: Trọng tâm';
+        isFocus = true;
+      } else if (isOct2026 && dayOfMonth === 24) {
+        isConference = true;
+        title = 'Ngày 3: Check-out';
+      }
+
+      days.push({
+        dayNumber: dayStr,
+        dateObj: dayDate,
+        label: dayNames[i],
+        fullDate,
+        isConference,
+        title,
+        isFocus,
+        isToday
+      });
+    }
+
+    const weekNum = getISOWeekNumber(selectedDate);
+    const weekYear = selectedDate.getFullYear();
+    const label = `W${weekNum} - ${weekYear}`;
+
+    return { allDays: days, weekLabel: label };
+  }, [selectedDate]);
+
+  // Displayed days based on viewType
   const displayedDays = useMemo(() => {
     if (viewType === 'threeDays') {
-      return allDays.filter((d) => d.isConference);
+      const confDays = allDays.filter((d) => d.isConference);
+      if (confDays.length > 0) return confDays;
+
+      // Fallback: 3 core conference days of Oct 2026
+      const now = new Date();
+      return [
+        {
+          dayNumber: '22',
+          label: 'Thứ năm',
+          fullDate: '22.10.2026',
+          isConference: true,
+          title: 'Ngày 1: Pre-conf',
+          isToday: now.getDate() === 22 && now.getMonth() === 9 && now.getFullYear() === 2026
+        },
+        {
+          dayNumber: '23',
+          label: 'Thứ sáu',
+          fullDate: '23.10.2026',
+          isConference: true,
+          title: 'Ngày 2: Trọng tâm',
+          isFocus: true,
+          isToday: now.getDate() === 23 && now.getMonth() === 9 && now.getFullYear() === 2026
+        },
+        {
+          dayNumber: '24',
+          label: 'Thứ bảy',
+          fullDate: '24.10.2026',
+          isConference: true,
+          title: 'Ngày 3: Check-out',
+          isToday: now.getDate() === 24 && now.getMonth() === 9 && now.getFullYear() === 2026
+        }
+      ];
     }
+
     if (viewType === 'day') {
-      return allDays.filter((d) => d.dayNumber === '23');
+      const todayInWeek = allDays.find((d) => d.isToday);
+      if (todayInWeek) return [todayInWeek];
+      return [allDays.find((d) => d.dayNumber === '23') || allDays[0]];
     }
+
     return allDays;
-  }, [viewType]);
+  }, [viewType, allDays]);
+
+  // Week navigation handlers
+  const handlePrevWeek = () => {
+    setSelectedDate((prev) => {
+      const next = new Date(prev);
+      next.setDate(next.getDate() - 7);
+      return next;
+    });
+  };
+
+  const handleNextWeek = () => {
+    setSelectedDate((prev) => {
+      const next = new Date(prev);
+      next.setDate(next.getDate() + 7);
+      return next;
+    });
+  };
+
+  const handleGoToday = () => {
+    const today = new Date();
+    setSelectedDate(today);
+    setViewType('week');
+    if (gridScrollRef.current) {
+      const currentMin = today.getHours() * 60 + today.getMinutes();
+      if (currentMin >= START_HOUR * 60 && currentMin <= END_HOUR * 60) {
+        const topPx = ((currentMin - START_HOUR * 60) / 60) * HOUR_HEIGHT;
+        gridScrollRef.current.scrollTo({ top: Math.max(0, topPx - 100), behavior: 'smooth' });
+      }
+    }
+  };
 
   // Helper parse minutes from "HH:MM"
   const parseTimeToMinutes = (timeStr, defaultMinutes = 0) => {
@@ -105,10 +257,10 @@ export default function CalendarView({
     });
   }, [schedules, selectedMember, showAllSessions, searchQuery]);
 
-  // Group events by day and compute overlapping columns
+  // Group events by day and compute overlapping positions
   const eventsByDay = useMemo(() => {
     const map = {};
-    allDays.forEach((d) => {
+    displayedDays.forEach((d) => {
       map[d.dayNumber] = [];
     });
 
@@ -166,7 +318,7 @@ export default function CalendarView({
     });
 
     return map;
-  }, [filteredEvents]);
+  }, [filteredEvents, displayedDays]);
 
   // Primary speaker / presenter name
   const getSpeakerText = (ev) => {
@@ -183,7 +335,6 @@ export default function CalendarView({
     return 'Cả đoàn HUST & HUCE';
   };
 
-  // Format time display like "Tiết 1 - 3 (06:45 - 09:10)" or "09:30 – 10:00"
   const formatEventTimeLabel = (ev) => {
     if (ev.periodText) return ev.periodText;
     return ev.time;
@@ -213,95 +364,115 @@ export default function CalendarView({
   return (
     <div className="card-3d rounded-3xl overflow-hidden mt-6 bg-white text-duo-dark">
       {/* =========================================================================
-          1. TOP CONTROLS BAR (3D Tactile Buttons & View Selector)
+          1. TOP CONTROLS BAR (3D Tactile Buttons & Real-Time Sync)
           ========================================================================= */}
       <div className="px-4 py-3 border-b-2 border-duo-border flex items-center justify-between bg-[#F8FAFC]">
         {/* Left: "Hôm nay" 3D Red Pill Button + Calendar Button */}
         <div className="flex items-center gap-2">
           <button
             type="button"
-            onClick={() => setViewType('week')}
-            className="btn-3d-hust text-white font-black text-xs sm:text-sm px-4 py-1.5 rounded-xl cursor-pointer"
+            onClick={handleGoToday}
+            className="btn-3d-hust text-white font-black text-xs sm:text-sm px-4 py-1.5 rounded-xl cursor-pointer flex items-center gap-1.5"
+            title="Nhấp để quay lại ngày và giờ hiện tại"
           >
-            Hôm nay
+            <span>Hôm nay</span>
           </button>
+          
           <button
             type="button"
-            onClick={() => setViewType('week')}
+            onClick={handleGoToday}
             className="btn-3d-white text-duo-dark w-8 h-8 rounded-xl flex items-center justify-center cursor-pointer"
-            title="Lịch tuần"
+            title="Về tuần hiện tại"
           >
             <CalendarIcon className="w-4 h-4 text-duo-blue" />
           </button>
         </div>
 
-        {/* Right: Dropdown "Lịch tuần ⌵" */}
+        {/* Right: View Type Dropdown */}
         <div className="relative">
           <select
             value={viewType}
             onChange={(e) => setViewType(e.target.value)}
             className="px-3.5 py-1.5 rounded-xl border-2 border-duo-border text-xs sm:text-sm font-black text-duo-dark bg-white hover:border-duo-blue focus:outline-none cursor-pointer shadow-xs pr-7 transition-colors"
           >
-            <option value="week">Lịch tuần (Week 43)</option>
-            <option value="threeDays">Lịch 3 ngày hội thảo</option>
-            <option value="day">Lịch Thứ 6 (Trọng tâm)</option>
+            <option value="week">Lịch tuần ({weekLabel})</option>
+            <option value="threeDays">Lịch 3 ngày hội thảo (22-24/10)</option>
+            <option value="day">Lịch hôm nay / Ngày trọng tâm</option>
           </select>
         </div>
       </div>
 
       {/* =========================================================================
-          2. TIMETABLE GRID (Header with Crimson < W43 - 2026 > Badge + Day Columns)
+          2. TIMETABLE GRID (Header with Dynamic Week Badge + Day Columns)
           ========================================================================= */}
-      <div className="overflow-x-auto relative">
+      <div ref={gridScrollRef} className="overflow-x-auto relative">
         <div className="min-w-[950px] select-none" style={{ width: '100%' }}>
-          {/* Header Row: Corner Crimson Badge + 7 Day Columns */}
+          
+          {/* Header Row: Corner Crimson Badge + Day Columns */}
           <div
-            className="grid border-b border-slate-300 bg-white sticky top-0 z-20"
+            className="grid border-b-2 border-duo-border bg-white sticky top-0 z-20"
             style={{
               gridTemplateColumns: `110px repeat(${displayedDays.length}, minmax(0, 1fr))`
             }}
           >
-            {/* Corner Header Cell: Dark Red Badge "< W43 - 2026 >" (Matches Image 1) */}
+            {/* Corner Header Cell: Real-Time Dynamic Week Badge with Nav Buttons */}
             <div className="border-r border-slate-200 p-1.5 flex items-center justify-center bg-white">
-              <div className="w-full bg-[#b91c1c] text-white rounded-md px-2 py-1 flex items-center justify-between shadow-xs">
+              <div className="w-full bg-[#B91C1C] text-white rounded-xl px-2 py-1.5 flex items-center justify-between shadow-xs">
                 <button
                   type="button"
-                  className="w-5 h-5 rounded-full bg-white text-[#b91c1c] flex items-center justify-center hover:bg-slate-100 transition-colors cursor-pointer"
+                  onClick={handlePrevWeek}
+                  className="w-6 h-6 rounded-full bg-white text-[#B91C1C] flex items-center justify-center hover:bg-slate-100 active:scale-90 transition-all cursor-pointer shadow-xs"
                   title="Tuần trước"
                 >
-                  <ChevronLeft className="w-3.5 h-3.5 stroke-[2.5]" />
+                  <ChevronLeft className="w-4 h-4 stroke-[3]" />
                 </button>
-                <span className="font-bold text-[11px] sm:text-xs tracking-tight text-white whitespace-nowrap">
-                  W43 - 2026
+                
+                <span className="font-black text-[11px] sm:text-xs tracking-tight text-white whitespace-nowrap">
+                  {weekLabel}
                 </span>
+
                 <button
                   type="button"
-                  className="w-5 h-5 rounded-full bg-white text-[#b91c1c] flex items-center justify-center hover:bg-slate-100 transition-colors cursor-pointer"
+                  onClick={handleNextWeek}
+                  className="w-6 h-6 rounded-full bg-white text-[#B91C1C] flex items-center justify-center hover:bg-slate-100 active:scale-90 transition-all cursor-pointer shadow-xs"
                   title="Tuần sau"
                 >
-                  <ChevronRight className="w-3.5 h-3.5 stroke-[2.5]" />
+                  <ChevronRight className="w-4 h-4 stroke-[3]" />
                 </button>
               </div>
             </div>
 
-            {/* Day Header Columns: "Thứ hai \n 19.10.2026" (Matches Image 1) */}
+            {/* Day Header Columns: Real-Time Label, Date & "Hôm nay" Badge */}
             {displayedDays.map((d) => (
               <div
-                key={d.dayNumber}
-                className="py-2.5 px-2 text-center border-r border-slate-200 last:border-r-0 bg-white"
+                key={d.dayNumber + d.fullDate}
+                className={`py-2 px-1.5 sm:py-2.5 sm:px-2 text-center border-r border-slate-200 last:border-r-0 transition-colors ${
+                  d.isToday ? 'bg-red-50/70 border-b-2 border-b-red-600' : 'bg-white'
+                }`}
               >
-                <div className="text-xs sm:text-[13px] font-normal text-slate-700">
-                  {d.label}
+                <div className="flex items-center justify-center gap-1.5 flex-wrap">
+                  <span className={`text-xs sm:text-[13px] ${d.isToday ? 'text-red-700 font-black' : 'text-slate-700 font-bold'}`}>
+                    {d.label}
+                  </span>
+                  {d.isToday && (
+                    <span className="text-[10px] font-black uppercase bg-red-600 text-white px-2 py-0.5 rounded-full shadow-xs">
+                      Hôm nay
+                    </span>
+                  )}
                 </div>
-                <div className="text-sm sm:text-base font-bold text-slate-900 mt-0.5 tracking-tight">
+
+                <div className={`text-sm sm:text-base font-black mt-0.5 tracking-tight ${
+                  d.isToday ? 'text-red-700 font-black' : 'text-duo-dark'
+                }`}>
                   {d.fullDate}
                 </div>
+
                 {d.isConference && (
                   <span
-                    className={`inline-block mt-0.5 text-[10px] px-1.5 py-0.2 rounded font-medium ${
+                    className={`inline-block mt-0.5 text-[10px] px-2 py-0.5 rounded-full font-black ${
                       d.isFocus
-                        ? 'bg-amber-100 text-amber-900 font-semibold'
-                        : 'bg-red-50 text-red-700'
+                        ? 'bg-amber-100 text-amber-900 border border-amber-300'
+                        : 'bg-red-50 text-red-700 border border-red-200'
                     }`}
                   >
                     {d.title}
@@ -324,7 +495,7 @@ export default function CalendarView({
               {hours.map((hour, idx) => (
                 <div
                   key={hour}
-                  className="absolute right-2 text-right font-sans text-xs text-slate-500 -translate-y-2 select-none flex items-center justify-end gap-1"
+                  className="absolute right-2 text-right font-sans text-xs font-bold text-slate-500 -translate-y-2 select-none flex items-center justify-end gap-1"
                   style={{ top: `${idx * HOUR_HEIGHT}px` }}
                 >
                   <span className="text-slate-400">-</span>
@@ -333,12 +504,12 @@ export default function CalendarView({
               ))}
             </div>
 
-            {/* Days Columns Body with Events */}
+            {/* Days Columns Body with Real-Time Events & Indicator */}
             {displayedDays.map((d, dayIndex) => {
               const dayEvents = eventsByDay[d.dayNumber] || [];
 
-              // Calculate current time indicator for today (19.10 or active day)
-              const showCurrentTime = d.isToday || d.dayNumber === '19';
+              // Real-time calculation: ONLY show the line on today's actual column
+              const showCurrentTime = d.isToday;
               const currentMinOfDay = currentTime.hour * 60 + currentTime.minute;
               const currentTopPx = ((currentMinOfDay - START_HOUR * 60) / 60) * HOUR_HEIGHT;
               const isCurrentTimeInRange =
@@ -346,8 +517,10 @@ export default function CalendarView({
 
               return (
                 <div
-                  key={d.dayNumber}
-                  className="border-r border-slate-200 last:border-r-0 relative bg-white"
+                  key={d.dayNumber + d.fullDate}
+                  className={`border-r border-slate-200 last:border-r-0 relative transition-colors ${
+                    d.isToday ? 'bg-red-50/15' : 'bg-white'
+                  }`}
                 >
                   {/* Dashed Horizontal Hour Grid Lines across the day */}
                   {hours.map((_, idx) => (
@@ -358,7 +531,7 @@ export default function CalendarView({
                     />
                   ))}
 
-                  {/* Red Current Time Line Indicator (Matches Image 1 at 05:43 / current time) */}
+                  {/* Red Current Time Line Indicator - LIVE ON TODAY'S COLUMN */}
                   {showCurrentTime && isCurrentTimeInRange && (
                     <div
                       className="absolute inset-x-0 z-30 pointer-events-none"
@@ -366,14 +539,14 @@ export default function CalendarView({
                     >
                       <div className="relative">
                         {/* Red Time Badge sitting right on the line */}
-                        <div className="absolute -top-4 left-0 text-red-600 font-bold text-[11px] font-mono leading-none">
+                        <div className="absolute -top-4 left-0 text-red-600 font-black text-[11px] font-mono leading-none bg-white px-1.5 py-0.5 rounded shadow-xs border border-red-200">
                           {`${String(currentTime.hour).padStart(2, '0')}:${String(
                             currentTime.minute
                           ).padStart(2, '0')}`}
                         </div>
                         {/* Red Line */}
-                        <div className="h-[1.5px] bg-red-600 w-full relative">
-                          <div className="w-2 h-2 rounded-full bg-red-600 absolute -left-1 -top-[3.25px]"></div>
+                        <div className="h-[2px] bg-red-600 w-full relative shadow-[0_0_8px_rgba(220,38,38,0.5)]">
+                          <div className="w-2.5 h-2.5 rounded-full bg-red-600 absolute -left-1 -top-[3.75px] ring-2 ring-white"></div>
                         </div>
                       </div>
                     </div>
@@ -394,7 +567,7 @@ export default function CalendarView({
                     const colWidthPct = 100 / totalCols;
                     const leftPct = colIdx * colWidthPct;
 
-                    // Smart popover anchor orientation to never clip outside the timetable or screen
+                    // Popover orientation to never clip outside the timetable or screen
                     const isRightSide =
                       displayedDays.length === 1
                         ? colIdx >= totalCols / 2
@@ -420,10 +593,12 @@ export default function CalendarView({
                           zIndex: isHovered ? 40 : 10
                         }}
                       >
-                        {/* 1. Base Card in the Timetable Grid (Always solid & nicely proportioned) */}
+                        {/* 1. Base Card in Timetable Grid */}
                         <div
-                          onClick={() => onEventClick && onEventClick(ev)}
-                          className={`w-full h-full rounded-md border border-slate-200/90 border-l-[3.5px] border-l-red-600 bg-white p-1.5 sm:p-2 flex flex-col justify-between overflow-hidden cursor-pointer transition-all duration-150 ${
+                          onClick={() => {
+                            if (onEventClick) onEventClick(ev);
+                          }}
+                          className={`w-full h-full rounded-xl border border-slate-200/90 border-l-[4px] border-l-red-600 bg-white p-1.5 sm:p-2 flex flex-col justify-between overflow-hidden cursor-pointer transition-all duration-150 ${
                             isHovered
                               ? 'ring-2 ring-red-500 shadow-md bg-red-50/20'
                               : 'shadow-xs hover:border-slate-300 hover:shadow-sm'
@@ -431,7 +606,7 @@ export default function CalendarView({
                         >
                           <div>
                             <h5
-                              className="text-xs font-bold text-red-600 leading-tight line-clamp-2"
+                              className="text-xs font-black text-red-600 leading-tight line-clamp-2"
                               title={ev.title}
                             >
                               {ev.isHighlight && (
@@ -442,7 +617,7 @@ export default function CalendarView({
 
                             <div className="flex items-center gap-1 text-[10px] sm:text-[11px] text-slate-700 mt-1 truncate">
                               <CalendarIcon className="w-3 h-3 text-slate-500 shrink-0 stroke-[1.75]" />
-                              <span className="font-medium text-slate-800 truncate">{timeLabel}</span>
+                              <span className="font-bold text-slate-800 truncate">{timeLabel}</span>
                             </div>
 
                             {ev.location && heightPx >= 52 && (
@@ -461,11 +636,13 @@ export default function CalendarView({
                           </div>
                         </div>
 
-                        {/* 2. Floating Popover (Smartly bounded, elegant preview on hover) */}
+                        {/* 2. Floating Popover on Hover */}
                         {isHovered && (
                           <div
-                            onClick={() => onEventClick && onEventClick(ev)}
-                            className="absolute z-50 bg-white rounded-xl shadow-2xl border border-slate-200 border-l-[5px] border-l-red-600 text-slate-800 cursor-pointer pointer-events-auto ring-1 ring-black/10 animate-fade-in flex flex-col"
+                            onClick={() => {
+                              if (onEventClick) onEventClick(ev);
+                            }}
+                            className="absolute z-50 bg-white rounded-2xl shadow-2xl border-2 border-duo-border border-l-[5px] border-l-red-600 text-duo-dark cursor-pointer pointer-events-auto ring-1 ring-black/10 animate-fade-in flex flex-col"
                             style={{
                               width: '320px',
                               maxWidth: 'min(360px, 88vw)',
@@ -474,145 +651,109 @@ export default function CalendarView({
                               ...(isBottomHalf ? { bottom: 0 } : { top: 0 })
                             }}
                           >
-                            {/* Popover Header (Pinned Top) */}
-                            <div className="p-3 pb-2 border-b border-slate-100 bg-white rounded-t-xl shrink-0">
+                            {/* Popover Header */}
+                            <div className="p-3 pb-2 border-b border-duo-border bg-white rounded-t-2xl shrink-0">
                               <div className="flex items-start justify-between gap-2">
                                 <div className="flex-1 min-w-0">
-                                  <div className="flex items-center gap-1.5 mb-1 flex-wrap">
-                                    <span
-                                      className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${catInfo.color}`}
-                                    >
-                                      {catInfo.text}
-                                    </span>
-                                    {ev.isHighlight && (
-                                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500 text-white flex items-center gap-0.5">
-                                        <Star className="w-2.5 h-2.5 fill-white" /> Trọng tâm
-                                      </span>
-                                    )}
-                                  </div>
-                                  <h4 className="text-xs sm:text-[13px] font-bold text-red-600 leading-snug break-words">
+                                  <span
+                                    className={`inline-block text-[10px] font-black px-2 py-0.5 rounded-full border mb-1 ${catInfo.color}`}
+                                  >
+                                    {catInfo.text}
+                                  </span>
+                                  <h4 className="text-xs sm:text-sm font-black text-slate-900 leading-snug line-clamp-2">
                                     {ev.title}
                                   </h4>
                                 </div>
 
-                                {/* Quick Action buttons */}
-                                <div className="flex items-center gap-1 shrink-0">
+                                <div className="flex items-center gap-1 shrink-0 ml-1">
                                   <button
                                     type="button"
                                     onClick={(e) => {
                                       e.stopPropagation();
-                                      onEventClick && onEventClick(ev);
+                                      if (onEventClick) onEventClick(ev);
                                     }}
-                                    className="p-1.5 rounded-md hover:bg-blue-50 text-slate-500 hover:text-blue-600 transition-colors"
-                                    title="Chỉnh sửa chi tiết"
+                                    className="p-1 rounded-lg text-slate-500 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+                                    title="Sửa hoạt động"
                                   >
                                     <Pen className="w-3.5 h-3.5" />
                                   </button>
-                                  {canDelete ? (
+
+                                  {canDelete && (
                                     <button
                                       type="button"
                                       onClick={(e) => {
                                         e.stopPropagation();
-                                        onDeleteEvent && onDeleteEvent(ev);
+                                        if (onDeleteEvent) onDeleteEvent(ev);
                                       }}
-                                      className="p-1.5 rounded-md hover:bg-red-50 text-slate-500 hover:text-red-600 transition-colors"
-                                      title="Xóa sự kiện"
+                                      className="p-1 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+                                      title="Xóa hoạt động"
                                     >
                                       <Trash2 className="w-3.5 h-3.5" />
-                                    </button>
-                                  ) : (
-                                    <button
-                                      type="button"
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        onDeleteEvent && onDeleteEvent(ev);
-                                      }}
-                                      className="p-1.5 rounded-md text-slate-300 hover:text-amber-600 hover:bg-amber-50 transition-colors"
-                                      title="Chỉ Nguyễn Quang Anh (20227035) mới có quyền xóa sự kiện này"
-                                    >
-                                      <Lock className="w-3.5 h-3.5 text-slate-400" />
                                     </button>
                                   )}
                                 </div>
                               </div>
+                            </div>
 
-                              {/* Key Meta Details */}
-                              <div className="mt-2 grid grid-cols-1 gap-1 text-[11px] text-slate-600">
-                                <div className="flex items-center gap-1.5">
-                                  <CalendarIcon className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                                  <span className="font-semibold text-slate-800">{timeLabel}</span>
-                                </div>
-                                {ev.location && (
-                                  <div className="flex items-center gap-1.5">
-                                    <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                                    <span className="text-slate-700 truncate">{ev.location}</span>
-                                  </div>
-                                )}
-                                {speaker && (
-                                  <div className="flex items-center gap-1.5">
-                                    <User className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                                    <span className="text-slate-700 truncate">{speaker}</span>
-                                  </div>
-                                )}
+                            {/* Popover Scrollable Body */}
+                            <div className="p-3 space-y-2 text-xs overflow-y-auto custom-scrollbar flex-1">
+                              <div className="flex items-center gap-1.5 font-bold text-slate-700">
+                                <Clock className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                                <span>{timeLabel}</span>
                               </div>
-                            </div>
 
-                            {/* Popover Scrollable Body (Max height with thin custom scrollbar) */}
-                            <div className="p-3 pt-2 overflow-y-auto custom-scrollbar space-y-2 flex-1 text-slate-700">
-                              {/* Member Personal Assignment Note */}
-                              {selectedMember !== 'all' &&
-                                ev.memberNotes &&
-                                ev.memberNotes[selectedMember] && (
-                                  <div className="p-2 bg-rose-50/90 border border-rose-200/90 rounded-lg text-[11px] text-rose-950 leading-relaxed shadow-2xs">
-                                    <div className="font-bold flex items-center gap-1 text-rose-800 text-[10px] uppercase tracking-wide mb-0.5">
-                                      <span>📌 Nhiệm vụ của bạn</span>
-                                    </div>
-                                    {ev.memberNotes[selectedMember]}
-                                  </div>
-                                )}
+                              {ev.location && (
+                                <div className="flex items-center gap-1.5 text-slate-600 font-medium">
+                                  <MapPin className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                                  <span>{ev.location}</span>
+                                </div>
+                              )}
 
-                              {/* Description */}
+                              {speaker && (
+                                <div className="flex items-center gap-1.5 text-slate-700 font-bold">
+                                  <User className="w-3.5 h-3.5 text-purple-600 shrink-0" />
+                                  <span>{speaker}</span>
+                                </div>
+                              )}
+
                               {ev.description && (
-                                <div className="text-[11px] text-slate-600 leading-relaxed whitespace-pre-line bg-slate-50/80 p-2 rounded-lg border border-slate-100">
+                                <p className="text-[11px] text-slate-600 pt-1 border-t border-slate-100 whitespace-pre-line leading-relaxed">
                                   {ev.description}
+                                </p>
+                              )}
+
+                              {ev.subItems && ev.subItems.length > 0 && (
+                                <div className="pt-1.5 border-t border-slate-100 space-y-1">
+                                  <div className="text-[10px] font-black text-slate-500 uppercase tracking-wider">
+                                    Bài báo trong phiên ({ev.subItems.length}):
+                                  </div>
+                                  {ev.subItems.map((sub, idx) => (
+                                    <div
+                                      key={idx}
+                                      className={`p-1.5 rounded text-[11px] leading-tight ${
+                                        sub.highlight
+                                          ? 'bg-amber-100 text-amber-950 font-bold border border-amber-300'
+                                          : 'bg-slate-50 text-slate-700'
+                                      }`}
+                                    >
+                                      <span className="font-mono text-red-600 mr-1">{sub.time}</span>
+                                      {sub.text}
+                                    </div>
+                                  ))}
                                 </div>
                               )}
 
-                              {/* Sub-items (Parallel sessions / Papers list) */}
-                              {ev.subItems && ev.subItems.length > 0 && (
-                                <div className="space-y-1.5">
-                                  <div className="flex items-center justify-between text-[10px] font-bold text-slate-700 uppercase tracking-wide">
-                                    <span>Chi tiết các phòng / Bài báo ({ev.subItems.length})</span>
-                                    <span className="text-[9px] font-normal text-slate-400">Cuộn xem thêm</span>
-                                  </div>
-                                  <div className="space-y-1">
-                                    {ev.subItems.map((sub, sIdx) => (
-                                      <div
-                                        key={sIdx}
-                                        className={`p-1.5 rounded-md text-[11px] leading-snug border transition-colors ${
-                                          sub.highlight
-                                            ? 'bg-amber-50 border-amber-300 text-amber-950 font-medium'
-                                            : 'bg-white border-slate-200 text-slate-700'
-                                        }`}
-                                      >
-                                        <div className="flex items-center gap-1 text-[10px] font-mono text-slate-500 font-bold mb-0.5">
-                                          {sub.highlight && <span className="text-amber-600">⭐ ĐOÀN HUST</span>}
-                                          <span>{sub.time}</span>
-                                        </div>
-                                        <div>{sub.text}</div>
-                                      </div>
-                                    ))}
-                                  </div>
+                              {selectedMember !== 'all' && ev.memberNotes && ev.memberNotes[selectedMember] && (
+                                <div className="p-2 rounded-lg bg-blue-50 border border-blue-200 text-blue-900 font-medium text-[11px]">
+                                  <strong>Nhiệm vụ của bạn:</strong> {ev.memberNotes[selectedMember]}
                                 </div>
                               )}
                             </div>
 
-                            {/* Popover Footer (Pinned Bottom) */}
-                            <div className="px-3 py-1.5 bg-slate-50/80 border-t border-slate-100 rounded-b-xl flex items-center justify-between text-[10px] text-slate-400 shrink-0">
-                              <span className="flex items-center gap-1 text-slate-500 hover:text-red-600 font-medium transition-colors">
-                                <ExternalLink className="w-3 h-3" /> Nhấp để mở toàn màn hình & chỉnh sửa
-                              </span>
-                              <span className="text-[9px] font-mono text-slate-400">ICEF 2026</span>
+                            {/* Popover Footer */}
+                            <div className="px-3 py-1.5 bg-slate-50 border-t border-slate-100 rounded-b-2xl text-[10px] text-slate-400 flex items-center justify-between shrink-0">
+                              <span>Nhấp để mở chi tiết & chỉnh sửa</span>
+                              <span className="text-red-600 font-bold">ICEF 2026</span>
                             </div>
                           </div>
                         )}
@@ -623,10 +764,9 @@ export default function CalendarView({
               );
             })}
           </div>
+
         </div>
       </div>
     </div>
   );
 }
-
-
