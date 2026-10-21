@@ -127,15 +127,16 @@ export const INITIAL_SCHEDULE = [
     location: 'Tòa nhà C7 - Đại học Bách khoa Hà Nội',
     category: 'travel',
     participants: [...ALL_MEMBER_IDS],
-    description: 'Có mặt đúng 11h00 tại Tòa nhà C7 ĐH Bách khoa Hà Nội để tập trung, điểm danh và sắp xếp hành lý lên xe. (Lưu ý: Đại biểu tự túc ăn trưa trước hoặc trên đường di chuyển).\n\n🚗 Danh sách xe (Dự kiến):\n- Xe 1: Gồm đủ 6 thành viên của PID 628 (Nguyễn Quang Anh, Trần Đức Kiên, Đặng Thảo Nguyên, Nguyễn Khánh Linh, Trịnh Thị Hồng, Bùi Thị Phương Ly).\n- Thành viên Vũ Đình Khôi (PID 661) di chuyển theo phương án đoàn/xe riêng.',
+    speaker: 'BSX: 29E 17655 • Lx Thùy (0986 181 412)',
+    description: 'Có mặt đúng 11h00 tại Tòa nhà C7 ĐH Bách khoa Hà Nội để tập trung, điểm danh và sắp xếp hành lý lên xe. (Lưu ý: Đại biểu tự túc ăn trưa trước hoặc trên đường di chuyển).\n\n🚌 Thông tin Xe tại C7:\n• Biển số xe (BSX): 29E 17655\n• Lái xe: Lx Thùy - 📞 0986 181 412\n\n🚗 Danh sách xe (Dự kiến):\n- Xe 1 (BSX 29E 17655): Gồm đủ 6 thành viên của PID 628 (Nguyễn Quang Anh, Trần Đức Kiên, Đặng Thảo Nguyên, Nguyễn Khánh Linh, Trịnh Thị Hồng, Bùi Thị Phương Ly).\n- Thành viên Vũ Đình Khôi (PID 661) di chuyển theo phương án đoàn/xe riêng.',
     memberNotes: {
-      quang_anh: 'Có mặt đúng 11h00 tại C7 ĐHBK. Điều phối danh sách Xe 1 (6 thành viên PID 628).',
-      thao_nguyen: 'Có mặt đúng 11h00 tại C7 ĐHBK. Kiểm tra quân số các thành viên nữ lên Xe 1.',
+      quang_anh: 'Có mặt đúng 11h00 tại C7 ĐHBK. Liên hệ Lx Thùy (0986 181 412 - BSX 29E 17655). Điều phối danh sách Xe 1 (6 thành viên PID 628).',
+      thao_nguyen: 'Có mặt đúng 11h00 tại C7 ĐHBK. Kiểm tra quân số các thành viên nữ lên Xe 1 (BSX 29E 17655).',
       dinh_khoi: 'Có mặt đúng 11h00 tại C7 ĐHBK. Kiểm tra và bảo quản cẩn thận ống đựng Poster PID 661.',
-      khanh_linh: 'Có mặt đúng 11h00 tại C7 ĐHBK. Chuẩn bị lên Xe 1 cùng nhóm PID 628.',
-      duc_kien: 'Có mặt đúng 11h00 tại C7 ĐHBK. Chuẩn bị lên Xe 1 cùng nhóm PID 628.',
-      thi_hong: 'Có mặt đúng 11h00 tại C7 ĐHBK. Chuẩn bị lên Xe 1 cùng nhóm PID 628.',
-      phuong_ly: 'Có mặt đúng 11h00 tại C7 ĐHBK. Chuẩn bị lên Xe 1 cùng nhóm PID 628.'
+      khanh_linh: 'Có mặt đúng 11h00 tại C7 ĐHBK. Chuẩn bị lên Xe 1 (BSX 29E 17655) cùng nhóm PID 628.',
+      duc_kien: 'Có mặt đúng 11h00 tại C7 ĐHBK. Chuẩn bị lên Xe 1 (BSX 29E 17655) cùng nhóm PID 628.',
+      thi_hong: 'Có mặt đúng 11h00 tại C7 ĐHBK. Chuẩn bị lên Xe 1 (BSX 29E 17655) cùng nhóm PID 628.',
+      phuong_ly: 'Có mặt đúng 11h00 tại C7 ĐHBK. Chuẩn bị lên Xe 1 (BSX 29E 17655) cùng nhóm PID 628.'
     }
   },
   {
@@ -145,13 +146,14 @@ export const INITIAL_SCHEDULE = [
     fullDate: '22.10.2026',
     dayTitle: 'THỨ 5 (22/10/2026): Di chuyển, Check-in & Pre-conference Workshops',
     time: '11:30 – 13:30',
-    title: 'Xe xuất phát khởi hành đi Ninh Bình (Xe 1: 6 thành viên PID 628)',
+    title: 'Xe xuất phát khởi hành đi Ninh Bình (Xe 1 - BSX: 29E 17655)',
     location: 'Tòa nhà C7 ĐHBK Hà Nội → Khách sạn Alo Garden Ninh Bình',
     category: 'travel',
     participants: [...ALL_MEMBER_IDS],
-    description: 'Xe xuất phát đúng 11h30 AM từ Tòa nhà C7 ĐHBK Hà Nội. Dự kiến tới Ninh Bình lúc ~13:30.\n\n🚗 Danh sách xe (Dự kiến):\n- Xe 1: Đủ 6 thành viên của PID 628 (Quang Anh, Đức Kiên, Thảo Nguyên, Khánh Linh, Thị Hồng, Phương Ly).',
+    speaker: 'Lx Thùy (0986 181 412 - BSX 29E 17655)',
+    description: 'Xe xuất phát đúng 11h30 AM từ Tòa nhà C7 ĐHBK Hà Nội. Dự kiến tới Ninh Bình lúc ~13:30.\n\n🚌 Thông tin xe:\n• Biển số xe: 29E 17655\n• Lái xe: Lx Thùy - 📞 0986 181 412\n\n🚗 Danh sách xe (Dự kiến):\n- Xe 1 (BSX 29E 17655): Đủ 6 thành viên PID 628 (Quang Anh, Đức Kiên, Thảo Nguyên, Khánh Linh, Thị Hồng, Phương Ly).',
     memberNotes: {
-      quang_anh: 'Xe 1 khởi hành đúng 11h30 đi Ninh Bình.',
+      quang_anh: 'Xe 1 (BSX 29E 17655 - Lx Thùy) khởi hành đúng 11h30 đi Ninh Bình.',
       dinh_khoi: 'Bảo quản cẩn thận poster PID 661 trong hành trình di chuyển.'
     }
   },
@@ -537,10 +539,11 @@ export const INITIAL_SCHEDULE = [
     dayTitle: 'THỨ 7 (24/10/2026): Check-out Khách sạn & Khởi hành về Hà Nội',
     time: '09:30 – 11:30',
     title: 'Xe xuất phát khởi hành về lại Hà Nội (Tòa nhà C7 ĐHBK)',
-    location: 'Khách sạn Alo Garden Ninh Bình → Tòa nhà C7 ĐH Bách khoa Hà Nội',
+    location: 'ALO RESORT Ninh Bình → Tòa nhà C7 ĐH Bách khoa Hà Nội',
     category: 'travel',
     participants: [...ALL_MEMBER_IDS],
-    description: 'Đúng 09:30 xe xuất phát từ khách sạn Alo Garden đưa đoàn về lại điểm tập trung ban đầu tại Tòa nhà C7, ĐH Bách khoa Hà Nội.\n\n⚠️ Lưu ý chính thức: Đại biểu tham gia tour tham quan Tràng An sẽ đi theo khung thời gian và lịch trình riêng (Delegates joining the Tràng An tour will follow a separate schedule).'
+    speaker: 'BSX: 29E 17655 • Lx Thùy (0986 181 412)',
+    description: 'Đúng 09:30 xe đón đoàn (BSX: 29E 17655, Lái xe: Lx Thùy - 📞 0986 181 412) xuất phát từ ALO RESORT đưa đoàn về lại điểm tập trung ban đầu tại Tòa nhà C7, ĐH Bách khoa Hà Nội.\n\n⚠️ Lưu ý chính thức: Đại biểu tham gia tour tham quan Tràng An sẽ đi theo khung thời gian và lịch trình riêng (Delegates joining the Tràng An tour will follow a separate schedule).'
   }
 ];
 

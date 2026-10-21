@@ -143,6 +143,18 @@ class DatabaseService {
       await this.saveAppInfo(appInfo);
     }
 
+    // Auto-migrate to version 5: Update C7 vehicle info (BSX: 29E 17655, Lx Thùy 0986181412)
+    if (appInfo.dataVersion < 5) {
+      for (const item of INITIAL_SCHEDULE) {
+        if (item.id === 'sch-22-1' || item.id === 'sch-22-2' || item.id === 'sch-24-3') {
+          await this.updateSchedule(item);
+        }
+      }
+      appInfo.dataVersion = 5;
+      appInfo.version = '3.4.0-vehicle-info';
+      await this.saveAppInfo(appInfo);
+    }
+
     // Database is already initialized.
     // NEVER re-insert deleted schedules on F5!
     // Only ensure members list has latest structure if empty
@@ -446,8 +458,8 @@ class DatabaseService {
 
     metaStore.put({
       key: 'app_info',
-      version: '3.3.0-clean',
-      dataVersion: 4,
+      version: '3.4.0-vehicle-info',
+      dataVersion: 5,
       lastReset: new Date().toISOString(),
       framework: 'React + TailwindCSS'
     });
@@ -466,22 +478,26 @@ class DatabaseService {
         members: JSON.parse(JSON.stringify(INITIAL_MEMBERS)),
         hotelInfo: JSON.parse(JSON.stringify(INITIAL_HOTEL_INFO)),
         meta: {
-          app_info: { key: 'app_info', version: '3.2.0-official', dataVersion: 3 }
+          app_info: { key: 'app_info', version: '3.4.0-vehicle-info', dataVersion: 5 }
         }
       };
       this._saveFallbackData(initial);
     } else {
       try {
         const data = JSON.parse(existing);
-        if (!data.meta?.app_info?.dataVersion || data.meta.app_info.dataVersion < 4) {
+        if (!data.meta?.app_info?.dataVersion || data.meta.app_info.dataVersion < 5) {
           if (Array.isArray(data.schedules)) {
             data.schedules = data.schedules.filter(
               (s) => s.id !== 'sch-hust-175507' && s.id !== 'sch-hust-174386'
             );
+            data.schedules = data.schedules.map((s) => {
+              const latest = INITIAL_SCHEDULE.find((init) => init.id === s.id);
+              return latest || s;
+            });
           }
           data.hotelInfo = JSON.parse(JSON.stringify(INITIAL_HOTEL_INFO));
           if (!data.meta) data.meta = {};
-          data.meta.app_info = { key: 'app_info', version: '3.3.0-clean', dataVersion: 4 };
+          data.meta.app_info = { key: 'app_info', version: '3.4.0-vehicle-info', dataVersion: 5 };
           this._saveFallbackData(data);
         }
       } catch (e) {

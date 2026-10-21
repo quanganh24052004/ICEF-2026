@@ -10,7 +10,7 @@ export default function LocationsCard({ onOpenMapModal }) {
     {
       key: 'hust_c7',
       label: '1. C7 ĐHBK Hà Nội',
-      sub: 'Tập trung 11:00 • Xuất phát 11:30',
+      sub: 'BSX 29E 17655 • Lx Thùy 0986181412',
       icon: School,
       color: 'text-red-600 bg-red-50 border-red-200'
     },
