@@ -16,6 +16,7 @@ import BackupModal from './components/BackupModal';
 import AuthModal from './components/AuthModal';
 import ErrorBoundary from './components/ErrorBoundary';
 import Toast from './components/Toast';
+import SplashView from './components/SplashView';
 import { Globe, Lock, User, Sparkles } from 'lucide-react';
 
 const DEFAULT_GUEST_USER = {
@@ -426,6 +427,9 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#F7F7F7] text-duo-dark font-sans selection:bg-duo-green/20 pb-20 md:pb-12">
+      {/* Màn hình chào giọt nước lan tỏa SplashView */}
+      <SplashView />
+
       {/* Header */}
       <Header
         searchQuery={searchQuery}

@@ -316,3 +316,112 @@
   }
 }
 
+/* =========================================================================
+   REALISTIC WATER DROP SPLASH ANIMATION (NO EXTREME SCALE)
+   ========================================================================= */
+
+/* 1. Giọt nước hình dáng giọt lệ, rơi có gia tốc trọng trường và co dãn */
+.water-drop-realistic {
+  width: 22px;
+  height: 32px;
+  background: linear-gradient(180deg, #67e8f9 0%, #06b6d4 50%, #0284c7 100%);
+  border-radius: 50% 50% 50% 50% / 65% 65% 35% 35%;
+  box-shadow: 0 0 16px rgba(6, 182, 212, 0.8), inset 0 2px 4px rgba(255, 255, 255, 0.6);
+  animation: realisticDrop 1s cubic-bezier(0.55, 0.055, 0.675, 0.19) forwards;
+}
+
+@keyframes realisticDrop {
+  0% {
+    top: -50px;
+    transform: translateX(-50%) scale(0.8, 1.4); /* Kéo dài thon khi bắt đầu rơi */
+    opacity: 0.9;
+  }
+  75% {
+    top: 48%;
+    transform: translateX(-50%) scale(0.9, 1.3);
+  }
+  90% {
+    top: 50%;
+    transform: translateX(-50%) scale(1.4, 0.7); /* Nén dẹp lại khi tiếp đất */
+    border-radius: 50%;
+  }
+  100% {
+    top: 50%;
+    transform: translateX(-50%) scale(1, 1);
+    opacity: 0;
+  }
+}
+
+/* 2. Lớp phủ lan tỏa bằng clip-path mở tròn từ tâm màn hình */
+.splash-reveal-layer {
+  background: radial-gradient(circle at center, #0284c7 0%, #0f172a 100%);
+  animation: clipReveal 1.1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes clipReveal {
+  0% {
+    clip-path: circle(0px at 50% 50%);
+    opacity: 1;
+  }
+  50% {
+    clip-path: circle(120vmax at 50% 50%); /* Phủ kín toàn bộ màn hình không cần scale */
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    clip-path: circle(120vmax at 50% 50%);
+    opacity: 0; /* Mờ dần để hiện trang web chính bên dưới */
+  }
+}
+
+/* 3. Vòng sóng nước Ripple mở rộng */
+.water-wave {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 2px solid rgba(103, 232, 249, 0.8);
+  pointer-events: none;
+}
+
+.wave-1 {
+  animation: waveExpand 1s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+}
+
+.wave-2 {
+  animation: waveExpand 1s cubic-bezier(0.1, 0.8, 0.3, 1) 0.18s forwards;
+}
+
+@keyframes waveExpand {
+  0% {
+    width: 20px;
+    height: 20px;
+    opacity: 1;
+    border-width: 4px;
+  }
+  100% {
+    width: 450px;
+    height: 450px;
+    opacity: 0;
+    border-width: 1px;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+
+
